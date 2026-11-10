@@ -10,7 +10,7 @@
     
     <style>
         /* =========================================
-           استایل‌های صفحه لودینگ و لاگین (جدید)
+           استایل‌های صفحه لودینگ و لاگین
            ========================================= */
         body { font-family: 'Vazirmatn', 'B Nazanin', Tahoma, sans-serif; background: #f1f5f9; margin: 0; padding: 0; overflow-x: hidden; }
         .hidden { display: none !important; }
@@ -24,7 +24,6 @@
         /* لاگین */
         .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; z-index: 9998; display: flex; justify-content: center; align-items: center; }
         .login-card { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; }
-        .login-card img { width: 80px; margin-bottom: 20px; }
         .login-card h2 { margin-bottom: 30px; color: #1e293b; }
         .input-group { margin-bottom: 20px; text-align: right; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #475569; }
@@ -56,10 +55,35 @@
         .badge-returned { background: #fee2e2; color: #dc2626; }
 
         /* =========================================
-           استایل‌های اصلی فرم حواله (دقیقاً همان نسخه قبلی)
+           استایل‌های اصلی فرم حواله
            ========================================= */
         @page { size: A4 landscape; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        /* **حذف کامل فلش‌های منوهای کشویی در کل سیستم و پرینت** */
+        select {
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            background-image: none !important;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none !important; 
+            margin: 0 !important; 
+            display: none !important;
+        }
+        input[type=number] { -moz-appearance: textfield !important; }
+
+        @media print {
+            select {
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+                background-image: none !important;
+            }
+        }
+
         .tabs-container { max-width: 1200px; margin: 0 auto 15px auto; background: #fff; padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .tabs { display: flex; gap: 5px; }
         .tab-btn { padding: 6px 15px; font-family: inherit; font-size: 14px; font-weight: bold; background-color: #f8fafc; border: 1px solid #cbd5e1; cursor: pointer; border-radius: 6px; transition: all 0.2s; color: #334155; }
@@ -70,6 +94,7 @@
         .btn:active { transform: scale(0.98); }
         .btn:disabled { background-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; opacity: 0.8;}
         .btn-success { background: #10b981; } .btn-danger { background: #ef4444; } .btn-primary { background: #3b82f6; } .btn-dark { background: #475569; } .btn-edit { background: #f59e0b; } .btn-share { background: #8b5cf6; }
+        
         .section { display: none; }
         .section.active { display: block; }
         .page { width: 297mm; height: 210mm; background-color: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; overflow: hidden; page-break-after: always; border-radius: 4px; }
@@ -109,6 +134,7 @@
         .footer-row-1 td { text-align: right; padding-right: 10px; font-weight: bold; height: 30px; }
         .footer-row-2 td { text-align: right; padding-right: 10px; height: 28px; }
         .signature-row td { vertical-align: top; text-align: right; padding-top: 8px; padding-right: 15px; height: 80px; font-weight: bold; width: 25%; }
+        
         @media print {
             body { background-color: #fff; padding: 0; }
             .page { box-shadow: none; margin: 0; padding: 4mm 8mm; width: 100%; height: 100%; border-radius: 0;}
@@ -187,11 +213,10 @@
             </div>
         </div>
 
-        <!-- فرم حواله (دقیقاً همان ساختار قبلی) -->
+        <!-- فرم حواله -->
         <div id="waybillView" class="hidden" style="padding: 20px;">
             <div class="tabs-container no-print" style="max-width: 100%;">
                 <div class="toolbar" id="mainToolbar">
-                    <!-- دکمه‌ها توسط جاوااسکریپت بر اساس نقش و وضعیت مدیریت می‌شوند -->
                     <button class="btn btn-dark" id="btnBackToDash" onclick="showDashboard()">🔙 بازگشت به لیست</button>
                     <button class="btn btn-success" id="btnSaveDraft" onclick="saveWaybill('draft')">💾 ذخیره پیش‌نویس</button>
                     <button class="btn btn-primary" id="btnSendToWarehouse" onclick="saveWaybill('pending')">📤 ارسال به انبار</button>
@@ -299,11 +324,11 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // --- متغیرهای سراسری ---
-        let currentUser = null; // کاربر لاگین شده
-        let currentWaybillId = null; // آیدی حواله‌ای که باز است
+        let currentUser = null; 
+        let currentWaybillId = null; 
         let currentWarehouseType = 'si-tak';
         let products = [];
-        let isReadOnlyMode = false; // آیا فرم قفل است؟
+        let isReadOnlyMode = false; 
 
         // --- توابع کمکی ---
         function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
@@ -341,13 +366,12 @@
                 return;
             }
 
-            // بررسی 30 روز
             const lastChange = new Date(user.last_password_change);
             const now = new Date();
             const diffDays = Math.floor((now - lastChange) / (1000 * 60 * 60 * 24));
 
             if (diffDays >= 30) {
-                currentUser = user; // موقت ذخیره میکنیم
+                currentUser = user; 
                 showScreen('changePassScreen');
             } else {
                 completeLogin(user);
@@ -414,7 +438,6 @@
         async function loadWaybills() {
             let query = supabaseClient.from('waybills').select('*').order('id', { ascending: false });
             
-            // اگر انباردار است، فقط حواله‌های در انتظار و کنترل شده را ببیند
             if (currentUser.role === 'warehouse') {
                 query = query.in('status', ['pending', 'checked']);
             }
@@ -430,8 +453,8 @@
                 let statusText = '';
                 if (w.status === 'draft') { badgeClass = 'badge-draft'; statusText = 'پیش‌نویس'; }
                 else if (w.status === 'pending') { badgeClass = 'badge-pending'; statusText = 'در انتظار انبار'; }
-                else if (w.status === 'checked') { badgeClass = 'badge-checked'; statusText = 'کنترل شده / آماده بارگیری'; }
-                else if (w.status === 'returned') { badgeClass = 'badge-returned'; statusText = 'برگشت خورده (نیاز به اصلاح)'; }
+                else if (w.status === 'checked') { badgeClass = 'badge-checked'; statusText = 'کنترل شده'; }
+                else if (w.status === 'returned') { badgeClass = 'badge-returned'; statusText = 'برگشت خورده'; }
 
                 tbody.innerHTML += `
                     <tr>
@@ -452,7 +475,6 @@
             loadWaybills();
         }
 
-        // --- بارگذاری کالاها ---
         async function loadProductsFromDB() {
             let { data } = await supabaseClient.from('products').select('*');
             products = data || [];
@@ -504,7 +526,6 @@
             document.getElementById('waybillView').classList.remove('hidden');
             document.getElementById('dashboardView').classList.add('hidden');
             
-            // ریست کردن فرم
             document.getElementById('warehouseSelect').value = 'si-tak';
             handleWarehouseChange(document.getElementById('warehouseSelect'));
             document.getElementById('customerName').value = '';
@@ -535,7 +556,6 @@
             document.getElementById('waybillView').classList.remove('hidden');
             document.getElementById('dashboardView').classList.add('hidden');
 
-            // پر کردن هدر
             document.getElementById('waybillNumber').value = waybill.waybill_number;
             document.getElementById('waybillDate').value = waybill.data.waybillDate || '';
             document.getElementById('printDate').value = waybill.data.printDate || '';
@@ -552,14 +572,12 @@
             document.getElementById('carPlate').value = waybill.data.carPlate || '';
             document.getElementById('documentDesc').value = waybill.data.documentDesc || '';
 
-            // پر کردن ردیف‌ها
             const tbody = document.querySelector('.table-body');
             tbody.innerHTML = '';
             if (waybill.data.rows && waybill.data.rows.length > 0) {
                 waybill.data.rows.forEach(rowData => {
-                    addRow(true); // ردیف خالی بساز
+                    addRow(true); 
                     const lastRow = tbody.lastElementChild;
-                    // پر کردن مقادیر
                     const inputs = lastRow.querySelectorAll('input, select');
                     inputs[0].value = rowData.code || '';
                     inputs[1].value = rowData.name || '';
@@ -578,17 +596,15 @@
 
             showScreen('appMain');
 
-            // مدیریت دسترسی‌ها
             if (currentUser.role === 'warehouse') {
-                setFormEditable(false); // انباردار اجازه ویرایش فیلدها را ندارد
+                setFormEditable(false); 
                 updateButtonVisibility(waybill.status);
             } else {
-                // مجتبی (فروش)
-                if (waybill.status === 'checked') {
-                    setFormEditable(false);
-                    alert('این حواله توسط انبار کنترل شده است. برای ویرایش باید از انبار درخواست برگشت کنید.');
-                } else {
+                if (waybill.status === 'draft' || waybill.status === 'returned') {
                     setFormEditable(true);
+                } else {
+                    setFormEditable(false);
+                    alert('این حواله ارسال شده است و شما نمی‌توانید آن را ویرایش کنید.');
                 }
                 updateButtonVisibility(waybill.status);
             }
@@ -605,7 +621,6 @@
         }
 
         function updateButtonVisibility(status) {
-            // مخفی کردن همه دکمه‌های عملیات
             ['btnSaveDraft', 'btnSendToWarehouse', 'btnCheckWarehouse', 'btnReturn', 'btnPrint', 'btnShare'].forEach(id => {
                 document.getElementById(id).style.display = 'none';
             });
@@ -633,9 +648,11 @@
 
         // --- ذخیره حواله در دیتابیس ---
         async function saveWaybill(newStatus) {
-            if (isReadOnlyMode) return;
+            // حذف شرط isReadOnlyMode تا مهدی بتواند وضعیت را تغییر دهد
 
-            // جمع آوری داده‌ها از فرم
+            if (currentUser.role === 'sales' && (newStatus === 'checked' || newStatus === 'returned')) return;
+            if (currentUser.role === 'warehouse' && (newStatus === 'draft' || newStatus === 'pending')) return;
+
             const data = {
                 printDate: document.getElementById('printDate').value,
                 waybillDate: document.getElementById('waybillDate').value,
@@ -675,14 +692,12 @@
 
             try {
                 if (currentWaybillId) {
-                    // آپدیت حواله موجود
                     await supabaseClient.from('waybills').update({
                         status: newStatus,
                         data: data,
                         checked_at: newStatus === 'checked' ? new Date().toISOString() : null
                     }).eq('id', currentWaybillId);
                 } else {
-                    // ساخت حواله جدید (شماره گذاری خودکار)
                     const { data: settings } = await supabaseClient.from('settings').select('waybill_count').eq('id', 1).single();
                     let count = settings ? settings.waybill_count : 1;
                     
@@ -702,7 +717,6 @@
                     currentWaybillId = newW.id;
                     document.getElementById('waybillNumber').value = waybillNum;
 
-                    // آپدیت شمارنده
                     await supabaseClient.from('settings').update({ waybill_count: count + 1 }).eq('id', 1);
                 }
                 
@@ -716,7 +730,7 @@
             }
         }
 
-        // --- سایر توابع کمکی فرم (بدون تغییر) ---
+        // --- سایر توابع ---
         function handleWarehouseChange(selectElement) {
             const newType = selectElement.value === 'kafpoosh' ? 'kafpoosh' : 'si-tak';
             if (currentWarehouseType === newType) return;
@@ -791,7 +805,6 @@
         }
 
         function prepareAndPrint() {
-            // تبدیل اعداد به انگلیسی قبل از پرینت
             document.querySelectorAll('#pdfContainer input').forEach(input => input.value = forceEnglish(input.value));
             document.querySelectorAll('.row-num').forEach(el => el.innerText = forceEnglish(el.innerText));
             window.print();
@@ -801,7 +814,7 @@
         window.onload = () => {
             setTimeout(() => {
                 showScreen('loginScreen');
-            }, 1000); // 1 ثانیه لودینگ اولیه
+            }, 1000);
         };
     </script>
 </body>
