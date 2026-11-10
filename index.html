@@ -452,6 +452,67 @@
         const SUPABASE_ANON_KEY = "sb_publishable_dUexAxlEw_-mZuMbVc3Wmg_aWrJDQmj";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // =========================================
+        // لیست کالاهای پیش‌فرض (برای تزریق اولیه به دیتابیس)
+        // =========================================
+        const highglossProducts = [
+            { code: "10A100", name: "سفید مات" }, { code: "11A109", name: "مشکی مات" }, { code: "12A111", name: "آبی مات" },
+            { code: "13A112", name: "سبز مات" }, { code: "15A101", name: "کرم مات" }, { code: "16A113", name: "سبززیتونی مات" },
+            { code: "17A114", name: "آبی ملایم مات" }, { code: "18A115", name: "خاکستری A مت" }, { code: "19A116", name: "سبز بیشه مات" },
+            { code: "20A102", name: "نسکافه مات" }, { code: "25A103", name: "خاکستری جدید مات" }, { code: "26A120", name: "پلاتین" },
+            { code: "27A121", name: "بیانکو مات" }, { code: "28A122", name: "ذغالی مات" }, { code: "30A104", name: "خاکستری روشن مات" },
+            { code: "35A105", name: "خاکستری تیره مات" }, { code: "36A106", name: "سفید متالیک مات" }, { code: "37A107", name: "کرم متالیک مات" },
+            { code: "38A108", name: "گلکسی عسلی مات" }, { code: "39A110", name: "متالیک آنتراسیت مات" }, { code: "40A118", name: "مشکی متالیک مات" },
+            { code: "42A119", name: "خاکستری روشن متالیک مات" }, { code: "101A76", name: "بتون خاکستری روشن" }, { code: "102A77", name: "سنگ قهوه ای" },
+            { code: "103A78", name: "مرمر سیاه مات" }, { code: "106A83", name: "بنفش کروم" }, { code: "107A84", name: "خاکستری کروم" },
+            { code: "115A52", name: "گلکسی عسلی" }, { code: "116A53", name: "گلکسی عسلی تیره" }, { code: "117A50", name: "متالیک سیلور" },
+            { code: "118A82", name: "خاکستری متالیک شاین" }, { code: "135A27", name: "میلانو گردویی" }, { code: "151A61", name: "ماتریس مرواریدی" },
+            { code: "154A60", name: "ماتریس سرخ" }, { code: "167A59", name: "ماتریس طلایی" }, { code: "170A62", name: "سفید متالیک" },
+            { code: "171A64", name: "مشکی متالیک" }, { code: "172A65", name: "قهوه ای متالیک" }, { code: "173A70", name: "بنفش متالیک" },
+            { code: "175A63", name: "کرم متالیک" }, { code: "181A75", name: "آلومینیوم طلایی مات" }, { code: "194A67", name: "آلومینیوم" },
+            { code: "195A66", name: "متالیک آنتراسیت" }, { code: "199A74", name: "آلومینیوم طلایی" }, { code: "202A44", name: "بتون خاکستری تیره" },
+            { code: "203A45", name: "بتون سفید" }, { code: "205A36", name: "ترا قهوه" }, { code: "206A35", name: "ترا شیری" },
+            { code: "220A33", name: "تیک" }, { code: "225A34", name: "آبنوس" }, { code: "230A29", name: "اورگون گردویی" },
+            { code: "261A26", name: "افرا روشن" }, { code: "262A124", name: "چوب خاکستری آنتی فینگر" }, { code: "263A125", name: "چوب نقره ای آنتی فینگر" },
+            { code: "264A126", name: "چوب بژ آنتی فینگر" }, { code: "265A127", name: "چوب روشن آنتی فینگر" }, { code: "266A123", name: "چوب تیره آنتی فینگر" },
+            { code: "300A06", name: "مشکی" }, { code: "301A15", name: "خاکستری تیره ( هایگلاس )" }, { code: "302A16", name: "خاکستری A براق ( هایگلاس )" },
+            { code: "305A01", name: "سفید" }, { code: "306A12", name: "آبی کاربنی" }, { code: "315A04", name: "نسکافه" },
+            { code: "320A13", name: "سبز زیتونی" }, { code: "330A08", name: "بنفش" }, { code: "335A03", name: "کرم" },
+            { code: "346A11", name: "آبی" }, { code: "347A10", name: "سبز" }, { code: "350A05", name: "قهوه ای" },
+            { code: "355A02", name: "بیانکو" }, { code: "360A07", name: "زرشکی" }, { code: "371A81", name: "آلومینیوم آنتی فینگر" },
+            { code: "372A79", name: "آلومینیوم طلایی آنتی فینگر" }, { code: "373A80", name: "آینه" }
+        ];
+
+        const kafpooshProducts = [
+            { code: "10", name: "white" }, { code: "10", name: "white one side" }, { code: "12", name: "KSP12" },
+            { code: "14", name: "KSP14" }, { code: "40", name: "KSP40" }, { code: "43", name: "KSP 43" },
+            { code: "46", name: "KSP46" }, { code: "71", name: "KSP71" }, { code: "75", name: "KSP 75" },
+            { code: "76", name: "KSP 76" }, { code: "77", name: "KSP77" }, { code: "79", name: "KSP 79" },
+            { code: "80", name: "KSP 80" }, { code: "82", name: "KSP82" }, { code: "83", name: "KSP83" },
+            { code: "85", name: "KSP 85" }, { code: "86", name: "KSP86" }, { code: "16", name: "CREAM" },
+            { code: "87", name: "GRAY-1" }, { code: "89", name: "GRAY -3" }, { code: "99", name: "BLACK" },
+            { code: "200", name: "LIGHT OAK" }, { code: "201", name: "ANTIQUE Kag" }, { code: "203", name: "CREAM BAL TIMOUR" },
+            { code: "205", name: "HLRKANI KARMAZOO" }, { code: "206", name: "CATANIA" }, { code: "207", name: "ANTIQUE LIGHT" },
+            { code: "208", name: "SORBUS" }, { code: "209", name: "HIRKANI KING OAK" }, { code: "210", name: "LYON WALNUT LIGHT" },
+            { code: "211", name: "LYON MEDIUM" }, { code: "213", name: "CANADA OAK" }, { code: "214", name: "SONAMA" },
+            { code: "215", name: "FLAGSTAFF OAK 2" }, { code: "216", name: "FLAGSTAFF OAK 3" }, { code: "217", name: "SEVEN OAK" },
+            { code: "218", name: "BIG OAK LIGH T" }, { code: "219", name: "BIG OAK MIDDLE" }, { code: "220", name: "DARK TAK  SUZ" },
+            { code: "221", name: "ACER" }, { code: "223", name: "ROBINIA" }, { code: "224", name: "TILALA" },
+            { code: "225", name: "LIGHT MALACH" }, { code: "226", name: "PYRUS" }, { code: "228", name: "HIRKANI MAMREZ 1" },
+            { code: "229", name: "HIRKANI MAMREZ 2" }, { code: "232", name: "HIRKANI MAMREZ 3" }, { code: "230", name: "LIGHT CLEAF" },
+            { code: "231", name: "MEDIUM CLEAF" }, { code: "235", name: "GOLDEN ANTIQUE" }, { code: "236", name: "ABACA 1" },
+            { code: "237", name: "ABACA 2" }, { code: "240", name: "LYON WALNUT DARK" }, { code: "245", name: "NOISE" },
+            { code: "246", name: "BESHIKTASH ELM(001)" }, { code: "247", name: "BLACK OAK" }, { code: "250", name: "DARK CLEAF" },
+            { code: "249", name: "MILANO WALNUT 1" }, { code: "251", name: "MILANO WALNUT 2" }, { code: "252", name: "MILANO WALNUT 3" },
+            { code: "255", name: "DARK MALACH" }, { code: "300", name: "METALLIC WHITE" }, { code: "304", name: "METALLIC CREAM" },
+            { code: "305", name: "METALLIC BEIGE" }, { code: "306", name: "METALIC CAPUCINO" }, { code: "315", name: "METALLIC SILVER" },
+            { code: "325", name: "METALIC ANTRASIT" }, { code: "400", name: "CONCRETE WHITE" }, { code: "405", name: "BETON 5" },
+            { code: "410", name: "BETON 6" }, { code: "408", name: "BETON 7" }, { code: "406", name: "BETON 8" },
+            { code: "411", name: "BETON 9" }, { code: "513", name: "WHITE LINEN" }, { code: "514", name: "CREAM LINEN" },
+            { code: "515", name: "TWIST 1" }, { code: "574", name: "HARDSTONE WHITE (3)" }, { code: "575", name: "HARDSTONE WHITE (4)" },
+            { code: "576", name: "HARDSTONE WHITE (8)" }
+        ];
+
         // --- متغیرهای سراسری ---
         let currentUser = null; 
         let currentWaybillId = null; 
@@ -647,9 +708,28 @@
             loadWaybills();
         }
 
+        // --- بارگذاری کالاها (با قابلیت تزریق اولیه) ---
         async function loadProductsFromDB() {
             let { data } = await supabaseClient.from('products').select('*');
             products = data || [];
+            
+            // اگر دیتابیس کاملاً خالی بود، لیست پیش‌فرض را اضافه کن
+            if (products.length === 0) {
+                await seedDefaultProducts();
+            }
+        }
+
+        async function seedDefaultProducts() {
+            const defaultProducts = [];
+            highglossProducts.forEach(p => defaultProducts.push({ code: p.code, name: "ورق ام دی اف هایگلاس " + p.name, type: "highgloss" }));
+            kafpooshProducts.forEach(p => defaultProducts.push({ code: p.code, name: p.name, type: "kafpoosh" }));
+            
+            showToast('در حال افزودن لیست اولیه کالاها...', 'info');
+            const { data, error } = await supabaseClient.from('products').insert(defaultProducts).select();
+            if (!error && data) {
+                products = data;
+                showToast('لیست کالاها با موفقیت اضافه شد.', 'success');
+            }
         }
 
         // --- فرم حواله ---
@@ -956,6 +1036,7 @@
         async function addRow(skipPrompt = false) {
             let pages = document.querySelectorAll('.page'); let lastPage = pages[pages.length - 1]; let tbody = lastPage.querySelector('.table-body');
             let currentPageRows = tbody.querySelectorAll('tr').length;
+            
             if (currentPageRows >= 10) { 
                 const newPage = lastPage.cloneNode(true); 
                 newPage.querySelector('.table-body').innerHTML = '';
@@ -963,11 +1044,27 @@
                 document.getElementById('pagesContainer').appendChild(newPage);
                 lastPage = newPage; tbody = lastPage.querySelector('.table-body');
             }
+
+            let duplicate = false;
+            if (!skipPrompt && !isReadOnlyMode) {
+                duplicate = await customConfirm('آیا مایلید اطلاعات ردیف قبل تکرار شود؟');
+            }
+
             let newTr = document.createElement('tr'); 
-            newTr.innerHTML = createRowHTML(currentWarehouseType); 
+            
+            if (duplicate && tbody.lastElementChild) {
+                newTr = tbody.lastElementChild.cloneNode(true);
+                newTr.querySelector('.qty').value = ''; 
+                let drops = newTr.querySelectorAll('.autocomplete-dropdown');
+                drops.forEach(d => d.style.display = 'none');
+            } else {
+                newTr.innerHTML = createRowHTML(currentWarehouseType); 
+            }
+
             newTr.querySelector('.row-num').innerText = forceEnglish(tbody.querySelectorAll('tr').length + 1);
             tbody.appendChild(newTr);
-            if(!isReadOnlyMode && !skipPrompt) newTr.querySelector('.search-code').focus();
+            
+            if(!isReadOnlyMode && !duplicate) newTr.querySelector('.search-code').focus();
         }
 
         async function deleteRow(btn) {
