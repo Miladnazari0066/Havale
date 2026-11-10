@@ -2,129 +2,89 @@
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>سیستم حواله فروش - سی تک پارسیان</title>
-    <!-- کتابخانه PDF -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم مدیریت حواله - سی تک پارسیان</title>
+    <!-- فونت وزیرمتن برای ظاهر مدرن -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
+    <!-- کتابخانه‌های مورد نیاز -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <!-- کتابخانه Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         @page { size: A4 landscape; margin: 0; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Vazirmatn', 'B Nazanin', Tahoma, sans-serif; }
+        body { background: #f1f5f9; color: #1e293b; font-size: 15px; overflow-x: hidden; }
         
-        body {
-            font-family: 'B Nazanin', 'Nazanin', Tahoma, sans-serif;
-            background-color: #f1f5f9;
-            font-size: 15px;
-            color: #000;
-            padding: 10px;
-            overflow-x: hidden;
-        }
-
-        /* --- استایل صفحه لودینگ و لاگین --- */
-        .overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #f8fafc;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            flex-direction: column;
-        }
+        /* --- ابزارهای کمکی --- */
         .hidden { display: none !important; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f8fafc; display: flex; justify-content: center; align-items: center; z-index: 9999; flex-direction: column; }
         
-        .loader {
-            border: 5px solid #e2e8f0;
-            border-top: 5px solid #3b82f6;
-            border-radius: 50%;
-            width: 50px; height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* --- صفحه لودینگ و لاگین --- */
+        .loader-ring { display: inline-block; position: relative; width: 80px; height: 80px; }
+        .loader-ring div { box-sizing: border-box; display: block; position: absolute; width: 64px; height: 64px; margin: 8px; border: 4px solid #3b82f6; border-radius: 50%; animation: loader-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite; border-color: #3b82f6 transparent transparent transparent; }
+        @keyframes loader-ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .login-box {
-            background: #fff; padding: 40px; border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            text-align: center; width: 350px;
-        }
-        .login-box img { width: 100px; margin-bottom: 20px; }
-        .login-box h2 { margin-bottom: 20px; color: #1e293b; }
-        .login-box input {
-            width: 100%; padding: 12px; margin-bottom: 15px;
-            border: 1px solid #cbd5e1; border-radius: 8px;
-            font-family: inherit; font-size: 16px; text-align: center;
-        }
-        .login-box button {
-            width: 100%; padding: 12px; background: #3b82f6; color: white;
-            border: none; border-radius: 8px; font-family: inherit;
-            font-size: 16px; font-weight: bold; cursor: pointer;
-        }
-        .login-box button:hover { background: #2563eb; }
-        .error-msg { color: #ef4444; font-size: 14px; margin-top: 10px; display: none; }
+        .login-box { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.08); text-align: center; width: 100%; max-width: 400px; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .login-box h2 { margin-bottom: 30px; font-size: 22px; color: #1e293b; }
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group input { width: 100%; padding: 14px 45px 14px 15px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 16px; transition: all 0.3s; }
+        .input-group input:focus { border-color: #3b82f6; outline: none; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); }
+        .input-group i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 18px; }
+        .login-box button { width: 100%; padding: 14px; background: #3b82f6; color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .login-box button:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        .error-msg { color: #ef4444; font-size: 14px; margin-top: 15px; display: none; background: #fef2f2; padding: 10px; border-radius: 8px; border: 1px solid #fecaca;}
 
-        /* --- مخفی کردن فلش‌ها --- */
-        input[type=number]::-webkit-inner-spin-button, 
-        input[type=number]::-webkit-outer-spin-button { 
-            -webkit-appearance: none !important; margin: 0 !important; display: none !important;
-        }
-        input[type=number] { -moz-appearance: textfield !important; }
+        /* --- منوی بالا (Header) --- */
+        .navbar { background: #fff; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-size: 20px; font-weight: bold; color: #3b82f6; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 10px; }
+        .nav-btn { padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; border: none; font-family: inherit; transition: 0.2s; display: flex; align-items: center; gap: 8px; background: transparent; color: #475569; }
+        .nav-btn:hover { background: #f1f5f9; color: #1e293b; }
+        .nav-btn.active { background: #eff6ff; color: #2563eb; }
+        .nav-btn.logout { color: #ef4444; }
+        .nav-btn.logout:hover { background: #fef2f2; }
+
+        /* --- محتوای اصلی --- */
+        .main-container { padding: 30px; max-width: 1400px; margin: 0 auto; }
         
-        @media print {
-            select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-image: none !important; }
-        }
-        .select-no-arrow { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none; }
+        /* --- کارت‌های منوی اصلی --- */
+        .dashboard-cards { display: flex; gap: 30px; justify-content: center; flex-wrap: wrap; margin-top: 50px; }
+        .dash-card { background: #fff; border-radius: 16px; padding: 40px 30px; width: 300px; text-align: center; cursor: pointer; transition: all 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        .dash-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px rgba(0,0,0,0.08); border-color: #3b82f6; }
+        .dash-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 35px; margin: 0 auto 20px auto; }
+        .icon-blue { background: #eff6ff; color: #3b82f6; }
+        .icon-green { background: #ecfdf5; color: #10b981; }
+        .dash-title { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 10px; }
+        .dash-desc { font-size: 14px; color: #64748b; line-height: 1.6; }
 
-        /* --- منوی تب‌ها و نوار ابزار --- */
-        .tabs-container {
-            max-width: 1200px; margin: 0 auto 15px auto; background: #fff; 
-            padding: 10px 15px; border-radius: 8px; border: 1px solid #cbd5e1;
-            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .tabs { display: flex; gap: 5px; }
-        .tab-btn {
-            padding: 6px 15px; font-family: inherit; font-size: 14px; font-weight: bold;
-            background-color: #f8fafc; border: 1px solid #cbd5e1; cursor: pointer; border-radius: 6px; transition: all 0.2s; color: #334155;
-        }
-        .tab-btn:hover { background-color: #e2e8f0; }
-        .tab-btn.active { background-color: #334155; color: #fff; border-color: #334155; }
-
-        .toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-        .btn {
-            padding: 6px 12px; font-family: inherit; font-size: 13px; font-weight: bold; 
-            border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; 
-            display: flex; align-items: center; gap: 4px; color: white;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn:disabled { background-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; opacity: 0.8;}
+        /* --- استایل پنل مدیریت --- */
+        .admin-grid { display: flex; gap: 20px; flex-wrap: wrap; }
+        .admin-card { background: #fff; border-radius: 12px; padding: 20px; flex: 1; min-width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        .admin-card h3 { margin-bottom: 20px; color: #1e293b; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .form-row input, .form-row select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-family: inherit; flex: 1; min-width: 120px; }
+        .btn-primary { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; font-family: inherit; }
+        .btn-primary:hover { background: #2563eb; }
         
-        .btn-success { background: #10b981; } .btn-success:hover:not(:disabled) { background: #059669; }
-        .btn-danger { background: #ef4444; } .btn-danger:hover:not(:disabled) { background: #dc2626; }
-        .btn-primary { background: #3b82f6; } .btn-primary:hover:not(:disabled) { background: #2563eb; }
-        .btn-dark { background: #475569; } .btn-dark:hover:not(:disabled) { background: #334155; }
-        .btn-edit { background: #f59e0b; } .btn-edit:hover:not(:disabled) { background: #d97706; }
-        .btn-share { background: #8b5cf6; } .btn-share:hover:not(:disabled) { background: #7c3aed; }
+        .table-responsive { overflow-x: auto; max-height: 400px; overflow-y: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: right; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; color: #475569; position: sticky; top: 0; }
+        .btn-sm { padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; border: none; color: white; font-family: inherit; }
+        .btn-edit { background: #f59e0b; } .btn-delete { background: #ef4444; }
 
-        /* --- تنظیمات کلی --- */
-        .section { display: none; }
-        .section.active { display: block; }
+        /* --- استایل حواله (کپی شده از نسخه قبل) --- */
+        .toolbar-waybill { background: #fff; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .btn { padding: 8px 16px; font-family: inherit; font-size: 14px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px; color: white; }
+        .btn:disabled { background-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; }
+        .btn-success { background: #10b981; } .btn-dark { background: #475569; } .btn-danger { background: #ef4444; } .btn-edit { background: #f59e0b; } .btn-share { background: #8b5cf6; }
 
-        .page {
-            width: 297mm; height: 210mm; background-color: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; overflow: hidden; page-break-after: always; border-radius: 4px;
-        }
-        .page:last-child { page-break-after: auto; }
-
-        .page::before {
-            content: "حواله ی دستی"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg);
-            font-size: 120px; font-weight: bold; color: rgba(0, 0, 0, 0.04); white-space: nowrap; pointer-events: none; z-index: 0;
-        }
-
+        .page { width: 297mm; height: 210mm; background: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; overflow: hidden; page-break-after: always; }
+        .page::before { content: "حواله ی دستی"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg); font-size: 120px; font-weight: bold; color: rgba(0,0,0,0.04); white-space: nowrap; pointer-events: none; z-index: 0; }
         .content { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; }
 
-        /* --- استایل فرم حواله --- */
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        table.waybill-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
         .header-table { border: none !important; margin-bottom: 5px; }
         .header-table td { border: none !important; vertical-align: top; padding: 0; }
         .header-right { width: 40%; text-align: right; line-height: 1.8; }
@@ -136,328 +96,330 @@
 
         .info-table, .main-table, .footer-table { border: 1px solid #000; }
         .info-table td, .main-table th, .main-table td, .footer-table td { border: 1px solid #000; padding: 2px 4px; text-align: center; vertical-align: middle; height: 26px; }
-        .main-table th { font-weight: bold; font-size: 14px; background-color: #f9f9f9; }
+        .main-table th { font-weight: bold; font-size: 14px; background: #f9f9f9; }
 
-        /* استایل کلی فیلدها */
-        input, select { border: none; background: transparent; font-family: inherit; font-size: inherit; outline: none; color: #000 !important; -webkit-text-fill-color: #000 !important; width: 100%; text-align: center; }
-        input:disabled, select:disabled { background-color: transparent !important; color: #000 !important; -webkit-text-fill-color: #000 !important; opacity: 1 !important; }
-        
-        /* تنظیمات هدر */
+        input.w-input, select.w-select { border: none; background: transparent; font-family: inherit; font-size: inherit; outline: none; color: #000 !important; width: 100%; text-align: center; }
+        input.w-input:disabled, select.w-select:disabled { background: transparent !important; color: #000 !important; opacity: 1 !important; }
         .header-right input, .header-right select { text-align: right; display: inline-block; }
         .header-left input { text-align: left; width: 110px; }
-        .header-right select { cursor: pointer; }
-        
-        /* فیلدهای تاریخ و عدد */
-        .ltr-input { 
-            direction: ltr !important; text-align: center !important; 
-            font-family: Tahoma, Arial, sans-serif !important; font-size: 12px !important; font-weight: normal !important;
-        }
+        .ltr-input { direction: ltr !important; text-align: center !important; font-family: Tahoma, sans-serif !important; font-size: 12px !important; }
+        .customer-wrapper { display: flex; align-items: center; gap: 8px; margin-top: 2px; }
 
-        /* استایل دقیق فاصله نام مشتری و رسمی */
-        .customer-wrapper { display: flex; align-items: center; justify-content: flex-start; gap: 8px; margin-top: 2px; }
-        .customer-wrapper select { margin: 0 !important; padding: 0; }
-        #isOfficial { width: auto; min-width: 55px; font-weight: bold; position: relative; z-index: 2; }
-
-        /* --- فیلدهای راننده --- */
         .info-table td { width: 50%; text-align: right; padding-right: 8px; }
-        .info-table input, .info-table select { width: 65%; text-align: right; font-family: inherit; }
+        .info-table input, .info-table select { width: 65%; text-align: right; }
 
         .main-table td { position: relative; }
-        .main-table td input, .main-table td select { width: 100%; text-align: center; font-size: 14px; border-radius: 0; }
-        
-        .autocomplete-dropdown {
-            position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #333;
-            max-height: 150px; overflow-y: auto; z-index: 999; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: none; list-style: none; text-align: right; min-width: 250px;
-        }
+        .autocomplete-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #333; max-height: 150px; overflow-y: auto; z-index: 999; display: none; list-style: none; text-align: right; min-width: 250px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .autocomplete-dropdown li { padding: 6px 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; }
-        .autocomplete-dropdown li:hover { background-color: #f0f0f0; font-weight: bold; }
-        .autocomplete-dropdown li .match-code { font-weight: bold; color: #2980b9; margin-left: 5px; }
+        .autocomplete-dropdown li:hover { background: #f0f0f0; font-weight: bold; }
+        .btn-row-del { background: #ef4444; color: white; border: none; border-radius: 3px; padding: 2px 6px; font-size: 12px; cursor: pointer; }
+        .btn-add-row { background: #3b82f6; color: white; border: none; padding: 8px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; width: 100%; margin-top: 8px; }
 
-        .btn-row-del { background: #ef4444; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 6px; font-size: 12px; }
-        .btn-add-row { background: #3b82f6; color: white; border: none; padding: 8px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; font-family: inherit; width: 100%; margin-top: 8px; }
-        .btn-add-row:hover { background: #2563eb; }
-        
         .footer-table { margin-top: 5px; }
         .footer-row-1 td { text-align: right; padding-right: 10px; font-weight: bold; height: 30px; }
         .footer-row-2 td { text-align: right; padding-right: 10px; height: 28px; }
         .signature-row td { vertical-align: top; text-align: right; padding-top: 8px; padding-right: 15px; height: 80px; font-weight: bold; width: 25%; }
 
         @media print {
-            body { background-color: #fff; padding: 0; }
-            .page { box-shadow: none; margin: 0; padding: 4mm 8mm; width: 100%; height: 100%; border-radius: 0;}
-            .no-print, .tabs-container, .autocomplete-dropdown { display: none !important; }
+            body { background: #fff; padding: 0; }
+            .navbar, .toolbar-waybill, .no-print, .autocomplete-dropdown { display: none !important; }
+            .main-container { padding: 0; margin: 0; max-width: none; }
+            .page { box-shadow: none; margin: 0; padding: 4mm 8mm; width: 100%; height: 100%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- صفحه لودینگ -->
+    <!-- 1. صفحه لودینگ -->
     <div id="loadingOverlay" class="overlay">
-        <div class="loader"></div>
-        <p style="margin-top: 15px; color: #475569;">در حال دریافت اطلاعات از سرور...</p>
+        <div class="loader-ring"><div></div><div></div><div></div><div></div></div>
+        <p style="margin-top: 20px; color: #475569; font-weight: bold;">در حال اتصال به سرور...</p>
     </div>
 
-    <!-- صفحه لاگین -->
+    <!-- 2. صفحه لاگین -->
     <div id="loginOverlay" class="overlay hidden">
         <div class="login-box">
-            <!-- لوگو -->
-            <img src="https://cdn-icons-png.flaticon.com/512/2921/2921822.png" alt="لوگو" id="loginLogo">
-            <h2>سیستم حواله فروش</h2>
-            <input type="password" id="passwordInput" placeholder="رمز عبور را وارد کنید">
-            <button onclick="checkPassword()">ورود</button>
-            <div class="error-msg" id="errorMsg">رمز عبور اشتباه است!</div>
+            <h2>ورود به سیستم مدیریت</h2>
+            <div class="input-group">
+                <input type="text" id="usernameInput" placeholder="نام کاربری">
+                <i>👤</i>
+            </div>
+            <div class="input-group">
+                <input type="password" id="passwordInput" placeholder="رمز عبور">
+                <i>🔒</i>
+            </div>
+            <button onclick="login()">ورود به سیستم</button>
+            <div class="error-msg" id="errorMsg">نام کاربری یا رمز عبور اشتباه است!</div>
         </div>
     </div>
 
-    <!-- برنامه اصلی -->
+    <!-- 3. برنامه اصلی (بعد از لاگین) -->
     <div id="mainApp" class="hidden">
-        <div class="tabs-container no-print">
-            <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('waybill')">🧾 صدور حواله</button>
-                <button class="tab-btn" onclick="switchTab('manageProducts')">📦 تعریف کالا</button>
+        <!-- منوی بالا -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span style="font-size: 24px;">🏢</span> سی تک پارسیان
             </div>
-            <div class="toolbar" id="mainToolbar">
-                <button class="btn btn-success" id="btnConfirm" onclick="toggleConfirm()">✅ ثبت و تایید</button>
-                <button class="btn btn-dark" id="btnPrint" onclick="prepareAndPrint()" disabled>🖨️ ذخیره PDF</button>
-                <button class="btn btn-share" id="btnShare" onclick="shareWaybill()" disabled>📤 ارسال</button>
-                <button class="btn btn-danger" id="btnCancel" onclick="cancelWaybill()">🗑️ لغو</button>
-                <button class="btn btn-primary" id="btnNew" onclick="startNewWaybill()" disabled>🆕 حواله جدید</button>
-                <button class="btn" style="background:#475569;" onclick="logout()">🚪 خروج</button>
+            <div class="nav-links">
+                <button class="nav-btn active" id="nav-home" onclick="showView('dashboard')">🏠 خانه</button>
+                <button class="nav-btn" id="nav-waybill" onclick="showView('waybill')">🧾 صدور حواله</button>
+                <button class="nav-btn" id="nav-admin" onclick="showView('admin')">⚙️ پنل مدیریت</button>
+                <button class="nav-btn logout" onclick="logout()">🚪 خروج</button>
             </div>
-        </div>
+        </nav>
 
-        <div id="manageProducts" class="section">
-            <div class="product-layout" style="display:flex; gap:20px; max-width:1200px; margin:0 auto; height:calc(100vh - 100px);">
-                <div class="product-sidebar" style="width:350px; background:#fff; padding:20px; border-radius:8px; border:1px solid #cbd5e1; height:fit-content;">
-                    <h3 style="margin-bottom: 20px; text-align: center; color: #1e293b;">افزودن / ویرایش کالا</h3>
-                    <div class="form-group" style="margin-bottom:15px;">
-                        <label style="display:block; font-weight:bold; margin-bottom:8px;">دسته بندی</label>
-                        <select id="p_type" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-family:inherit;">
-                            <option value="highgloss">هایگلاس (سی تک)</option>
-                            <option value="kafpoosh">کفپوش (ملامینه)</option>
-                        </select>
+        <div class="main-container">
+            <!-- نمای 1: خانه (انتخاب پنل) -->
+            <div id="view-dashboard" class="view-section">
+                <div class="dashboard-cards">
+                    <div class="dash-card" onclick="showView('waybill')">
+                        <div class="dash-icon icon-green">🧾</div>
+                        <div class="dash-title">صدور حواله</div>
+                        <div class="dash-desc">ورود به فرم صدور حواله برای کارشناسان فروش و انبار</div>
                     </div>
-                    <div class="form-group" style="margin-bottom:15px;">
-                        <label style="display:block; font-weight:bold; margin-bottom:8px;">کد کالا</label>
-                        <input type="text" id="p_code" class="ltr-input" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;" placeholder="مثلا: 305A01" oninput="this.value = forceEnglish(this.value)">
-                    </div>
-                    <div class="form-group" style="margin-bottom:15px;">
-                        <label style="display:block; font-weight:bold; margin-bottom:8px;">نام کالا (طرح / شرح)</label>
-                        <input type="text" id="p_name" style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:4px;" placeholder="مثلا: سفید">
-                    </div>
-                    <button class="btn-submit" id="btnSubmitProduct" onclick="addProduct()" style="background:#10b981; color:white; border:none; padding:10px; font-size:15px; font-weight:bold; cursor:pointer; border-radius:4px; width:100%; font-family:inherit;">➕ ثبت کالای جدید</button>
-                </div>
-
-                <div class="product-main" style="flex:1; background:#fff; padding:20px; border-radius:8px; border:1px solid #cbd5e1; display:flex; flex-direction:column;">
-                    <h3 style="margin-bottom: 15px; color: #1e293b;">لیست کالاهای تعریف شده</h3>
-                    
-                    <div style="display:flex; gap:10px; margin-bottom:15px;">
-                        <input type="text" id="searchProduct" style="flex:1; padding:8px; border:1px solid #cbd5e1; border-radius:4px;" placeholder="جستجو نام یا کد..." oninput="filterProductList()">
-                        <select id="filterType" style="width:150px; padding:8px; border:1px solid #cbd5e1; border-radius:4px; font-family:inherit; background:#f8fafc;" onchange="filterProductList()">
-                            <option value="all">همه دسته‌ها</option>
-                            <option value="highgloss">فقط هایگلاس</option>
-                            <option value="kafpoosh">فقط کفپوش</option>
-                        </select>
-                    </div>
-
-                    <div class="table-wrapper" style="overflow-y:auto; flex:1;">
-                        <table class="product-list-table" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
-                            <thead>
-                                <tr>
-                                    <th style="border:1px solid #cbd5e1; padding:10px; background:#f8fafc;">دسته بندی</th>
-                                    <th style="border:1px solid #cbd5e1; padding:10px; background:#f8fafc;">کد کالا</th>
-                                    <th style="border:1px solid #cbd5e1; padding:10px; background:#f8fafc;">نام کالا</th>
-                                    <th style="border:1px solid #cbd5e1; padding:10px; background:#f8fafc; width:120px;">عملیات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productListBody"></tbody>
-                        </table>
+                    <div class="dash-card" onclick="showView('admin')">
+                        <div class="dash-icon icon-blue">⚙️</div>
+                        <div class="dash-title">پنل مدیریت</div>
+                        <div class="dash-desc">مدیریت کالاها، کاربران و تنظیمات سیستم</div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="waybill" class="section active">
-            <div id="pdfContainer">
-                <div id="pagesContainer">
-                    <div class="page">
-                        <div class="content">
-                            <table class="header-table">
-                                <tr>
-                                    <td class="header-right">
-                                        شماره حواله : <input type="text" id="waybillNumber" class="form-input ltr-input" readonly style="font-weight: bold; width: 100px;"><br>
-                                        تاریخ : <input type="text" id="waybillDate" class="h-input form-input ltr-input" style="width: 100px;" readonly><br>
-                                        نام انبار : 
-                                        <select id="warehouseSelect" class="h-input form-input select-no-arrow" style="width: 220px;" onchange="handleWarehouseChange(this)">
-                                            <option value="si-tak">انبار محصول سی تک - خط هایگلاس</option>
-                                            <option value="kafpoosh">انبار محصول کفپوش - خط ملامینه</option>
-                                        </select><br>
-                                        
-                                        <div class="customer-wrapper">
-                                            <span style="margin-left: 2px;">نام مشتری :</span>
-                                            <select id="customerName" class="h-input form-input select-no-arrow" style="width: auto; max-width: 140px; text-align: right;">
-                                                <option value="">-- انتخاب --</option>
-                                                <option value="امیرعلی عشوری">امیرعلی عشوری</option>
-                                                <option value="حسن شعبانی">حسن شعبانی</option>
-                                                <option value="حسن شعبانی پارتیکلایی">حسن شعبانی پارتیکلایی</option>
-                                                <option value="حسین یوسفی">حسین یوسفی</option>
-                                            </select>
-                                            <select id="isOfficial" class="h-input form-input select-no-arrow">
-                                                <option value=""></option>
-                                                <option value="(رسمی)">(رسمی)</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td class="header-center">
-                                        <h2 class="company-title">سی تک پارسیان</h2>
-                                        <h3>حواله فروش</h3>
-                                        <div class="manual-text">(حواله ی دستی)</div>
-                                    </td>
-                                    <td class="header-left">
-                                        تاریخ پرینت گزارش : <input type="text" id="printDate" class="ltr-input" readonly><br>
-                                    </td>
-                                </tr>
+            <!-- نمای 2: پنل مدیریت -->
+            <div id="view-admin" class="view-section hidden">
+                <div class="admin-grid">
+                    <!-- بخش کالاها -->
+                    <div class="admin-card">
+                        <h3>📦 مدیریت کالاها</h3>
+                        <div class="form-row">
+                            <select id="p_type">
+                                <option value="highgloss">هایگلاس</option>
+                                <option value="kafpoosh">کفپوش</option>
+                            </select>
+                            <input type="text" id="p_code" placeholder="کد کالا">
+                            <input type="text" id="p_name" placeholder="نام کالا">
+                        </div>
+                        <button class="btn-primary" id="btnSubmitProduct" onclick="addProduct()" style="width: 100%; margin-bottom: 20px;">➕ ثبت کالای جدید</button>
+                        
+                        <div class="form-row">
+                            <input type="text" id="searchProduct" placeholder="جستجو..." oninput="renderProducts()">
+                            <select id="filterType" onchange="renderProducts()">
+                                <option value="all">همه دسته‌ها</option>
+                                <option value="highgloss">فقط هایگلاس</option>
+                                <option value="kafpoosh">فقط کفپوش</option>
+                            </select>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table>
+                                <thead><tr><th>دسته</th><th>کد</th><th>نام</th><th>عملیات</th></tr></thead>
+                                <tbody id="productsTableBody"></tbody>
                             </table>
+                        </div>
+                    </div>
 
-                            <table class="info-table">
-                                <tr>
-                                    <td>نام راننده : <input type="text" id="driverNameMain" class="driver-input h-input form-input" oninput="syncDriverName(this.value)"></td>
-                                    <td>نوع وسیله نقلیه : 
-                                        <select class="driver-input h-input form-input select-no-arrow">
-                                            <option value="خاور">خاور</option>
-                                            <option value="تریلی">تریلی</option>
-                                            <option value="کامیون">کامیون</option>
-                                            <option value="نیسان">نیسان</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>شماره تماس راننده : <input type="text" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
-                                    <td>شماره ماشین : <input type="text" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
-                                </tr>
-                            </table>
+                    <!-- بخش کاربران -->
+                    <div class="admin-card">
+                        <h3>👥 مدیریت کاربران</h3>
+                        <div class="form-row">
+                            <input type="text" id="u_username" placeholder="نام کاربری">
+                            <input type="password" id="u_password" placeholder="رمز عبور">
+                        </div>
+                        <div class="form-row">
+                            <select id="u_role">
+                                <option value="user">کاربر عادی</option>
+                                <option value="admin">مدیر سیستم</option>
+                            </select>
+                            <button class="btn-primary" onclick="addUser()">➕ ثبت کاربر</button>
+                        </div>
 
-                            <table class="main-table">
-                                <thead id="mainTableHead"></thead>
-                                <tbody class="table-body"></tbody>
-                            </table>
-                            
-                            <div class="no-print btn-add-container" style="margin-top: 8px;">
-                                <button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>
-                            </div>
-
-                            <table class="footer-table">
-                                <tr class="footer-row-1">
-                                    <td colspan="4">
-                                        کالای فوق صحیح و سالم به آقای <input type="text" id="driverNameFooter" class="form-input" style="border: none; text-align: center; width: 120px;"> تحویل و از کارخانه کفپوش سی تک پارسیان خارج گردید.
-                                    </td>
-                                </tr>
-                                <tr class="footer-row-2">
-                                    <td colspan="4">شرح سند: <input type="text" class="form-input" style="width: 85%; text-align: right;"></td>
-                                </tr>
-                                <tr class="signature-row">
-                                    <td>امضاء و اثر انگشت راننده :</td>
-                                    <td>امضاء راننده لیفتراک :</td>
-                                    <td>امضاء انباردار :</td>
-                                    <td>امضاء مدیریت :</td>
-                                </tr>
+                        <div class="table-responsive" style="margin-top: 20px;">
+                            <table>
+                                <thead><tr><th>نام کاربری</th><th>رمز</th><th>نقش</th><th>عملیات</th></tr></thead>
+                                <tbody id="usersTableBody"></tbody>
                             </table>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- نمای 3: حواله -->
+            <div id="view-waybill" class="view-section hidden">
+                <div class="toolbar-waybill no-print">
+                    <button class="btn btn-success" id="btnConfirm" onclick="toggleConfirm()">✅ ثبت و تایید</button>
+                    <button class="btn btn-dark" id="btnPrint" onclick="prepareAndPrint()" disabled>🖨️ ذخیره PDF</button>
+                    <button class="btn btn-share" id="btnShare" onclick="shareWaybill()" disabled>📤 ارسال</button>
+                    <button class="btn btn-danger" id="btnCancel" onclick="cancelWaybill()">🗑️ لغو</button>
+                    <button class="btn btn-primary" id="btnNew" onclick="startNewWaybill()" disabled>🆕 حواله جدید</button>
+                </div>
+
+                <div id="pdfContainer">
+                    <div id="pagesContainer">
+                        <div class="page">
+                            <div class="content">
+                                <table class="waybill-table header-table">
+                                    <tr>
+                                        <td class="header-right">
+                                            شماره حواله : <input type="text" id="waybillNumber" class="w-input ltr-input" readonly style="font-weight: bold; width: 100px;"><br>
+                                            تاریخ : <input type="text" id="waybillDate" class="h-input w-input ltr-input" style="width: 100px;" readonly><br>
+                                            نام انبار : 
+                                            <select id="warehouseSelect" class="h-input w-input select-no-arrow" style="width: 220px;" onchange="handleWarehouseChange(this)">
+                                                <option value="si-tak">انبار محصول سی تک - خط هایگلاس</option>
+                                                <option value="kafpoosh">انبار محصول کفپوش - خط ملامینه</option>
+                                            </select><br>
+                                            <div class="customer-wrapper">
+                                                <span>نام مشتری :</span>
+                                                <select id="customerName" class="h-input w-input select-no-arrow" style="width: auto; max-width: 140px; text-align: right;">
+                                                    <option value="">-- انتخاب --</option>
+                                                    <option value="امیرعلی عشوری">امیرعلی عشوری</option>
+                                                    <option value="حسن شعبانی">حسن شعبانی</option>
+                                                    <option value="حسن شعبانی پارتیکلایی">حسن شعبانی پارتیکلایی</option>
+                                                    <option value="حسین یوسفی">حسین یوسفی</option>
+                                                </select>
+                                                <select id="isOfficial" class="h-input w-input select-no-arrow" style="width: auto; min-width: 55px; font-weight: bold;">
+                                                    <option value=""></option>
+                                                    <option value="(رسمی)">(رسمی)</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td class="header-center">
+                                            <h2 class="company-title">سی تک پارسیان</h2>
+                                            <h3>حواله فروش</h3>
+                                            <div class="manual-text">(حواله ی دستی)</div>
+                                        </td>
+                                        <td class="header-left">
+                                            تاریخ پرینت گزارش : <input type="text" id="printDate" class="ltr-input" readonly><br>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <table class="waybill-table info-table">
+                                    <tr>
+                                        <td>نام راننده : <input type="text" id="driverNameMain" class="driver-input h-input w-input" oninput="syncDriverName(this.value)"></td>
+                                        <td>نوع وسیله نقلیه : 
+                                            <select class="driver-input h-input w-input select-no-arrow">
+                                                <option value="خاور">خاور</option>
+                                                <option value="تریلی">تریلی</option>
+                                                <option value="کامیون">کامیون</option>
+                                                <option value="نیسان">نیسان</option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>شماره تماس راننده : <input type="text" class="driver-input h-input w-input" oninput="this.value = forceEnglish(this.value)"></td>
+                                        <td>شماره ماشین : <input type="text" class="driver-input h-input w-input" oninput="this.value = forceEnglish(this.value)"></td>
+                                    </tr>
+                                </table>
+
+                                <table class="waybill-table main-table">
+                                    <thead id="mainTableHead"></thead>
+                                    <tbody class="table-body"></tbody>
+                                </table>
+                                
+                                <div class="no-print btn-add-container" style="margin-top: 8px;">
+                                    <button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>
+                                </div>
+
+                                <table class="waybill-table footer-table">
+                                    <tr class="footer-row-1">
+                                        <td colspan="4">
+                                            کالای فوق صحیح و سالم به آقای <input type="text" id="driverNameFooter" class="w-input" style="border: none; text-align: center; width: 120px;"> تحویل و از کارخانه کفپوش سی تک پارسیان خارج گردید.
+                                        </td>
+                                    </tr>
+                                    <tr class="footer-row-2">
+                                        <td colspan="4">شرح سند: <input type="text" class="w-input" style="width: 85%; text-align: right;"></td>
+                                    </tr>
+                                    <tr class="signature-row">
+                                        <td>امضاء و اثر انگشت راننده :</td>
+                                        <td>امضاء راننده لیفتراک :</td>
+                                        <td>امضاء انباردار :</td>
+                                        <td>امضاء مدیریت :</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        // --- تنظیمات اتصال به Supabase ---
+        // --- تنظیمات دیتابیس ---
         const SUPABASE_URL = "https://sizebshjcwiumclcbsrg.supabase.co";
-        
-        // کلید Publishable که ارسال کردید:
         const SUPABASE_ANON_KEY = "sb_publishable_dUexAxlEw_-mZuMbVc3Wmg_aWrJDQmj";
-        
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-        // --- پسورد ورود ---
-        const APP_PASSWORD = "123456"; // پسورد دلخواه خود را اینجا تغییر دهید
 
         // --- متغیرهای عمومی ---
         let products = []; 
+        let users = [];
         let currentWaybillCount = 1; 
-        let currentWarehouseType = 'si-tak';
-        let isWaybillConfirmed = false;
+        let currentWarehouseType = 'si-tak'; 
+        let isWaybillConfirmed = false; 
         let totalRowsOverall = 0;
-        let editingProductId = null; 
-
-        // --- توابع احراز هویت ---
-        function checkPassword() {
-            const pass = document.getElementById('passwordInput').value;
-            if (pass === APP_PASSWORD) {
-                sessionStorage.setItem('isLoggedIn', 'true');
-                document.getElementById('loginOverlay').classList.add('hidden');
-                document.getElementById('mainApp').classList.remove('hidden');
-                initAppData();
-            } else {
-                document.getElementById('errorMsg').style.display = 'block';
-            }
-        }
-
-        function logout() {
-            sessionStorage.removeItem('isLoggedIn');
-            location.reload();
-        }
+        let editingProductId = null;
 
         // --- توابع کمکی ---
-        function forceEnglish(str) {
-            if (str === null || str === undefined) return '';
-            let s = str.toString();
-            s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776));
-            s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632));
-            return s;
-        }
-        function convertAllToEnglish(container) {
-            container.querySelectorAll('input').forEach(input => input.value = forceEnglish(input.value));
-            container.querySelectorAll('.row-num').forEach(el => el.innerText = forceEnglish(el.innerText));
-        }
-        function getTodayEnglishDate() {
+        function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
+        function convertAllToEnglish(container) { container.querySelectorAll('input').forEach(input => input.value = forceEnglish(input.value)); container.querySelectorAll('.row-num').forEach(el => el.innerText = forceEnglish(el.innerText)); }
+        function getTodayEnglishDate() { try { return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { let faDate = new Intl.DateTimeFormat('fa-IR').format(new Date()); let enDate = forceEnglish(faDate); let parts = enDate.split('/'); return parts.length === 3 ? `${parts[0]}/${parts[1].padStart(2, '0')}/${parts[2].padStart(2, '0')}` : enDate; } }
+
+        // --- احراز هویت ---
+        async function login() {
+            const user = document.getElementById('usernameInput').value.trim();
+            const pass = document.getElementById('passwordInput').value.trim();
+            if(!user || !pass) return;
+
+            document.getElementById('loadingOverlay').classList.remove('hidden');
             try {
-                return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
-            } catch (e) {
-                let faDate = new Intl.DateTimeFormat('fa-IR').format(new Date());
-                let enDate = forceEnglish(faDate);
-                let parts = enDate.split('/');
-                return parts.length === 3 ? `${parts[0]}/${parts[1].padStart(2, '0')}/${parts[2].padStart(2, '0')}` : enDate;
+                const { data, error } = await supabaseClient.from('users').select('*').eq('username', user).eq('password', pass).single();
+                if(error || !data) {
+                    document.getElementById('errorMsg').style.display = 'block';
+                    document.getElementById('loadingOverlay').classList.add('hidden');
+                    return;
+                }
+                sessionStorage.setItem('havale_user', JSON.stringify(data));
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                showView('dashboard');
+                loadData();
+            } catch (err) {
+                alert("خطا در اتصال!");
+                document.getElementById('loadingOverlay').classList.add('hidden');
             }
         }
 
-        // --- بارگذاری اولیه برنامه ---
-        async function initAppData() {
-            const loading = document.getElementById('loadingOverlay');
-            loading.classList.remove('hidden');
+        function logout() { sessionStorage.removeItem('havale_user'); location.reload(); }
+
+        // --- مدیریت نماها (Views) ---
+        function showView(viewName) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
             
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if(viewName === 'dashboard') document.getElementById('nav-home').classList.add('active');
+            if(viewName === 'waybill') document.getElementById('nav-waybill').classList.add('active');
+            if(viewName === 'admin') document.getElementById('nav-admin').classList.add('active');
+        }
+
+        // --- بارگذاری اولیه داده‌ها ---
+        async function loadData() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
             try {
-                // 1. گرفتن کالاها از Supabase
-                let { data: dbProducts, error: prodErr } = await supabaseClient.from('products').select('*');
-                if (prodErr) throw prodErr;
+                let { data: dbProducts } = await supabaseClient.from('products').select('*');
                 products = dbProducts || [];
+                renderProducts();
 
-                // 2. گرفتن شماره حواله از Supabase
-                let { data: settings, error: setErr } = await supabaseClient.from('settings').select('waybill_count').eq('id', 1).single();
-                if (setErr && setErr.code !== 'PGRST116') { 
-                    console.error(setErr);
-                }
-                
-                if (settings) {
-                    currentWaybillCount = settings.waybill_count;
-                } else {
-                    await supabaseClient.from('settings').insert([{ id: 1, waybill_count: 1 }]);
-                    currentWaybillCount = 1;
-                }
+                let { data: dbUsers } = await supabaseClient.from('users').select('*');
+                users = dbUsers || [];
+                renderUsers();
 
-                // 3. رندر کردن رابط کاربری
-                filterProductList();
+                let { data: settings } = await supabaseClient.from('settings').select('waybill_count').eq('id', 1).single();
+                if (settings) currentWaybillCount = settings.waybill_count;
+                else { await supabaseClient.from('settings').insert([{ id: 1, waybill_count: 1 }]); currentWaybillCount = 1; }
+
                 updateDateAndWaybill(); 
-                
                 document.querySelector('.main-table thead').innerHTML = getTableHeaderHTML(currentWarehouseType);
                 
                 const tbody = document.querySelector('.table-body');
@@ -468,583 +430,311 @@
                 tbody.appendChild(tr);
                 totalRowsOverall = 1;
 
-            } catch (error) {
-                console.error("Error loading data:", error);
-                alert('خطا در اتصال به دیتابیس! ' + error.message);
-            } finally {
-                loading.classList.add('hidden');
-            }
+            } catch (error) { console.error(error); } finally { document.getElementById('loadingOverlay').classList.add('hidden'); }
         }
 
-        // --- شروع برنامه ---
         window.onload = () => {
-            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+            const loggedInUser = sessionStorage.getItem('havale_user');
+            if (loggedInUser) {
                 document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
-                initAppData();
+                showView('dashboard');
+                loadData();
             } else {
                 document.getElementById('loadingOverlay').classList.add('hidden');
                 document.getElementById('loginOverlay').classList.remove('hidden');
             }
         };
 
-        // --- توابع کالا (متصل به دیتابیس) ---
-        async function addProduct() {
-            let code = forceEnglish(document.getElementById('p_code').value.trim());
-            const name = document.getElementById('p_name').value.trim();
-            const type = document.getElementById('p_type').value;
-            const btn = document.getElementById('btnSubmitProduct');
-            
-            if (!name || !code) { alert('لطفا کد و نام کالا را وارد کنید.'); return; }
-            
-            btn.disabled = true;
-            btn.innerHTML = '⏳ در حال ذخیره...';
-
-            try {
-                if (editingProductId) {
-                    const { error } = await supabaseClient.from('products')
-                        .update({ code: code, name: name, type: type })
-                        .eq('id', editingProductId);
-                    if (error) throw error;
-                    editingProductId = null;
-                    btn.innerHTML = '➕ ثبت کالای جدید';
-                    btn.style.background = '#10b981';
-                } else {
-                    const { data, error } = await supabaseClient.from('products')
-                        .insert([{ code: code, name: name, type: type }])
-                        .select();
-                    if (error) throw error;
-                    if(data) products.push(data[0]);
-                }
-                
-                document.getElementById('p_code').value = '';
-                document.getElementById('p_name').value = '';
-                
-                let { data: dbProducts } = await supabaseClient.from('products').select('*');
-                products = dbProducts || [];
-                filterProductList();
-
-            } catch (err) {
-                alert('خطا در ذخیره کالا: ' + err.message);
-            } finally {
-                btn.disabled = false;
-            }
-        }
-
-        function editProduct(id) {
-            const product = products.find(p => p.id === id);
-            if (!product) return;
-            
-            document.getElementById('p_type').value = product.type;
-            document.getElementById('p_code').value = product.code;
-            document.getElementById('p_name').value = product.name;
-            
-            editingProductId = id;
-            
-            const btn = document.getElementById('btnSubmitProduct');
-            btn.innerHTML = '✏️ ثبت تغییرات';
-            btn.style.background = '#f59e0b'; 
-        }
-
-        async function deleteProduct(id) {
-            if(confirm('آیا از حذف این کالا مطمئن هستید؟')) {
-                try {
-                    const { error } = await supabaseClient.from('products').delete().eq('id', id);
-                    if (error) throw error;
-                    
-                    products = products.filter(p => p.id !== id);
-                    filterProductList();
-                } catch (err) {
-                    alert('خطا در حذف: ' + err.message);
-                }
-            }
-        }
-
-        function renderProductList(filterText = '', typeFilter = 'all') {
-            const tbody = document.getElementById('productListBody');
+        // --- مدیریت کالاها ---
+        function renderProducts() {
+            const tbody = document.getElementById('productsTableBody');
             tbody.innerHTML = '';
-            
+            const search = document.getElementById('searchProduct').value.toLowerCase();
+            const filter = document.getElementById('filterType').value;
+
             const filtered = products.filter(p => {
-                const matchesText = p.name.includes(filterText) || p.code.includes(filterText);
-                const matchesType = typeFilter === 'all' || p.type === typeFilter;
-                return matchesText && matchesType;
-            });
-            
-            filtered.sort((a, b) => {
-                if (a.type !== b.type) return a.type === 'highgloss' ? -1 : 1;
-                return a.code.localeCompare(b.code, undefined, {numeric: true});
+                const matchSearch = p.name.toLowerCase().includes(search) || p.code.toLowerCase().includes(search);
+                const matchFilter = filter === 'all' || p.type === filter;
+                return matchSearch && matchFilter;
             });
 
             filtered.forEach(p => {
                 const typeName = p.type === 'highgloss' ? 'هایگلاس' : 'کفپوش';
-                const typeColor = p.type === 'highgloss' ? '#3b82f6' : '#10b981';
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="border:1px solid #cbd5e1; padding:8px; color:${typeColor}; font-weight:bold;">${typeName}</td>
-                        <td class="ltr-input" style="border:1px solid #cbd5e1; padding:8px;">${p.code}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;">${p.name}</td>
-                        <td style="border:1px solid #cbd5e1; padding:8px;">
-                            <button style="background:#3b82f6; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; margin-left:5px;" onclick="editProduct(${p.id})">ویرایش</button>
-                            <button style="background:#ef4444; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;" onclick="deleteProduct(${p.id})">حذف</button>
-                        </td>
-                    </tr>`;
+                tbody.innerHTML += `<tr>
+                    <td>${typeName}</td>
+                    <td style="font-family:Tahoma; direction:ltr; text-align:center;">${p.code}</td>
+                    <td>${p.name}</td>
+                    <td>
+                        <button class="btn-sm btn-edit" onclick="editProduct(${p.id})">ویرایش</button>
+                        <button class="btn-sm btn-delete" onclick="deleteProduct(${p.id})">حذف</button>
+                    </td>
+                </tr>`;
             });
         }
 
-        function filterProductList() { 
-            const text = document.getElementById('searchProduct').value;
-            const typeFilter = document.getElementById('filterType').value;
-            renderProductList(text, typeFilter); 
+        async function addProduct() {
+            const code = forceEnglish(document.getElementById('p_code').value.trim());
+            const name = document.getElementById('p_name').value.trim();
+            const type = document.getElementById('p_type').value;
+            const btn = document.getElementById('btnSubmitProduct');
+            if (!name || !code) return alert('کد و نام الزامی است.');
+
+            btn.disabled = true; btn.innerHTML = '⏳...';
+            try {
+                if (editingProductId) {
+                    await supabaseClient.from('products').update({ code, name, type }).eq('id', editingProductId);
+                    editingProductId = null; btn.innerHTML = '➕ ثبت کالای جدید';
+                } else {
+                    await supabaseClient.from('products').insert([{ code, name, type }]);
+                }
+                document.getElementById('p_code').value = ''; document.getElementById('p_name').value = '';
+                
+                let { data } = await supabaseClient.from('products').select('*');
+                products = data || [];
+                renderProducts();
+            } catch (err) { alert(err.message); } finally { btn.disabled = false; }
+        }
+
+        function editProduct(id) {
+            const p = products.find(x => x.id === id);
+            document.getElementById('p_type').value = p.type;
+            document.getElementById('p_code').value = p.code;
+            document.getElementById('p_name').value = p.name;
+            editingProductId = id;
+            document.getElementById('btnSubmitProduct').innerHTML = '✏️ ثبت تغییرات';
+        }
+
+        async function deleteProduct(id) {
+            if(!confirm('حذف شود؟')) return;
+            await supabaseClient.from('products').delete().eq('id', id);
+            let { data } = await supabaseClient.from('products').select('*');
+            products = data || [];
+            renderProducts();
+        }
+
+        // --- مدیریت کاربران ---
+        function renderUsers() {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            users.forEach(u => {
+                tbody.innerHTML += `<tr>
+                    <td>${u.username}</td>
+                    <td style="font-family:Tahoma;">${u.password}</td>
+                    <td>${u.role === 'admin' ? 'مدیر' : 'کاربر'}</td>
+                    <td><button class="btn-sm btn-delete" onclick="deleteUser(${u.id})">حذف</button></td>
+                </tr>`;
+            });
+        }
+
+        async function addUser() {
+            const username = document.getElementById('u_username').value.trim();
+            const password = document.getElementById('u_password').value.trim();
+            const role = document.getElementById('u_role').value;
+            if(!username || !password) return alert('نام کاربری و رمز را وارد کنید.');
+
+            try {
+                await supabaseClient.from('users').insert([{ username, password, role }]);
+                document.getElementById('u_username').value = ''; document.getElementById('u_password').value = '';
+                let { data } = await supabaseClient.from('users').select('*');
+                users = data || [];
+                renderUsers();
+            } catch (err) { alert(err.message); }
+        }
+
+        async function deleteUser(id) {
+            if(!confirm('کاربر حذف شود؟')) return;
+            await supabaseClient.from('users').delete().eq('id', id);
+            let { data } = await supabaseClient.from('users').select('*');
+            users = data || [];
+            renderUsers();
         }
 
         // --- توابع حواله ---
-        function switchTab(tabId) {
-            document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function updateDateAndWaybill() {
-            const today = getTodayEnglishDate();
-            document.getElementById('printDate').value = today;
+        function updateDateAndWaybill() { 
+            const today = getTodayEnglishDate(); 
+            document.getElementById('printDate').value = today; 
             document.getElementById('waybillDate').value = today; 
             document.getElementById('waybillNumber').value = forceEnglish(`${currentWaybillCount} (دستی)`); 
         }
 
-        async function startNewWaybill() {
-            if(!isWaybillConfirmed) {
-                alert('ابتدا باید حواله فعلی را ثبت کنید یا آن را لغو کنید.');
-                return;
-            }
-            if(confirm('آیا مطمئن هستید؟ حواله فعلی ثبت شده و شماره بعدی صادر می‌شود.')) {
-                try {
-                    let newCount = currentWaybillCount + 1;
-                    const { error } = await supabaseClient.from('settings').update({ waybill_count: newCount }).eq('id', 1);
-                    if (error) throw error;
-
-                    currentWaybillCount = newCount;
-                    resetForm();
-                    updateDateAndWaybill();
-                    isWaybillConfirmed = false;
-
-                    document.getElementById('btnConfirm').innerHTML = '✅ ثبت و تایید';
-                    document.getElementById('btnConfirm').className = 'btn btn-success';
-                    document.getElementById('btnPrint').disabled = true;
-                    document.getElementById('btnShare').disabled = true;
-                    document.getElementById('btnNew').disabled = true;
-                } catch (err) {
-                    alert('خطا در ثبت شماره حواله جدید!');
-                }
-            }
-        }
-
-        // --- توابع ساخت داینامیک جدول ---
         function getTableHeaderHTML(type) {
             if (type === 'kafpoosh') {
-                return `
-                    <tr>
-                        <th width="4%">ردیف</th>
-                        <th width="10%">کد کالا</th>
-                        <th width="25%">شرح کالا</th>
-                        <th width="13%">طرح کروم</th>
-                        <th width="8%">برند</th>
-                        <th width="7%">درجه بندی</th>
-                        <th width="9%">سایز</th>
-                        <th width="7%">ضخامت</th>
-                        <th width="7%">پشت کار کالا</th>
-                        <th width="5%">واحد اصلی کالا</th>
-                        <th width="5%">مقدار یا تعداد</th>
-                        <th width="3%" class="no-print">حذف</th>
-                    </tr>`;
+                return `<tr><th width="4%">ردیف</th><th width="10%">کد کالا</th><th width="25%">شرح کالا</th><th width="13%">طرح کروم</th><th width="8%">برند</th><th width="7%">درجه بندی</th><th width="9%">سایز</th><th width="7%">ضخامت</th><th width="7%">پشت کار کالا</th><th width="5%">واحد اصلی</th><th width="5%">مقدار</th><th width="3%" class="no-print">حذف</th></tr>`;
             }
-            return `
-                <tr>
-                    <th width="4%">ردیف</th>
-                    <th width="10%">کد کالا</th>
-                    <th width="22%">شرح کالا</th>
-                    <th width="9%">نایلون</th>
-                    <th width="8%">برند</th>
-                    <th width="8%">درجه بندی</th>
-                    <th width="11%">سایز</th>
-                    <th width="10%">ضخامت</th>
-                    <th width="8%">پشت کار</th>
-                    <th width="5%">واحد</th>
-                    <th width="5%">تعداد</th>
-                    <th width="3%" class="no-print">حذف</th>
-                </tr>`;
+            return `<tr><th width="4%">ردیف</th><th width="10%">کد کالا</th><th width="22%">شرح کالا</th><th width="9%">نایلون</th><th width="8%">برند</th><th width="8%">درجه بندی</th><th width="11%">سایز</th><th width="10%">ضخامت</th><th width="8%">پشت کار</th><th width="5%">واحد</th><th width="5%">تعداد</th><th width="3%" class="no-print">حذف</th></tr>`;
         }
 
         function createRowHTML(type) {
             if (type === 'kafpoosh') {
                 return `
-                    <td class="row-num ltr-input" style="font-size:14px;"></td>
-                    <td>
-                        <input type="text" class="search-code form-input ltr-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="کد...">
-                        <ul class="autocomplete-dropdown"></ul>
-                    </td>
-                    <td>
-                        <input type="text" class="search-name form-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="شرح کالا...">
-                        <ul class="autocomplete-dropdown"></ul>
-                    </td>
-                    <td>
-                        <select class="form-input select-no-arrow chrom-select" onchange="updateKafpooshCode(this)">
-                            <option value="فوق برجسته ی 1" selected>فوق برجسته ی 1</option>
-                            <option value="فوق برجسته ی 2">فوق برجسته ی 2</option>
-                            <option value="فوق برجسته ی 3">فوق برجسته ی 3</option>
-                            <option value="برفی">برفی</option>
-                            <option value="آینه ای">آینه ای</option>
-                            <option value="سوپر مات">سوپر مات</option>
-                        </select>
-                    </td>
-                    <td><select class="form-input select-no-arrow"><option value="کفپوش - ایرانی" selected>کفپوش - ایرانی</option><option value="کفپوش - خارجی">کفپوش - خارجی</option></select></td>
-                    <td><select class="form-input select-no-arrow"><option value="درجه 1" selected>درجه 1</option><option value="درجه 2">درجه 2</option><option value="درجه 3">درجه 3</option></select></td>
+                    <td class="row-num ltr-input"></td>
+                    <td><input type="text" class="search-code form-input ltr-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="کد..."><ul class="autocomplete-dropdown"></ul></td>
+                    <td><input type="text" class="search-name form-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="شرح..."><ul class="autocomplete-dropdown"></ul></td>
+                    <td><select class="form-input chrom-select" onchange="updateKafpooshCode(this)"><option value="فوق برجسته ی 1" selected>فوق برجسته ی 1</option><option value="فوق برجسته ی 2">فوق برجسته ی 2</option><option value="فوق برجسته ی 3">فوق برجسته ی 3</option><option value="برفی">برفی</option><option value="آینه ای">آینه ای</option><option value="سوپر مات">سوپر مات</option></select></td>
+                    <td><select class="form-input"><option value="کفپوش - ایرانی" selected>کفپوش - ایرانی</option><option value="کفپوش - خارجی">کفپوش - خارجی</option></select></td>
+                    <td><select class="form-input"><option value="درجه 1" selected>درجه 1</option><option value="درجه 2">درجه 2</option><option value="درجه 3">درجه 3</option></select></td>
                     <td><input type="text" value="3660*1830" readonly class="form-input ltr-input"></td>
-                    <td><select class="form-input select-no-arrow"><option value="میلی متر 16" selected>میلی متر 16</option><option value="میلی متر 18">میلی متر 18</option></select></td>
-                    <td>
-                        <select class="form-input select-no-arrow">
-                            <option value="ملامینه" selected>ملامینه</option>
-                            <option value="بدون روکش">بدون روکش</option>
-                        </select>
-                    </td>
+                    <td><select class="form-input"><option value="میلی متر 16" selected>میلی متر 16</option><option value="میلی متر 18">میلی متر 18</option></select></td>
+                    <td><select class="form-input"><option value="ملامینه" selected>ملامینه</option><option value="بدون روکش">بدون روکش</option></select></td>
                     <td><input type="text" value="عدد" readonly class="form-input"></td>
-                    <td><input type="text" inputmode="numeric" class="qty form-input ltr-input" oninput="this.value = forceEnglish(this.value)"></td>
+                    <td><input type="text" class="qty form-input ltr-input" oninput="this.value = forceEnglish(this.value)"></td>
                     <td class="no-print"><button class="btn-row-del" onclick="deleteRow(this)">✖</button></td>
                 `;
             }
             return `
-                <td class="row-num ltr-input" style="font-size:14px;"></td>
-                <td>
-                    <input type="text" class="search-code form-input ltr-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="کد...">
-                    <ul class="autocomplete-dropdown"></ul>
-                </td>
-                <td>
-                    <input type="text" class="search-name form-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="نام کالا...">
-                    <ul class="autocomplete-dropdown"></ul>
-                </td>
-                <td><select class="form-input select-no-arrow"><option value="نایلون دار" selected>نایلون دار</option><option value="بدون نایلون">بدون نایلون</option></select></td>
-                <td><select class="form-input select-no-arrow"><option value="سی تک" selected>سی تک</option><option value="اشک">اشک</option></select></td>
-                <td><select class="form-input select-no-arrow"><option value="درجه 1" selected>درجه 1</option><option value="درجه 2">درجه 2</option><option value="درجه 3">درجه 3</option></select></td>
+                <td class="row-num ltr-input"></td>
+                <td><input type="text" class="search-code form-input ltr-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="کد..."><ul class="autocomplete-dropdown"></ul></td>
+                <td><input type="text" class="search-name form-input" oninput="smartSearch(this)" onfocus="smartSearch(this)" placeholder="نام..."><ul class="autocomplete-dropdown"></ul></td>
+                <td><select class="form-input"><option value="نایلون دار" selected>نایلون دار</option><option value="بدون نایلون">بدون نایلون</option></select></td>
+                <td><select class="form-input"><option value="سی تک" selected>سی تک</option><option value="اشک">اشک</option></select></td>
+                <td><select class="form-input"><option value="درجه 1" selected>درجه 1</option><option value="درجه 2">درجه 2</option><option value="درجه 3">درجه 3</option></select></td>
                 <td><input type="text" value="2800*1220" readonly class="form-input ltr-input"></td>
-                <td><select class="form-input select-no-arrow"><option value="میلی متر 16" selected>میلی متر 16</option><option value="میلی متر 18">میلی متر 18</option></select></td>
-                <td><select class="form-input select-no-arrow"><option value="پی وی سی" selected>پی وی سی</option><option value="هایگلاس">هایگلاس</option></select></td>
+                <td><select class="form-input"><option value="میلی متر 16" selected>میلی متر 16</option><option value="میلی متر 18">میلی متر 18</option></select></td>
+                <td><select class="form-input"><option value="پی وی سی" selected>پی وی سی</option><option value="هایگلاس">هایگلاس</option></select></td>
                 <td><input type="text" value="عدد" readonly class="form-input"></td>
-                <td><input type="text" inputmode="numeric" class="qty form-input ltr-input" oninput="this.value = forceEnglish(this.value)"></td>
+                <td><input type="text" class="qty form-input ltr-input" oninput="this.value = forceEnglish(this.value)"></td>
                 <td class="no-print"><button class="btn-row-del" onclick="deleteRow(this)">✖</button></td>
             `;
         }
 
         function updateKafpooshCode(selectElement) {
             if (!selectElement) return;
-            const row = selectElement.closest('tr');
-            const codeInput = row.querySelector('.search-code');
+            const row = selectElement.closest('tr'); const codeInput = row.querySelector('.search-code');
             if (!codeInput || !codeInput.value) return;
-            
             let currentCode = codeInput.value.trim();
             let baseCode = currentCode.replace(/^(WA|WB|WC|SA|M|GA)\s*/i, '').trim();
-            
             let prefix = "";
-            switch(selectElement.value) {
-                case "فوق برجسته ی 1": prefix = "WA"; break;
-                case "فوق برجسته ی 2": prefix = "WB"; break;
-                case "فوق برجسته ی 3": prefix = "WC"; break;
-                case "برفی": prefix = "SA"; break;
-                case "آینه ای": prefix = "M"; break;
-                case "سوپر مات": prefix = "GA"; break;
-            }
-            
-            if (prefix) {
-                codeInput.value = prefix + baseCode;
-            } else {
-                codeInput.value = baseCode;
-            }
+            switch(selectElement.value) { case "فوق برجسته ی 1": prefix = "WA"; break; case "فوق برجسته ی 2": prefix = "WB"; break; case "فوق برجسته ی 3": prefix = "WC"; break; case "برفی": prefix = "SA"; break; case "آینه ای": prefix = "M"; break; case "سوپر مات": prefix = "GA"; break; }
+            if (prefix) codeInput.value = prefix + baseCode; else codeInput.value = baseCode;
         }
 
         function handleWarehouseChange(selectElement) {
             const newType = selectElement.value === 'kafpoosh' ? 'kafpoosh' : 'si-tak';
             if (currentWarehouseType === newType) return;
-
             if (confirm('تغییر نوع انبار باعث پاک شدن ردیف‌های جدول می‌شود. آیا موافقید؟')) {
-                currentWarehouseType = newType;
-                updateTableStructure();
-            } else {
-                selectElement.value = currentWarehouseType === 'kafpoosh' ? 'kafpoosh' : 'si-tak';
-            }
+                currentWarehouseType = newType; updateTableStructure();
+            } else { selectElement.value = currentWarehouseType === 'kafpoosh' ? 'kafpoosh' : 'si-tak'; }
         }
 
         function updateTableStructure() {
             const selectElement = document.getElementById('warehouseSelect');
             const titleElement = selectElement.closest('.page').querySelector('.company-title');
             titleElement.textContent = currentWarehouseType === 'kafpoosh' ? 'کفپوش سی تک پارسیان' : 'سی تک پارسیان';
-
-            document.querySelectorAll('.main-table thead').forEach(thead => {
-                thead.innerHTML = getTableHeaderHTML(currentWarehouseType);
-            });
-
+            document.querySelectorAll('.main-table thead').forEach(thead => { thead.innerHTML = getTableHeaderHTML(currentWarehouseType); });
             const pages = document.querySelectorAll('.page');
             for (let i = 1; i < pages.length; i++) pages[i].remove();
-
-            const tbody = document.querySelector('.table-body');
-            tbody.innerHTML = '';
-            totalRowsOverall = 0;
-            addRow(true);
+            const tbody = document.querySelector('.table-body'); tbody.innerHTML = ''; totalRowsOverall = 0; addRow(true);
         }
 
         function smartSearch(inputElement) {
             inputElement.value = forceEnglish(inputElement.value);
-            const query = inputElement.value.trim().toLowerCase();
-            const td = inputElement.closest('td');
-            const dropdown = td.querySelector('.autocomplete-dropdown');
-            const row = inputElement.closest('tr');
+            const query = inputElement.value.trim().toLowerCase(); const td = inputElement.closest('td');
+            const dropdown = td.querySelector('.autocomplete-dropdown'); const row = inputElement.closest('tr');
             if (query.length === 0) { dropdown.style.display = 'none'; return; }
-            
             const currentType = currentWarehouseType === 'kafpoosh' ? 'kafpoosh' : 'highgloss';
-            
-            const matches = products.filter(p => 
-                p.type === currentType && 
-                (p.code.toLowerCase().includes(query) || p.name.toLowerCase().includes(query))
-            );
-            
+            const matches = products.filter(p => p.type === currentType && (p.code.toLowerCase().includes(query) || p.name.toLowerCase().includes(query)));
             if (matches.length === 0) { dropdown.style.display = 'none'; return; }
             dropdown.innerHTML = '';
             matches.forEach(m => {
-                const li = document.createElement('li');
-                li.innerHTML = `<span class="match-code ltr-input" style="display:inline-block; font-size:14px;">${m.code}</span> - ${m.name}`;
+                const li = document.createElement('li'); li.innerHTML = `<span class="ltr-input" style="display:inline-block; font-weight:bold;">${m.code}</span> - ${m.name}`;
                 li.onclick = function() {
-                    const codeInput = row.querySelector('.search-code');
-                    codeInput.value = m.code;
-                    row.querySelector('.search-name').value = m.name;
-                    dropdown.style.display = 'none';
-                    
-                    if (currentType === 'kafpoosh') {
-                        const chromSelect = row.querySelector('.chrom-select');
-                        if (chromSelect) updateKafpooshCode(chromSelect);
-                    }
+                    const codeInput = row.querySelector('.search-code'); codeInput.value = m.code; row.querySelector('.search-name').value = m.name; dropdown.style.display = 'none';
+                    if (currentType === 'kafpoosh') { const chromSelect = row.querySelector('.chrom-select'); if (chromSelect) updateKafpooshCode(chromSelect); }
                 };
                 dropdown.appendChild(li);
             });
             dropdown.style.display = 'block';
         }
 
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('td')) {
-                document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.style.display = 'none');
-            }
-        });
-
+        document.addEventListener('click', function(e) { if (!e.target.closest('td')) { document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.style.display = 'none'); } });
         function syncDriverName(val) { document.querySelectorAll('#driverNameFooter').forEach(el => el.value = val); }
 
-        // --- توابع دکمه‌های حواله ---
         function toggleConfirm() {
-            const btnConfirm = document.getElementById('btnConfirm');
-            const btnPrint = document.getElementById('btnPrint');
-            const btnShare = document.getElementById('btnShare');
-            const btnNew = document.getElementById('btnNew');
-            const formInputs = document.querySelectorAll('#waybill .form-input, #waybill .search-code, #waybill .search-name, #waybill .qty, #waybill select');
-            const addRowBtn = document.querySelector('.btn-add-row');
-            const deleteRowBtns = document.querySelectorAll('.btn-row-del');
-
+            const btnConfirm = document.getElementById('btnConfirm'); const btnPrint = document.getElementById('btnPrint');
+            const btnShare = document.getElementById('btnShare'); const btnNew = document.getElementById('btnNew');
+            const formInputs = document.querySelectorAll('#view-waybill .form-input, #view-waybill .search-code, #view-waybill .search-name, #view-waybill .qty, #view-waybill select');
+            const addRowBtn = document.querySelector('.btn-add-row'); const deleteRowBtns = document.querySelectorAll('.btn-row-del');
             if (!isWaybillConfirmed) {
-                isWaybillConfirmed = true;
-                formInputs.forEach(el => el.disabled = true);
-                if(addRowBtn) addRowBtn.disabled = true;
-                deleteRowBtns.forEach(el => el.disabled = true);
-
-                btnConfirm.innerHTML = '✏️ ویرایش حواله';
-                btnConfirm.className = 'btn btn-edit';
-                btnPrint.disabled = false;
-                btnShare.disabled = false;
-                btnNew.disabled = false;
+                isWaybillConfirmed = true; formInputs.forEach(el => el.disabled = true); if(addRowBtn) addRowBtn.disabled = true; deleteRowBtns.forEach(el => el.disabled = true);
+                btnConfirm.innerHTML = '✏️ ویرایش'; btnConfirm.className = 'btn btn-edit'; btnPrint.disabled = false; btnShare.disabled = false; btnNew.disabled = false;
             } else {
-                isWaybillConfirmed = false;
-                formInputs.forEach(el => el.disabled = false);
-                if(addRowBtn) addRowBtn.disabled = false;
-                deleteRowBtns.forEach(el => el.disabled = false);
-
-                btnConfirm.innerHTML = '✅ ثبت و تایید';
-                btnConfirm.className = 'btn btn-success';
-                btnPrint.disabled = true;
-                btnShare.disabled = true;
-                btnNew.disabled = true;
+                isWaybillConfirmed = false; formInputs.forEach(el => el.disabled = false); if(addRowBtn) addRowBtn.disabled = false; deleteRowBtns.forEach(el => el.disabled = false);
+                btnConfirm.innerHTML = '✅ ثبت و تایید'; btnConfirm.className = 'btn btn-success'; btnPrint.disabled = true; btnShare.disabled = true; btnNew.disabled = true;
             }
         }
 
-        function cancelWaybill() {
-            if(confirm('آیا مطمئن هستید؟ تمام اطلاعات این حواله پاک می‌شود.')) {
-                resetForm();
-                isWaybillConfirmed = false;
-                document.getElementById('btnConfirm').innerHTML = '✅ ثبت و تایید';
-                document.getElementById('btnConfirm').className = 'btn btn-success';
-                document.getElementById('btnPrint').disabled = true;
-                document.getElementById('btnShare').disabled = true;
-                document.getElementById('btnNew').disabled = true;
-            }
-        }
-
-        function prepareAndPrint() {
-            convertAllToEnglish(document.getElementById('pdfContainer'));
-            window.print();
-        }
+        function cancelWaybill() { if(confirm('آیا مطمئن هستید؟ تمام اطلاعات این حواله پاک می‌شود.')) { resetForm(); isWaybillConfirmed = false; document.getElementById('btnConfirm').innerHTML = '✅ ثبت و تایید'; document.getElementById('btnConfirm').className = 'btn btn-success'; document.getElementById('btnPrint').disabled = true; document.getElementById('btnShare').disabled = true; document.getElementById('btnNew').disabled = true; } }
+        function prepareAndPrint() { convertAllToEnglish(document.getElementById('pdfContainer')); window.print(); }
 
         async function shareWaybill() {
             convertAllToEnglish(document.getElementById('pdfContainer'));
-
-            const waybillNum = document.getElementById('waybillNumber').value;
-            const waybillDate = document.getElementById('waybillDate').value;
-            
-            let customerName = document.getElementById('customerName').value;
-            const isOfficial = document.getElementById('isOfficial').value;
-            if(!customerName) customerName = 'نامشخص';
-            if(isOfficial) customerName += ` ${isOfficial}`;
-            
-            const isKafpoosh = currentWarehouseType === 'kafpoosh';
-            const companyFullName = isKafpoosh ? 'کفپوش سی تک پارسیان' : 'سی تک پارسیان';
-            const companyShortName = isKafpoosh ? 'کفپوش' : 'سی تک';
-            
+            const waybillNum = document.getElementById('waybillNumber').value; const waybillDate = document.getElementById('waybillDate').value;
+            let customerName = document.getElementById('customerName').value; const isOfficial = document.getElementById('isOfficial').value;
+            if(!customerName) customerName = 'نامشخص'; if(isOfficial) customerName += ` ${isOfficial}`;
+            const isKafpoosh = currentWarehouseType === 'kafpoosh'; const companyFullName = isKafpoosh ? 'کفپوش سی تک پارسیان' : 'سی تک پارسیان'; const companyShortName = isKafpoosh ? 'کفپوش' : 'سی تک';
             const cleanWaybillNum = forceEnglish(waybillNum).replace(' (دستی)', '').replace(/\s+/g, '').trim();
-            const fileName = `حواله ی فروش ${companyShortName} - ${cleanWaybillNum}.pdf`;
+            const fileName = `حواله ${companyShortName} - ${cleanWaybillNum}.pdf`;
             const caption = `حواله ی شماره ی ${waybillNum}\n\n${companyFullName}\n\nنام مشتری: ${customerName}\n\nتاریخ: ${waybillDate}`;
-
-            const noPrintElements = document.querySelectorAll('.no-print');
-            noPrintElements.forEach(el => el.style.display = 'none');
-
+            const noPrintElements = document.querySelectorAll('.no-print'); noPrintElements.forEach(el => el.style.display = 'none');
             const element = document.getElementById('pdfContainer');
-            const opt = {
-                margin: 0,
-                filename: fileName,
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0, backgroundColor: '#ffffff' },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' }
-            };
-
-            const btnShare = document.getElementById('btnShare');
-            const originalText = btnShare.innerHTML;
-            btnShare.innerHTML = '⏳ در حال ساخت...';
-            btnShare.disabled = true;
-
+            const opt = { margin: 0, filename: fileName, image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true, letterRendering: true, scrollY: 0, scrollX: 0 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' } };
+            const btnShare = document.getElementById('btnShare'); const originalText = btnShare.innerHTML; btnShare.innerHTML = '⏳ در حال ساخت...'; btnShare.disabled = true;
             try {
                 const pdfBlob = await html2pdf().set(opt).from(element).outputPdf('blob');
-                noPrintElements.forEach(el => el.style.display = '');
-                btnShare.innerHTML = originalText;
-                btnShare.disabled = false;
-
+                noPrintElements.forEach(el => el.style.display = ''); btnShare.innerHTML = originalText; btnShare.disabled = false;
                 const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
-
-                if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                    await navigator.share({ files: [file], title: fileName, text: caption });
-                } else {
-                    const url = URL.createObjectURL(pdfBlob);
-                    const a = document.createElement('a');
-                    a.href = url; a.download = fileName;
-                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-                    navigator.clipboard.writeText(caption).then(() => {
-                        alert(`فایل با نام "${fileName}" دانلود شد و متن کپی شد.`);
-                    });
-                }
-            } catch (error) {
-                noPrintElements.forEach(el => el.style.display = '');
-                btnShare.innerHTML = originalText;
-                btnShare.disabled = false;
-                alert('خطا در ساخت فایل.');
-            }
+                if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: fileName, text: caption }); }
+                else { const url = URL.createObjectURL(pdfBlob); const a = document.createElement('a'); a.href = url; a.download = fileName; document.body.appendChild(a); a.click(); document.body.removeChild(a); navigator.clipboard.writeText(caption).then(() => { alert('فایل PDF دانلود شد و متن کپی شد.'); }); }
+            } catch (error) { noPrintElements.forEach(el => el.style.display = ''); btnShare.innerHTML = originalText; btnShare.disabled = false; alert('خطا در ساخت فایل.'); }
         }
 
         function resetForm() {
-            document.querySelectorAll('#waybill .form-input, #waybill .search-code, #waybill .search-name, #waybill .qty').forEach(input => {
-                if(input.id !== 'waybillNumber' && input.id !== 'printDate' && input.id !== 'waybillDate') {
-                    input.value = '';
-                }
-            });
-            document.querySelectorAll('#waybill select').forEach(select => {
-                select.selectedIndex = 0;
-            });
+            document.querySelectorAll('#view-waybill .form-input, #view-waybill .search-code, #view-waybill .search-name, #view-waybill .qty').forEach(input => { if(input.id !== 'waybillNumber' && input.id !== 'printDate' && input.id !== 'waybillDate') { input.value = ''; } });
+            document.querySelectorAll('#view-waybill select').forEach(select => { select.selectedIndex = 0; });
             document.querySelectorAll('#driverNameFooter').forEach(el => el.value = '');
-            const pages = document.querySelectorAll('.page');
-            for(let i = 1; i < pages.length; i++) pages[i].remove();
-            const tbody = document.querySelector('.table-body');
-            tbody.innerHTML = '';
-            totalRowsOverall = 0;
-            addRow(true);
+            const pages = document.querySelectorAll('.page'); for(let i = 1; i < pages.length; i++) pages[i].remove();
+            const tbody = document.querySelector('.table-body'); tbody.innerHTML = ''; totalRowsOverall = 0; addRow(true);
         }
 
         function addRow(skipPrompt = false) {
-            let pages = document.querySelectorAll('.page');
-            let lastPage = pages[pages.length - 1];
-            let tbody = lastPage.querySelector('.table-body');
+            let pages = document.querySelectorAll('.page'); let lastPage = pages[pages.length - 1]; let tbody = lastPage.querySelector('.table-body');
             let currentPageRows = tbody.querySelectorAll('tr').length;
-
-            if (currentPageRows >= 10) {
-                createNewPage();
-                pages = document.querySelectorAll('.page');
-                lastPage = pages[pages.length - 1];
-                tbody = lastPage.querySelector('.table-body');
-                currentPageRows = 0;
-            }
-
-            totalRowsOverall++;
-            let newTr = document.createElement('tr');
-            
-            let duplicate = false;
-            if (!skipPrompt && totalRowsOverall > 1) {
-                duplicate = confirm("آیا مایلید اطلاعات ردیف قبل تکرار شود؟");
-            }
-
+            if (currentPageRows >= 10) { createNewPage(); pages = document.querySelectorAll('.page'); lastPage = pages[pages.length - 1]; tbody = lastPage.querySelector('.table-body'); currentPageRows = 0; }
+            totalRowsOverall++; let newTr = document.createElement('tr'); let duplicate = false;
+            if (!skipPrompt && totalRowsOverall > 1) { duplicate = confirm("آیا مایلید اطلاعات ردیف قبل تکرار شود؟"); }
             if (duplicate && tbody.lastElementChild) {
-                newTr = tbody.lastElementChild.cloneNode(true);
-                newTr.querySelector('.qty').value = ''; 
-                newTr.querySelector('.row-num').innerText = forceEnglish(totalRowsOverall);
-                let drops = newTr.querySelectorAll('.autocomplete-dropdown');
-                drops.forEach(d => d.style.display = 'none');
+                newTr = tbody.lastElementChild.cloneNode(true); newTr.querySelector('.qty').value = ''; newTr.querySelector('.row-num').innerText = forceEnglish(totalRowsOverall);
+                let drops = newTr.querySelectorAll('.autocomplete-dropdown'); drops.forEach(d => d.style.display = 'none');
                 newTr.querySelectorAll('.form-input, .btn-row-del').forEach(el => el.disabled = false);
-            } else {
-                newTr.innerHTML = createRowHTML(currentWarehouseType); 
-                newTr.querySelector('.row-num').innerText = forceEnglish(totalRowsOverall);
-            }
-            
-            tbody.appendChild(newTr);
-            if(!duplicate) newTr.querySelector('.search-code').focus();
+            } else { newTr.innerHTML = createRowHTML(currentWarehouseType); newTr.querySelector('.row-num').innerText = forceEnglish(totalRowsOverall); }
+            tbody.appendChild(newTr); if(!duplicate) newTr.querySelector('.search-code').focus();
         }
 
-        function deleteRow(btn) {
-            if(confirm('این ردیف حذف شود؟')) {
-                let tr = btn.closest('tr');
-                tr.remove();
-                renumberAllRows();
-            }
-        }
+        function deleteRow(btn) { if(confirm('این ردیف حذف شود؟')) { let tr = btn.closest('tr'); tr.remove(); renumberAllRows(); } }
+        function renumberAllRows() { let count = 1; document.querySelectorAll('.table-body tr').forEach(tr => { tr.querySelector('.row-num').innerText = forceEnglish(count++); }); totalRowsOverall = count - 1; }
 
-        function renumberAllRows() {
-            let count = 1;
-            document.querySelectorAll('.table-body tr').forEach(tr => {
-                tr.querySelector('.row-num').innerText = forceEnglish(count++);
-            });
-            totalRowsOverall = count - 1;
+        async function startNewWaybill() {
+            if(!isWaybillConfirmed) { alert('ابتدا باید حواله فعلی را ثبت کنید یا آن را لغو کنید.'); return; }
+            if(confirm('آیا مطمئن هستید؟ حواله فعلی ثبت شده و شماره بعدی صادر می‌شود.')) {
+                try {
+                    let newCount = currentWaybillCount + 1; const { error } = await supabaseClient.from('settings').update({ waybill_count: newCount }).eq('id', 1); if (error) throw error;
+                    currentWaybillCount = newCount; resetForm(); updateDateAndWaybill(); isWaybillConfirmed = false;
+                    document.getElementById('btnConfirm').innerHTML = '✅ ثبت و تایید'; document.getElementById('btnConfirm').className = 'btn btn-success'; document.getElementById('btnPrint').disabled = true; document.getElementById('btnShare').disabled = true; document.getElementById('btnNew').disabled = true;
+                } catch (err) { alert('خطا در ثبت شماره حواله جدید!'); }
+            }
         }
 
         function createNewPage() {
-            const pages = document.querySelectorAll('.page');
-            const lastPage = pages[pages.length - 1];
-
-            const oldBtnContainer = lastPage.querySelector('.btn-add-container');
-            if (oldBtnContainer) oldBtnContainer.remove();
-
-            const newPage = lastPage.cloneNode(true);
-            newPage.querySelector('.table-body').innerHTML = '';
-            
+            const pages = document.querySelectorAll('.page'); const lastPage = pages[pages.length - 1];
+            const oldBtnContainer = lastPage.querySelector('.btn-add-container'); if (oldBtnContainer) oldBtnContainer.remove();
+            const newPage = lastPage.cloneNode(true); newPage.querySelector('.table-body').innerHTML = '';
             newPage.querySelector('.main-table thead').innerHTML = getTableHeaderHTML(currentWarehouseType);
-
             const footerTable = newPage.querySelector('.footer-table');
-            const btnContainer = document.createElement('div');
-            btnContainer.className = 'no-print btn-add-container';
-            btnContainer.style.marginTop = '8px';
+            const btnContainer = document.createElement('div'); btnContainer.className = 'no-print btn-add-container'; btnContainer.style.marginTop = '8px';
             btnContainer.innerHTML = `<button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>`;
-            footerTable.parentNode.insertBefore(btnContainer, footerTable);
-
-            document.getElementById('pagesContainer').appendChild(newPage);
-            
-            if(isWaybillConfirmed) {
-                newPage.querySelectorAll('.form-input, .btn-add-row, .btn-row-del').forEach(el => el.disabled = true);
-            }
+            footerTable.parentNode.insertBefore(btnContainer, footerTable); document.getElementById('pagesContainer').appendChild(newPage);
+            if(isWaybillConfirmed) { newPage.querySelectorAll('.form-input, .btn-add-row, .btn-row-del').forEach(el => el.disabled = true); }
         }
     </script>
 </body>
