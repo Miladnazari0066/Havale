@@ -14,10 +14,12 @@
            ========================================= */
         :root {
             --primary: #7c3aed;
+            --primary-hover: #6d28d9;
             --secondary: #ec4899;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #3b82f6;
             --text-dark: #0f172a;
             --text-light: #475569;
             --glass-bg: rgba(255, 255, 255, 0.85);
@@ -28,7 +30,6 @@
         body { 
             font-family: var(--font-family); 
             margin: 0; padding: 0; overflow-x: hidden; color: var(--text-dark);
-            /* پس زمینه پویا و رنگارنگ */
             background: linear-gradient(135deg, #a78bfa, #60a5fa, #f472b6, #34d399);
             background-size: 300% 300%;
             animation: gradientBG 12s ease infinite;
@@ -59,29 +60,19 @@
             display: flex; align-items: center; gap: 12px; animation: slideDownSpring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
             min-width: 300px; justify-content: center; position: relative; overflow: hidden; color: var(--text-dark);
         }
-        .toast::after {
-            content: ''; position: absolute; bottom: 0; left: 0; height: 4px; width: 100%;
-            animation: toastProgress 3s linear forwards;
-        }
+        .toast::after { content: ''; position: absolute; bottom: 0; left: 0; height: 4px; width: 100%; animation: toastProgress 3s linear forwards; }
         @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
-        
         .toast.success::after { background: var(--success); } .toast.success { border-right: 5px solid var(--success); }
         .toast.error::after { background: var(--danger); } .toast.error { border-right: 5px solid var(--danger); }
-        .toast.info::after { background: var(--primary); } .toast.info { border-right: 5px solid var(--primary); }
-        
+        .toast.info::after { background: var(--info); } .toast.info { border-right: 5px solid var(--info); }
         .toast.fade-out { animation: fadeOutUp 0.4s forwards; }
         @keyframes fadeOutUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-50px); opacity: 0; } }
 
         /* =========================================
            مودال سفارشی (تاییدیه)
            ========================================= */
-        #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); z-index: 99998; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
-        .confirm-box { 
-            background: #ffffff; padding: 40px; border-radius: 24px; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; 
-            max-width: 450px; width: 90%; animation: zoomInSpring 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
-            border: 1px solid rgba(255,255,255,0.8);
-        }
+        #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(8px); z-index: 99998; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
+        .confirm-box { background: #ffffff; padding: 40px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); text-align: center; max-width: 450px; width: 90%; animation: zoomInSpring 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); border: 1px solid rgba(255,255,255,0.8); }
         .confirm-box p { font-size: 18px; margin-bottom: 30px; color: var(--text-dark); line-height: 1.6; font-weight: 700; }
         .confirm-actions { display: flex; gap: 15px; justify-content: center; }
         .confirm-actions button { padding: 12px 35px; border-radius: 12px; border: none; font-family: inherit; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 15px; }
@@ -106,63 +97,68 @@
            صفحه لاگین (Glassmorphism)
            ========================================= */
         .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9998; display: flex; justify-content: center; align-items: center; }
-        .login-card { 
-            background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            padding: 50px 40px; border-radius: 28px; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8); 
-            width: 100%; max-width: 420px; text-align: center; 
-            border: 1px solid rgba(255,255,255,0.6); animation: slideUpSmooth 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
-        }
+        .login-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 50px 40px; border-radius: 28px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8); width: 100%; max-width: 420px; text-align: center; border: 1px solid rgba(255,255,255,0.6); animation: slideUpSmooth 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .login-card h2 { margin-bottom: 40px; color: var(--text-dark); font-size: 28px; font-weight: 900; }
         .input-group { margin-bottom: 25px; text-align: right; }
         .input-group label { display: block; margin-bottom: 10px; font-weight: 700; color: var(--text-light); font-size: 14px; }
-        .input-group input, .input-group select { 
-            width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.9); 
-            border: 2px solid transparent; border-radius: 14px; 
-            font-family: inherit; font-size: 16px; box-sizing: border-box; outline: none; 
-            color: var(--text-dark); transition: 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-        }
-        .input-group input:focus, .input-group select:focus { 
-            border-color: var(--primary); background: #ffffff; 
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); 
-        }
-        .btn-login { 
-            width: 100%; padding: 16px; background: linear-gradient(135deg, #7c3aed, #ec4899); 
-            color: white; border: none; border-radius: 14px; font-family: inherit; font-size: 18px; 
-            font-weight: 900; cursor: pointer; transition: 0.3s; 
-            box-shadow: 0 10px 25px -5px rgba(124,58,237,0.5); 
-        }
+        .input-group input, .input-group select { width: 100%; padding: 15px; background: rgba(255, 255, 255, 0.9); border: 2px solid transparent; border-radius: 14px; font-family: inherit; font-size: 16px; box-sizing: border-box; outline: none; color: var(--text-dark); transition: 0.3s; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+        .input-group input:focus, .input-group select:focus { border-color: var(--primary); background: #ffffff; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); }
+        .btn-login { width: 100%; padding: 16px; background: linear-gradient(135deg, #7c3aed, #ec4899); color: white; border: none; border-radius: 14px; font-family: inherit; font-size: 18px; font-weight: 900; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 25px -5px rgba(124,58,237,0.5); }
         .btn-login:hover { transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(124,58,237,0.7); }
 
         /* =========================================
-           داشبورد
+           داشبورد (نسخه پیشرفته)
            ========================================= */
-        .dashboard-header { 
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); 
-            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; 
-            border-bottom: 1px solid rgba(255,255,255,0.8);
-        }
+        .dashboard-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.8); }
         .user-info { font-weight: 900; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 18px; }
         .user-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #a78bfa, #f472b6); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; box-shadow: 0 4px 15px rgba(236,72,153,0.3); }
         .btn-logout { background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 900; transition: 0.3s; }
         .btn-logout:hover { background: var(--danger); color: white; border-color: var(--danger); box-shadow: 0 4px 15px rgba(239,68,68,0.4); }
         
-        .dashboard-content { max-width: 1200px; margin: 40px auto; padding: 0 20px; animation: fadeIn 0.8s; }
-        .dashboard-title { font-size: 32px; font-weight: 900; margin-bottom: 30px; color: #ffffff; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .dashboard-content { max-width: 1400px; margin: 30px auto; padding: 0 20px; animation: fadeIn 0.8s; }
         
-        .waybill-list { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); overflow: hidden; border: 1px solid rgba(255,255,255,0.8); }
+        /* بخش بالایی داشبورد (خوش آمدگویی و دکمه) */
+        .dashboard-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; }
+        .welcome-text h1 { font-size: 32px; font-weight: 900; color: #ffffff; margin: 0 0 10px 0; text-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .welcome-text p { color: rgba(255, 255, 255, 0.9); font-size: 16px; margin: 0; font-weight: 500; }
+
+        /* کارت‌های آماری (Widgets) */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: space-between; transition: 0.3s; position: relative; overflow: hidden; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.12); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; }
+        .stat-card.total::before { background: var(--info); }
+        .stat-card.pending::before { background: var(--warning); }
+        .stat-card.checked::before { background: var(--success); }
+        .stat-card.returned::before { background: var(--danger); }
+        
+        .stat-info h3 { margin: 0; font-size: 15px; color: var(--text-light); font-weight: 700; }
+        .stat-info .number { font-size: 32px; font-weight: 900; color: var(--text-dark); margin-top: 5px; }
+        .stat-icon { width: 60px; height: 60px; border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 28px; }
+        .stat-card.total .stat-icon { background: #eff6ff; color: var(--info); }
+        .stat-card.pending .stat-icon { background: #fffbeb; color: var(--warning); }
+        .stat-card.checked .stat-icon { background: #ecfdf5; color: var(--success); }
+        .stat-card.returned .stat-icon { background: #fef2f2; color: var(--danger); }
+
+        /* نوار جستجو و فیلتر داشبورد */
+        .dashboard-toolbar { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.7); padding: 15px; border-radius: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8); }
+        .search-input { flex: 1; padding: 14px 20px; border-radius: 12px; border: none; outline: none; font-family: inherit; font-size: 15px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .filter-select { width: 200px; padding: 14px 20px; border-radius: 12px; border: none; outline: none; font-family: inherit; font-size: 15px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; }
+
+        /* جدول حواله‌ها */
+        .waybill-list-container { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); overflow: hidden; border: 1px solid rgba(255,255,255,0.8); }
         .waybill-list table { width: 100%; border-collapse: collapse; text-align: right; }
         .waybill-list th, .waybill-list td { padding: 20px 25px; border-bottom: 1px solid #f1f5f9; }
-        .waybill-list th { background: #f8fafc; color: var(--text-light); font-weight: 900; font-size: 15px; }
-        .waybill-list tr { transition: all 0.3s ease; }
-        .waybill-list tr:hover { background: #f8fafc; transform: scale(1.005); box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .waybill-list th { background: #f8fafc; color: var(--text-light); font-weight: 900; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .waybill-list tr { transition: all 0.2s ease; }
+        .waybill-list tr:hover { background: #f8fafc; }
         
-        .badge { padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 900; display: inline-block; }
-        .badge-draft { background: #fef3c7; color: #b45309; }
-        .badge-pending { background: #dbeafe; color: #1d4ed8; }
-        .badge-checked { background: #d1fae5; color: #047857; }
-        .badge-returned { background: #fee2e2; color: #b91c1c; }
+        .badge { padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; }
+        .badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .badge-draft { background: #f1f5f9; color: #475569; } .badge-draft::before { background: #475569; }
+        .badge-pending { background: #fef3c7; color: #b45309; } .badge-pending::before { background: #b45309; }
+        .badge-checked { background: #d1fae5; color: #047857; } .badge-checked::before { background: #047857; }
+        .badge-returned { background: #fee2e2; color: #b91c1c; } .badge-returned::before { background: #b91c1c; }
 
         /* =========================================
            دکمه‌های عمومی (رنگارنگ و مدرن)
@@ -172,7 +168,6 @@
         .btn:active { transform: translateY(0); }
         .btn:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.8;}
         
-        /* دکمه‌های گرادیانتی زنده */
         .btn-success { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 4px 15px rgba(16,185,129,0.3); } 
         .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 15px rgba(239,68,68,0.3); } 
         .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 4px 15px rgba(59,130,246,0.3); } 
@@ -180,12 +175,7 @@
         .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245,158,11,0.3); } 
         .btn-share { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 4px 15px rgba(139,92,246,0.3); }
         
-        .tabs-container { 
-            max-width: 100%; margin: 0 auto 20px auto; background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.8); display: flex; justify-content: space-between; 
-            align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-        }
+        .tabs-container { max-width: 100%; margin: 0 auto 20px auto; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.8); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
         /* =========================================
@@ -240,7 +230,7 @@
         @media print {
             body { background-color: #fff; padding: 0; }
             .page { box-shadow: none; margin: 0; padding: 4mm 8mm; width: 100%; height: 100%; border-radius: 0;}
-            .no-print, .tabs-container, .autocomplete-dropdown, .dashboard-header { display: none !important; }
+            .no-print, .tabs-container, .autocomplete-dropdown, .dashboard-header, .dashboard-top, .stats-grid, .dashboard-toolbar { display: none !important; }
             select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-image: none !important; }
         }
     </style>
@@ -314,13 +304,62 @@
             <button class="btn-logout" onclick="logout()">خروج از حساب</button>
         </div>
 
-        <!-- داشبورد (لیست حواله‌ها) -->
+        <!-- داشبورد پیشرفته -->
         <div id="dashboardView" class="dashboard-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <div class="dashboard-title" id="dashboardTitle">لیست حواله‌ها</div>
-                <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:14px 30px; font-size:16px;">➕ صدور حواله جدید</button>
+            <div class="dashboard-top">
+                <div class="welcome-text">
+                    <h1 id="welcomeTitle">داشبورد مدیریت</h1>
+                    <p id="welcomeSubtitle">خلاصه‌ای از فعالیت‌های شما</p>
+                </div>
+                <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:14px 30px; font-size:16px; border-radius: 16px;">➕ صدور حواله جدید</button>
             </div>
-            <div class="waybill-list">
+
+            <!-- کارت‌های آماری -->
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-info">
+                        <h3>کل حواله‌ها</h3>
+                        <div class="number" id="statTotal">0</div>
+                    </div>
+                    <div class="stat-icon">📄</div>
+                </div>
+                <div class="stat-card pending">
+                    <div class="stat-info">
+                        <h3>در انتظار انبار</h3>
+                        <div class="number" id="statPending">0</div>
+                    </div>
+                    <div class="stat-icon">⏳</div>
+                </div>
+                <div class="stat-card checked">
+                    <div class="stat-info">
+                        <h3>کنترل شده</h3>
+                        <div class="number" id="statChecked">0</div>
+                    </div>
+                    <div class="stat-icon">✅</div>
+                </div>
+                <div class="stat-card returned">
+                    <div class="stat-info">
+                        <h3>برگشتی</h3>
+                        <div class="number" id="statReturned">0</div>
+                    </div>
+                    <div class="stat-icon">↩️</div>
+                </div>
+            </div>
+
+            <!-- نوار جستجو و فیلتر -->
+            <div class="dashboard-toolbar">
+                <input type="text" id="dashboardSearch" class="search-input" placeholder="جستجو بر اساس شماره حواله یا تاریخ..." oninput="renderDashboardTable()">
+                <select id="dashboardFilter" class="filter-select" onchange="renderDashboardTable()">
+                    <option value="all">همه وضعیت‌ها</option>
+                    <option value="draft">پیش‌نویس</option>
+                    <option value="pending">در انتظار انبار</option>
+                    <option value="checked">کنترل شده</option>
+                    <option value="returned">برگشتی</option>
+                </select>
+            </div>
+
+            <!-- جدول حواله‌ها -->
+            <div class="waybill-list-container waybill-list">
                 <table>
                     <thead>
                         <tr>
@@ -335,7 +374,7 @@
             </div>
         </div>
 
-        <!-- فرم حواله -->
+        <!-- فرم حواله (دست‌نخورده) -->
         <div id="waybillView" class="hidden" style="padding: 20px;">
             <div class="tabs-container no-print">
                 <div class="toolbar" id="mainToolbar">
@@ -511,6 +550,7 @@
         let currentUser = null; 
         let currentWaybillId = null; 
         let currentWarehouseType = 'si-tak';
+        let allWaybills = []; // برای ذخیره دیتای داشبورد
         let products = [];
         let isReadOnlyMode = false; 
 
@@ -607,10 +647,12 @@
             
             if (user.role === 'sales') {
                 document.getElementById('btnCreateNew').style.display = 'block';
-                document.getElementById('dashboardTitle').innerText = 'حواله‌های من';
+                document.getElementById('welcomeTitle').innerText = 'داشبورد کارشناس فروش';
+                document.getElementById('welcomeSubtitle').innerText = 'مدیریت حواله‌های صادر شده توسط شما';
             } else {
                 document.getElementById('btnCreateNew').style.display = 'none';
-                document.getElementById('dashboardTitle').innerText = 'حواله‌های در انتظار انبار';
+                document.getElementById('welcomeTitle').innerText = 'داشبورد انباردار';
+                document.getElementById('welcomeSubtitle').innerText = 'حواله‌های در انتظار کنترل و بارگیری';
             }
 
             showScreen('appMain');
@@ -656,7 +698,7 @@
             showToast('با موفقیت خارج شدید.', 'info');
         }
 
-        // --- داشبورد ---
+        // --- داشبورد پیشرفته ---
         async function loadWaybills() {
             let query = supabaseClient.from('waybills').select('*').order('id', { ascending: false });
             
@@ -667,15 +709,42 @@
             const { data: waybills, error } = await query;
             if (error) return;
 
+            allWaybills = waybills || [];
+            updateDashboardStats();
+            renderDashboardTable();
+        }
+
+        function updateDashboardStats() {
+            let total = allWaybills.length;
+            let pending = allWaybills.filter(w => w.status === 'pending').length;
+            let checked = allWaybills.filter(w => w.status === 'checked').length;
+            let returned = allWaybills.filter(w => w.status === 'returned').length;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statPending').innerText = pending;
+            document.getElementById('statChecked').innerText = checked;
+            document.getElementById('statReturned').innerText = returned;
+        }
+
+        function renderDashboardTable() {
+            const searchTerm = document.getElementById('dashboardSearch').value.trim().toLowerCase();
+            const filterStatus = document.getElementById('dashboardFilter').value;
+
             const tbody = document.getElementById('waybillListBody');
             tbody.innerHTML = '';
 
-            if(waybills.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:#94a3b8; font-size:16px;">هیچ حواله‌ای یافت نشد.</td></tr>`;
+            const filtered = allWaybills.filter(w => {
+                const matchesSearch = w.waybill_number.toLowerCase().includes(searchTerm) || w.created_at.includes(searchTerm);
+                const matchesFilter = filterStatus === 'all' || w.status === filterStatus;
+                return matchesSearch && matchesFilter;
+            });
+
+            if(filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:#94a3b8; font-size:16px;">هیچ حواله‌ای با این مشخصات یافت نشد.</td></tr>`;
                 return;
             }
 
-            waybills.forEach(w => {
+            filtered.forEach(w => {
                 let badgeClass = '';
                 let statusText = '';
                 if (w.status === 'draft') { badgeClass = 'badge-draft'; statusText = 'پیش‌نویس'; }
@@ -689,7 +758,7 @@
                         <td style="font-weight:700;">${w.created_at.substring(0, 10)}</td>
                         <td><span class="badge ${badgeClass}">${statusText}</span></td>
                         <td>
-                            <button class="btn btn-primary" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button>
+                            <button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button>
                         </td>
                     </tr>
                 `;
@@ -699,7 +768,7 @@
         function showDashboard() {
             document.getElementById('waybillView').classList.add('hidden');
             document.getElementById('dashboardView').classList.remove('hidden');
-            loadWaybills();
+            loadWaybills(); // رفرش لیست و آمار
         }
 
         // --- بارگذاری کالاها (با قابلیت تزریق اولیه) ---
