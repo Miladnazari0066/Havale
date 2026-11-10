@@ -372,8 +372,9 @@
     <script>
         // --- تنظیمات اتصال به Supabase ---
         const SUPABASE_URL = "https://sizebshjcwiumclcbsrg.supabase.co";
-        // **توجه**: این کلیدی که فرستادید استاندارد نیست، اما تست می‌کنیم.
-        const SUPABASE_ANON_KEY = "h/rBwSSPsHEHRMiclMkngpJL4gxzJNZIivAzPhlHc5W9KObvstuxh5Psw1j4Jnln6jMME0UPYfQ0PgcP/qiWZQ==";
+        
+        // کلید Publishable که ارسال کردید:
+        const SUPABASE_ANON_KEY = "sb_publishable_dUexAxlEw_-mZuMbVc3Wmg_aWrJDQmj";
         
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -381,12 +382,12 @@
         const APP_PASSWORD = "123456"; // پسورد دلخواه خود را اینجا تغییر دهید
 
         // --- متغیرهای عمومی ---
-        let products = []; // کالاها از دیتابیس لود می‌شوند
-        let currentWaybillCount = 1; // شماره حواله از دیتابیس لود می‌شود
+        let products = []; 
+        let currentWaybillCount = 1; 
         let currentWarehouseType = 'si-tak';
         let isWaybillConfirmed = false;
         let totalRowsOverall = 0;
-        let editingProductId = null; // برای ذخیره کالایی که در حال ویرایش است
+        let editingProductId = null; 
 
         // --- توابع احراز هویت ---
         function checkPassword() {
@@ -442,14 +443,13 @@
 
                 // 2. گرفتن شماره حواله از Supabase
                 let { data: settings, error: setErr } = await supabaseClient.from('settings').select('waybill_count').eq('id', 1).single();
-                if (setErr && setErr.code !== 'PGRST116') { // اگر رکورد نبود خطا نده
+                if (setErr && setErr.code !== 'PGRST116') { 
                     console.error(setErr);
                 }
                 
                 if (settings) {
                     currentWaybillCount = settings.waybill_count;
                 } else {
-                    // اگر رکورد تنظیمات نبود، بساز
                     await supabaseClient.from('settings').insert([{ id: 1, waybill_count: 1 }]);
                     currentWaybillCount = 1;
                 }
@@ -470,7 +470,7 @@
 
             } catch (error) {
                 console.error("Error loading data:", error);
-                alert('خطا در اتصال به دیتابیس! لطفا کلید API را بررسی کنید.');
+                alert('خطا در اتصال به دیتابیس! ' + error.message);
             } finally {
                 loading.classList.add('hidden');
             }
@@ -502,7 +502,6 @@
 
             try {
                 if (editingProductId) {
-                    // ویرایش
                     const { error } = await supabaseClient.from('products')
                         .update({ code: code, name: name, type: type })
                         .eq('id', editingProductId);
@@ -511,7 +510,6 @@
                     btn.innerHTML = '➕ ثبت کالای جدید';
                     btn.style.background = '#10b981';
                 } else {
-                    // ثبت جدید
                     const { data, error } = await supabaseClient.from('products')
                         .insert([{ code: code, name: name, type: type }])
                         .select();
@@ -522,7 +520,6 @@
                 document.getElementById('p_code').value = '';
                 document.getElementById('p_name').value = '';
                 
-                // رفرش لیست از دیتابیس
                 let { data: dbProducts } = await supabaseClient.from('products').select('*');
                 products = dbProducts || [];
                 filterProductList();
@@ -642,7 +639,7 @@
             }
         }
 
-        // --- توابع ساخت داینامیک جدول (بدون تغییر) ---
+        // --- توابع ساخت داینامیک جدول ---
         function getTableHeaderHTML(type) {
             if (type === 'kafpoosh') {
                 return `
