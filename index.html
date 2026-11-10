@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سیستم مدیریت حواله - سی تک پارسیان</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -13,100 +13,189 @@
            متغیرها و پایه‌ها
            ========================================= */
         :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
-            --bg-color: #f1f5f9;
-            --text-dark: #1e293b;
+            --text-dark: #0f172a;
             --text-light: #64748b;
-            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --font-family: 'Vazirmatn', sans-serif;
         }
 
-        body { font-family: 'Vazirmatn', 'B Nazanin', Tahoma, sans-serif; background: var(--bg-color); margin: 0; padding: 0; overflow-x: hidden; color: var(--text-dark); }
-        .hidden { display: none !important; }
+        body { 
+            font-family: var(--font-family); 
+            margin: 0; padding: 0; overflow-x: hidden; color: var(--text-dark);
+            background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #1e293b);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+        }
         
-        /* انیمیشن‌های عمومی */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* انیمیشن‌های حرفه‌ای (Spring & Smooth) */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes zoomIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        @keyframes slideUpSmooth { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes zoomInSpring { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes slideDownSpring { 0% { transform: translateY(-100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(79, 70, 229, 0); } }
         
         /* =========================================
-           سیستم پاپ‌آپ (Toast)
+           سیستم پاپ‌آپ (Toast) لوکس
            ========================================= */
-        #toastContainer { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-        .toast { background: var(--white); padding: 12px 24px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); font-weight: bold; display: flex; align-items: center; gap: 10px; animation: slideDown 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); min-width: 250px; justify-content: center; }
-        @keyframes slideDown { from { transform: translateY(-100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        #toastContainer { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .toast { 
+            background: var(--glass-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 15px 25px; border-radius: 12px; border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.3); font-weight: 700; font-size: 15px;
+            display: flex; align-items: center; gap: 12px; animation: slideDownSpring 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+            min-width: 300px; justify-content: center; position: relative; overflow: hidden; color: var(--text-dark);
+        }
+        .toast::after {
+            content: ''; position: absolute; bottom: 0; left: 0; height: 4px; width: 100%;
+            animation: toastProgress 3s linear forwards;
+        }
+        @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+        
+        .toast.success::after { background: var(--success); } .toast.success { border-right: 5px solid var(--success); }
+        .toast.error::after { background: var(--danger); } .toast.error { border-right: 5px solid var(--danger); }
+        .toast.info::after { background: var(--primary); } .toast.info { border-right: 5px solid var(--primary); }
+        
         .toast.fade-out { animation: fadeOutUp 0.4s forwards; }
         @keyframes fadeOutUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-50px); opacity: 0; } }
-        
-        .toast.success { border-right: 5px solid var(--success); color: var(--success); }
-        .toast.error { border-right: 5px solid var(--danger); color: var(--danger); }
-        .toast.info { border-right: 5px solid var(--primary); color: var(--primary); }
 
         /* =========================================
            مودال سفارشی (تاییدیه)
            ========================================= */
-        #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 99998; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
-        .confirm-box { background: var(--white); padding: 30px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); text-align: center; max-width: 400px; width: 90%; animation: zoomIn 0.3s; }
-        .confirm-box p { font-size: 16px; margin-bottom: 25px; color: var(--text-dark); line-height: 1.6; }
-        .confirm-actions { display: flex; gap: 10px; justify-content: center; }
-        .confirm-actions button { padding: 10px 30px; border-radius: 8px; border: none; font-family: inherit; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-yes { background: var(--primary); color: white; }
-        .btn-yes:hover { background: var(--primary-hover); }
-        .btn-no { background: #e2e8f0; color: var(--text-dark); }
-        .btn-no:hover { background: #cbd5e1; }
+        #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); z-index: 99998; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
+        .confirm-box { 
+            background: #ffffff; padding: 40px; border-radius: 20px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); text-align: center; 
+            max-width: 450px; width: 90%; animation: zoomInSpring 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); 
+        }
+        .confirm-box p { font-size: 18px; margin-bottom: 30px; color: var(--text-dark); line-height: 1.6; font-weight: 700; }
+        .confirm-actions { display: flex; gap: 15px; justify-content: center; }
+        .confirm-actions button { padding: 12px 35px; border-radius: 10px; border: none; font-family: inherit; font-weight: 900; cursor: pointer; transition: 0.3s; font-size: 15px; }
+        .btn-yes { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(79,70,229,0.4); }
+        .btn-yes:hover { background: var(--primary-hover); transform: translateY(-2px); }
+        .btn-no { background: #f1f5f9; color: var(--text-dark); }
+        .btn-no:hover { background: #e2e8f0; transform: translateY(-2px); }
 
         /* =========================================
            صفحه لودینگ
            ========================================= */
-        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--white); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        .spinner { width: 60px; height: 60px; border: 5px solid #e2e8f0; border-top: 5px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.6s ease; }
+        .spinner-box { position: relative; width: 80px; height: 80px; }
+        .spinner-box div { position: absolute; border: 4px solid transparent; border-radius: 50%; animation: spin 1.5s linear infinite; }
+        .spinner-box div:nth-child(1) { border-top-color: #4f46e5; width: 100%; height: 100%; }
+        .spinner-box div:nth-child(2) { border-right-color: #10b981; width: 70%; height: 70%; top: 15%; left: 15%; animation-direction: reverse; }
+        .spinner-box div:nth-child(3) { border-bottom-color: #ec4899; width: 40%; height: 40%; top: 30%; left: 30%; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .loading-text { margin-top: 20px; font-weight: bold; color: var(--text-light); font-size: 18px; }
+        .loading-text { margin-top: 30px; font-weight: 700; color: #e2e8f0; font-size: 18px; letter-spacing: 1px; animation: pulseGlow 2s infinite; }
 
         /* =========================================
-           صفحه لاگین
+           صفحه لاگین (Glassmorphism)
            ========================================= */
-        .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%); z-index: 9998; display: flex; justify-content: center; align-items: center; }
-        .login-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); padding: 40px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.5); animation: slideUp 0.6s ease; }
-        .login-card h2 { margin-bottom: 30px; color: var(--text-dark); font-size: 24px; }
-        .input-group { margin-bottom: 20px; text-align: right; }
-        .input-group label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--text-light); font-size: 14px; }
-        .input-group input, .input-group select { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: inherit; font-size: 15px; box-sizing: border-box; outline: none; transition: 0.3s; background: rgba(255,255,255,0.9); }
-        .input-group input:focus, .input-group select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
-        .btn-login { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-family: inherit; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
-        .btn-login:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 15px rgba(59,130,246,0.4); }
+        .login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9998; display: flex; justify-content: center; align-items: center; }
+        .login-card { 
+            background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 50px 40px; border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1); 
+            width: 100%; max-width: 420px; text-align: center; 
+            border: 1px solid rgba(255,255,255,0.1); animation: slideUpSmooth 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        .login-card h2 { margin-bottom: 40px; color: #ffffff; font-size: 26px; font-weight: 900; letter-spacing: 1px; }
+        .input-group { margin-bottom: 25px; text-align: right; }
+        .input-group label { display: block; margin-bottom: 10px; font-weight: 700; color: #cbd5e1; font-size: 14px; }
+        .input-group input, .input-group select { 
+            width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.5); 
+            border: 2px solid rgba(255,255,255,0.05); border-radius: 12px; 
+            font-family: inherit; font-size: 16px; box-sizing: border-box; outline: none; 
+            color: #ffffff; transition: 0.3s; 
+        }
+        .input-group input:focus, .input-group select:focus { 
+            border-color: #4f46e5; background: rgba(15, 23, 42, 0.8); 
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2); 
+        }
+        .input-group select option { background: #1e293b; color: #fff; }
+        .btn-login { 
+            width: 100%; padding: 16px; background: linear-gradient(135deg, #4f46e5, #7c3aed); 
+            color: white; border: none; border-radius: 12px; font-family: inherit; font-size: 17px; 
+            font-weight: 900; cursor: pointer; transition: 0.3s; 
+            box-shadow: 0 10px 20px -10px rgba(79,70,229,0.8); position: relative; overflow: hidden;
+        }
+        .btn-login::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn-login:hover::before { left: 100%; }
+        .btn-login:hover { transform: translateY(-3px); box-shadow: 0 15px 25px -10px rgba(79,70,229,1); }
 
         /* =========================================
            داشبورد
            ========================================= */
-        .dashboard-header { background: var(--white); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: sticky; top: 0; z-index: 100; }
-        .user-info { font-weight: bold; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
-        .user-icon { width: 40px; height: 40px; background: #e0e7ff; color: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 20px; }
-        .btn-logout { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: bold; transition: 0.2s; }
-        .btn-logout:hover { background: var(--danger); color: white; }
+        .dashboard-header { 
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); 
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; 
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+        }
+        .user-info { font-weight: 900; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 18px; }
+        .user-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); color: var(--primary); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; box-shadow: 0 4px 10px rgba(79,70,229,0.2); }
+        .btn-logout { background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 2px solid rgba(239, 68, 68, 0.2); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 900; transition: 0.3s; }
+        .btn-logout:hover { background: var(--danger); color: white; box-shadow: 0 4px 15px rgba(239,68,68,0.4); }
         
-        .dashboard-content { max-width: 1200px; margin: 40px auto; padding: 0 20px; animation: fadeIn 0.5s; }
-        .dashboard-title { font-size: 24px; font-weight: bold; margin-bottom: 25px; color: var(--text-dark); }
+        .dashboard-content { max-width: 1200px; margin: 50px auto; padding: 0 20px; animation: fadeIn 0.8s; }
+        .dashboard-title { font-size: 28px; font-weight: 900; margin-bottom: 30px; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
         
-        .waybill-list { background: var(--white); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); overflow: hidden; border: 1px solid #e2e8f0; }
+        .waybill-list { background: rgba(255, 255, 255, 0.95); border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(255,255,255,0.5); }
         .waybill-list table { width: 100%; border-collapse: collapse; text-align: right; }
-        .waybill-list th, .waybill-list td { padding: 18px 20px; border-bottom: 1px solid #f1f5f9; }
-        .waybill-list th { background: #f8fafc; color: var(--text-light); font-weight: bold; font-size: 14px; }
-        .waybill-list tr { transition: 0.2s; }
-        .waybill-list tr:hover { background: #f8fafc; }
+        .waybill-list th, .waybill-list td { padding: 20px 25px; border-bottom: 1px solid #e2e8f0; }
+        .waybill-list th { background: #f8fafc; color: var(--text-light); font-weight: 900; font-size: 15px; }
+        .waybill-list tr { transition: all 0.3s ease; }
+        .waybill-list tr:hover { background: #f1f5f9; transform: scale(1.005); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
         
-        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-block; }
-        .badge-draft { background: #fef3c7; color: #d97706; }
-        .badge-pending { background: #dbeafe; color: #2563eb; }
-        .badge-checked { background: #d1fae5; color: #059669; }
-        .badge-returned { background: #fee2e2; color: #dc2626; }
+        .badge { padding: 8px 16px; border-radius: 30px; font-size: 13px; font-weight: 900; display: inline-block; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .badge-draft { background: #fef3c7; color: #b45309; }
+        .badge-pending { background: #dbeafe; color: #1d4ed8; }
+        .badge-checked { background: #d1fae5; color: #047857; }
+        .badge-returned { background: #fee2e2; color: #b91c1c; }
 
         /* =========================================
-           استایل‌های اصلی فرم حواله (دقیقاً بدون تغییر برای پرینت)
+           دکمه‌های عمومی (حرفه‌ای)
+           ========================================= */
+        .btn { padding: 10px 20px; font-family: inherit; font-size: 14px; font-weight: 900; border: none; border-radius: 10px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; align-items: center; gap: 8px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { background-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.8;}
+        
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); } 
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); } 
+        .btn-primary { background: linear-gradient(135deg, #4f46e5, #4338ca); } 
+        .btn-dark { background: linear-gradient(135deg, #475569, #334155); } 
+        .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); } 
+        .btn-share { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        
+        .tabs-container { 
+            max-width: 100%; margin: 0 auto 20px auto; background: rgba(255, 255, 255, 0.9); 
+            backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 16px; 
+            border: 1px solid rgba(255,255,255,0.5); display: flex; justify-content: space-between; 
+            align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+        }
+        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+        /* =========================================
+           استایل‌های اصلی فرم حواله (کاملاً دست‌نخورده برای پرینت)
            ========================================= */
         @page { size: A4 landscape; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -115,16 +204,7 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none !important; margin: 0 !important; display: none !important; }
         input[type=number] { -moz-appearance: textfield !important; }
 
-        .tabs-container { max-width: 100%; margin: 0 auto 15px auto; background: #fff; padding: 12px 20px; border-radius: 12px; border: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-        .toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .btn { padding: 8px 16px; font-family: inherit; font-size: 13px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .btn:active { transform: translateY(0); }
-        .btn:disabled { background-color: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.8;}
-        
-        .btn-success { background: var(--success); } .btn-danger { background: var(--danger); } .btn-primary { background: var(--primary); } .btn-dark { background: #475569; } .btn-edit { background: var(--warning); } .btn-share { background: #8b5cf6; }
-        
-        .page { width: 297mm; height: 210mm; background-color: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm; box-shadow: 0 10px 30px rgba(0,0,0,0.08); position: relative; overflow: hidden; page-break-after: always; border-radius: 4px; }
+        .page { width: 297mm; height: 210mm; background-color: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative; overflow: hidden; page-break-after: always; border-radius: 4px; }
         .page:last-child { page-break-after: auto; }
         .page::before { content: "حواله ی دستی"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg); font-size: 120px; font-weight: bold; color: rgba(0, 0, 0, 0.03); white-space: nowrap; pointer-events: none; z-index: 0; }
         .content { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; }
@@ -189,7 +269,11 @@
 
     <!-- 1. لودینگ -->
     <div id="loadingScreen" class="loading-screen">
-        <div class="spinner"></div>
+        <div class="spinner-box">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
         <div class="loading-text">در حال اتصال به سرور...</div>
     </div>
 
@@ -206,22 +290,22 @@
             </div>
             <div class="input-group">
                 <label>رمز عبور (۴ رقمی)</label>
-                <input type="password" id="loginPassword" maxlength="4" placeholder="****">
+                <input type="password" id="loginPassword" maxlength="4" placeholder="****" style="letter-spacing: 5px; font-size: 20px;">
             </div>
             <button class="btn-login" onclick="doLogin()">ورود به سیستم</button>
         </div>
     </div>
 
     <!-- 3. تغییر رمز اجباری -->
-    <div id="changePassScreen" class="modal-overlay hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); backdrop-filter:blur(4px); z-index:99998; display:flex; justify-content:center; align-items:center; animation:fadeIn 0.3s;">
+    <div id="changePassScreen" class="modal-overlay hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.7); backdrop-filter:blur(8px); z-index:99998; display:flex; justify-content:center; align-items:center; animation:fadeIn 0.3s;">
         <div class="confirm-box" style="text-align:right;">
-            <h3 style="margin-bottom: 20px; color: var(--danger); text-align:center;">تغییر رمز عبور اجباری</h3>
-            <p style="text-align:center; margin-bottom:20px; font-size:14px; color:var(--text-light);">بیش از ۳۰ روز از تغییر رمز شما گذشته است. لطفاً رمز جدیدی (۴ رقمی) وارد کنید.</p>
+            <h3 style="margin-bottom: 20px; color: var(--danger); text-align:center; font-size: 22px;">تغییر رمز عبور اجباری</h3>
+            <p style="text-align:center; margin-bottom:25px; font-size:14px; color:var(--text-light);">بیش از ۳۰ روز از تغییر رمز شما گذشته است. لطفاً رمز جدیدی (۴ رقمی) وارد کنید.</p>
             <div class="input-group">
                 <label>رمز عبور جدید (۴ عدد)</label>
-                <input type="password" id="newPassword" maxlength="4" style="text-align:center; letter-spacing:5px;">
+                <input type="password" id="newPassword" maxlength="4" style="text-align:center; letter-spacing:10px; font-size:22px; border:2px solid #e2e8f0; padding:15px; border-radius:12px;">
             </div>
-            <button class="btn-login" onclick="changePassword()">ثبت رمز جدید</button>
+            <button class="btn-login" onclick="changePassword()" style="margin-top: 15px;">ثبت رمز جدید</button>
         </div>
     </div>
 
@@ -240,7 +324,7 @@
         <div id="dashboardView" class="dashboard-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <div class="dashboard-title" id="dashboardTitle">لیست حواله‌ها</div>
-                <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:12px 24px; font-size:15px;">➕ صدور حواله جدید</button>
+                <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:14px 30px; font-size:16px;">➕ صدور حواله جدید</button>
             </div>
             <div class="waybill-list">
                 <table>
@@ -275,6 +359,7 @@
                 <div id="pagesContainer">
                     <div class="page">
                         <div class="content">
+                            <!-- محتوای فرم حواله (بدون هیچ تغییری) -->
                             <table class="header-table">
                                 <tr>
                                     <td class="header-right">
@@ -416,7 +501,7 @@
                 } else {
                     if(id === 'loadingScreen') {
                         el.style.opacity = '0';
-                        setTimeout(() => { el.classList.add('hidden'); el.style.opacity = '1'; }, 500);
+                        setTimeout(() => { el.classList.add('hidden'); el.style.opacity = '1'; }, 600);
                     } else {
                         el.classList.add('hidden');
                         if(id !== 'appMain') el.style.display = 'none';
@@ -531,7 +616,7 @@
             tbody.innerHTML = '';
 
             if(waybills.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#94a3b8;">هیچ حواله‌ای یافت نشد.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:40px; color:#94a3b8; font-size:16px;">هیچ حواله‌ای یافت نشد.</td></tr>`;
                 return;
             }
 
@@ -545,8 +630,8 @@
 
                 tbody.innerHTML += `
                     <tr>
-                        <td style="font-weight:bold; font-family:Tahoma;">${w.waybill_number}</td>
-                        <td>${w.created_at.substring(0, 10)}</td>
+                        <td style="font-weight:900; font-family:Tahoma; font-size:16px;">${w.waybill_number}</td>
+                        <td style="font-weight:700;">${w.created_at.substring(0, 10)}</td>
                         <td><span class="badge ${badgeClass}">${statusText}</span></td>
                         <td>
                             <button class="btn btn-primary" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button>
@@ -908,7 +993,7 @@
         window.onload = () => {
             setTimeout(() => {
                 showScreen('loginScreen');
-            }, 1000);
+            }, 1500);
         };
     </script>
 </body>
