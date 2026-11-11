@@ -1,4 +1,4 @@
-const CACHE_NAME = 'havale-erp-v7';
+const CACHE_NAME = 'havale-erp-v8';
 const urlsToCache = [
   './',
   './index.html',
@@ -34,7 +34,6 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  // برای درخواست‌های دیتابیس، اصلا از کش استفاده نکن
   if (event.request.url.includes('supabase.co')) return; 
 
   event.respondWith(
