@@ -5,179 +5,225 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>سیستم مدیریت حواله - سی تک پارسیان</title>
     
-    <!-- تزریق تنظیمات PWA به صورت داخلی (بدون نیاز به فایل جداگانه) -->
-    <link rel="manifest" href='data:application/manifest+json,{"name":"حواله سی تک","short_name":"حواله","start_url":"./","display":"standalone","background_color":"%23d4d0c8","theme_color":"%230a246a","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"512x512","type":"image/png"}]}'>
-    <meta name="theme-color" content="#0a246a">
+    <!-- تنظیمات PWA به صورت داخلی -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"حواله سی تک","short_name":"حواله","start_url":"./","display":"standalone","background_color":"%230f172a","theme_color":"%237c3aed","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"512x512","type":"image/png"}]}'>
+    <meta name="theme-color" content="#7c3aed">
 
-    <!-- 🟢 لوگوی اختصاصی سایت در تب مرورگر -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%230a246a'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230a246a'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230a246a'%3EE%3C/text%3E%3Ctext x='45' y='75' font-family='Arial, sans-serif' font-size='12' fill='%230a246a'%3EETEC%3C/text%3E%3C/svg%3E">
+    <!-- لوگوی اختصاصی سایت در تب مرورگر -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%237c3aed'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%237c3aed'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%237c3aed'%3EE%3C/text%3E%3Ctext x='45' y='75' font-family='Arial, sans-serif' font-size='12' fill='%237c3aed'%3EETEC%3C/text%3E%3C/svg%3E">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
-    
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         /* =========================================
-           تم کلاسیک ویندوز / ERP (آرین)
+           متغیرها و پایه‌ها (تم مدرن و لاکچری)
            ========================================= */
         :root {
-            --bg-color: #d4d0c8;
-            --window-bg: #ffffff;
-            --workspace-bg: #e6f0fa;
-            --title-bar-start: #0a246a;
-            --title-bar-end: #a6caf0;
-            --text-dark: #000000;
-            --border-light: #ffffff;
-            --border-dark: #808080;
-            --font-family: 'Vazirmatn', Tahoma, sans-serif;
+            --primary: #7c3aed;
+            --primary-hover: #6d28d9;
+            --secondary: #ec4899;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --font-family: 'Vazirmatn', sans-serif;
+            
+            /* انیمیشن‌های روان */
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         body { 
             font-family: var(--font-family); 
-            margin: 0; padding: 10px; 
-            color: var(--text-dark);
-            background-color: var(--bg-color);
-            height: 100vh;
-            box-sizing: border-box;
-            overflow: hidden;
+            margin: 0; padding: 0; overflow-x: hidden; color: var(--text-dark);
+            /* پس زمینه پویا و درخشان */
+            background: linear-gradient(135deg, #a78bfa, #60a5fa, #f472b6, #34d399);
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
         }
         
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         .hidden { display: none !important; }
 
-        /* --- کادر اصلی پنجره --- */
-        .window-frame {
-            background-color: var(--bg-color);
-            border: 2px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
-        }
-
-        /* --- نوار عنوان --- */
-        .title-bar {
-            background: linear-gradient(to right, var(--title-bar-start), var(--title-bar-end));
-            color: white;
-            padding: 4px 8px;
-            font-size: 13px;
-            font-weight: bold;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            user-select: none;
-        }
-        .title-bar-brand { display: flex; align-items: center; gap: 8px; }
-        .title-bar-controls span {
-            display: inline-block;
-            width: 18px; height: 16px;
-            background: #d4d0c8; color: black;
-            border: 1px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            text-align: center; line-height: 12px; font-size: 10px;
-            margin-left: 2px; cursor: pointer; font-weight: bold;
-        }
-
-        /* --- منوی بالا --- */
-        .menu-bar {
-            background: #e0e0e0;
-            border-bottom: 1px solid var(--border-dark);
-            padding: 2px 5px;
-            display: flex; gap: 5px;
-        }
-        .menu-btn {
-            background: transparent; border: 1px solid transparent;
-            padding: 4px 15px; font-family: inherit; font-size: 13px; font-weight: bold;
-            cursor: pointer;
-        }
-        .menu-btn:hover { border-color: var(--border-dark); background: #f0f0f0; }
-        .menu-btn.active { background: #d4d0c8; border-color: var(--border-dark); }
-
-        /* --- بدنه اصلی --- */
-        .workspace-body { display: flex; flex: 1; overflow: hidden; }
-
-        /* بخش سمت چپ: میزکار */
-        .main-workspace {
-            flex: 1; background-color: var(--workspace-bg);
-            border: 2px solid; border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-            margin: 5px; padding: 10px; overflow-y: auto; position: relative;
-        }
-
-        /* بخش سمت راست: پنل کناری */
-        .sidebar { width: 320px; display: flex; flex-direction: column; padding: 5px; gap: 10px; overflow-y: auto; }
-
-        /* --- استایل پنل‌های کناری --- */
-        fieldset { border: 1px solid var(--border-dark); padding: 10px; margin: 0; background: #ffffff; }
-        legend { font-size: 12px; font-weight: bold; padding: 0 5px; }
-
-        /* جدول اطلاعات */
-        .info-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .info-table td { padding: 4px; border-bottom: 1px solid #eee; }
-        .info-table td:first-child { font-weight: bold; color: #444; width: 40%; }
-        .info-table td:last-child { color: #000; text-align: left; direction: ltr; }
-
-        /* لینک‌های فرآیندها */
-        .process-list { list-style: none; padding: 0; margin: 0; }
-        .process-list li { margin-bottom: 8px; }
-        .process-list a { color: #0000ee; text-decoration: none; font-size: 12px; display: block; padding: 2px 5px; }
-        .process-list a:hover { background: #e0e0e0; text-decoration: underline; }
-
-        /* جدول لیست حواله‌ها */
-        .erp-grid { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border-dark); }
-        .erp-grid th { background: #e0e0e0; border: 1px solid var(--border-dark); padding: 5px; font-size: 12px; font-weight: bold; text-align: center; }
-        .erp-grid td { border: 1px solid #ccc; padding: 5px; font-size: 12px; text-align: center; }
-        .erp-grid tr:hover { background-color: #f0f8ff; }
-
-        /* دکمه‌ها */
-        .btn-classic {
-            background: #d4d0c8; border: 2px solid;
-            border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
-            padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 12px;
-        }
-        .btn-classic:active { border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark); }
-
-        .status-badge { padding: 2px 6px; border: 1px solid #999; font-size: 11px; border-radius: 3px; }
-        .bg-draft { background: #f0f0f0; color: #333; }
-        .bg-pending { background: #fff3cd; color: #856404; border-color: #ffeeba; }
-        .bg-checked { background: #d4edda; color: #155724; border-color: #c3e6cb; }
-        .bg-returned { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        /* =========================================
+           انیمیشن‌های ورود
+           ========================================= */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUpSmooth { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes zoomInSpring { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes slideDownSpring { 0% { transform: translateY(-100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 
         /* =========================================
-           صفحه نصب و لاگین (کادر کلاسیک)
+           سیستم پاپ‌آپ (Toast)
            ========================================= */
-        #installLockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99999; display: flex; justify-content: center; align-items: center; }
-        .install-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 400px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); }
-        .install-content { padding: 20px; text-align: center; background: #fff; margin: 5px; border: 1px solid var(--border-dark); }
-        .install-icon { font-size: 40px; margin-bottom: 10px; }
-        .btn-install { padding: 8px 20px; margin-top: 15px; font-size: 14px; background: #d4d0c8; border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); cursor: pointer; font-weight: bold; }
+        #toastContainer { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 15px; align-items: center; pointer-events: none; }
+        .toast { 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 15px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15); font-weight: 700; font-size: 15px;
+            display: flex; align-items: center; gap: 12px; animation: slideDownSpring 0.6s var(--transition-bounce); 
+            min-width: 300px; justify-content: center; position: relative; overflow: hidden; color: var(--text-dark);
+            pointer-events: auto;
+        }
+        .toast::after { content: ''; position: absolute; bottom: 0; left: 0; height: 4px; width: 100%; animation: toastProgress 3s linear forwards; }
+        @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
         
-        .install-help { display: none; margin-top: 15px; font-size: 12px; text-align: right; background: #f8f9fa; padding: 10px; border: 1px solid #ccc; border-radius: 4px; color: #333; line-height: 1.6; }
-        .install-help b { color: #0a246a; }
-
-        #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--workspace-bg); z-index: 9998; display: flex; justify-content: center; align-items: center; }
-        .login-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 360px; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
-        .login-header { background: linear-gradient(to right, var(--title-bar-start), var(--title-bar-end)); color: white; padding: 5px 10px; font-weight: bold; font-size: 13px; }
-        .login-body { padding: 20px 30px; background: #fff; margin: 5px; border: 1px solid var(--border-dark); }
+        .toast.success::after { background: var(--success); } .toast.success { border-right: 5px solid var(--success); }
+        .toast.error::after { background: var(--danger); } .toast.error { border-right: 5px solid var(--danger); }
+        .toast.info::after { background: var(--primary); } .toast.info { border-right: 5px solid var(--primary); }
         
-        /* 🟢 استایل لوگو در صفحه لاگین */
-        .login-logo-container { text-align: center; margin-bottom: 20px; }
-        .login-logo-container svg { width: 120px; height: auto; }
-        .login-logo-text { font-size: 11px; font-weight: bold; color: #555; margin-top: 5px; }
-
-        .form-group { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
-        .form-group label { font-size: 12px; font-weight: bold; width: 80px; }
-        .form-group input, .form-group select { flex: 1; padding: 5px; border: 1px solid var(--border-dark); font-family: inherit; font-size: 12px; outline: none; }
-        .btn-login { width: 100%; padding: 6px; background: #d4d0c8; border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); cursor: pointer; font-family: inherit; font-weight: bold; font-size: 13px; margin-top: 10px; }
-        .btn-login:active { border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark); }
+        .toast.fade-out { animation: fadeOutUp 0.4s forwards; }
+        @keyframes fadeOutUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-30px); opacity: 0; } }
 
         /* =========================================
-           فرم حواله (دست‌نخورده برای پرینت)
+           مودال سفارشی
            ========================================= */
-        #waybillView { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 100; overflow-y: auto; padding: 10px; box-sizing: border-box; }
-        .waybill-toolbar { background: #e0e0e0; border: 1px solid var(--border-dark); padding: 5px; margin-bottom: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
+        #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); z-index: 99998; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
+        .confirm-box { background: #ffffff; padding: 35px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); text-align: center; max-width: 400px; width: 90%; animation: zoomInSpring 0.4s var(--transition-bounce); }
+        .confirm-box p { font-size: 17px; margin-bottom: 25px; color: var(--text-dark); line-height: 1.6; font-weight: 700; }
+        .confirm-actions { display: flex; gap: 15px; justify-content: center; }
+        .confirm-actions button { padding: 12px 30px; border-radius: 10px; border: none; font-family: inherit; font-weight: 900; cursor: pointer; transition: var(--transition-smooth); font-size: 15px; }
+        .btn-yes { background: linear-gradient(135deg, #7c3aed, #ec4899); color: white; box-shadow: 0 8px 20px rgba(124,58,237,0.3); }
+        .btn-yes:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(124,58,237,0.4); }
+        .btn-no { background: #f1f5f9; color: var(--text-dark); }
+        .btn-no:hover { background: #e2e8f0; transform: translateY(-3px); }
+
+        /* =========================================
+           صفحه لاگین (Glassmorphism)
+           ========================================= */
+        #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9998; display: flex; justify-content: center; align-items: center; }
+        .login-card { 
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            padding: 40px 35px; border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8); 
+            width: 100%; max-width: 400px; text-align: center; 
+            border: 1px solid rgba(255,255,255,0.6); animation: slideUpSmooth 0.7s var(--transition-bounce); 
+        }
+        
+        /* لوگو مینیمال لاگین */
+        .login-logo { width: 130px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1)); }
+        .login-subtitle { font-size: 12px; font-weight: bold; color: var(--text-light); margin-bottom: 35px; letter-spacing: 1px; }
+
+        .input-group { margin-bottom: 20px; text-align: right; }
+        .input-group label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--text-light); font-size: 13px; }
+        .input-group select, .input-group input { 
+            width: 100%; padding: 14px 15px; background: rgba(255, 255, 255, 0.9); 
+            border: 2px solid transparent; border-radius: 12px; 
+            font-family: inherit; font-size: 15px; box-sizing: border-box; outline: none; 
+            color: var(--text-dark); transition: var(--transition-smooth); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .input-group select:focus, .input-group input:focus { 
+            border-color: var(--primary); background: #ffffff; 
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); 
+            transform: translateY(-2px);
+        }
+        .btn-login { 
+            width: 100%; padding: 15px; background: linear-gradient(135deg, #7c3aed, #ec4899); 
+            color: white; border: none; border-radius: 12px; font-family: inherit; font-size: 17px; 
+            font-weight: 900; cursor: pointer; transition: var(--transition-bounce); 
+            box-shadow: 0 10px 25px -5px rgba(124,58,237,0.5); margin-top: 10px;
+        }
+        .btn-login:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 30px -5px rgba(124,58,237,0.7); }
+
+        /* =========================================
+           داشبورد
+           ========================================= */
+        .dashboard-header { 
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); 
+            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; 
+            border-bottom: 1px solid rgba(255,255,255,0.8);
+        }
+        .header-brand { display: flex; align-items: center; gap: 12px; }
+        .header-brand svg { height: 30px; width: auto; }
+        .header-brand span { font-weight: 900; color: var(--text-dark); font-size: 16px; border-right: 2px solid #cbd5e1; padding-right: 12px; }
+        
+        .user-info { font-weight: 900; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .user-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #a78bfa, #f472b6); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(236,72,153,0.3); }
+        .btn-logout { background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 900; transition: var(--transition-smooth); font-size: 13px; }
+        .btn-logout:hover { background: var(--danger); color: white; border-color: var(--danger); box-shadow: 0 4px 15px rgba(239,68,68,0.4); transform: translateY(-2px); }
+        
+        .dashboard-content { max-width: 1200px; margin: 30px auto; padding: 0 20px; animation: fadeIn 0.6s; }
+        
+        .dashboard-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
+        .welcome-text h1 { font-size: 26px; font-weight: 900; color: #ffffff; margin: 0 0 5px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.15); }
+        .welcome-text p { color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 0; font-weight: 500; }
+
+        /* کارت‌های آماری مینیمال */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
+        @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+        
+        .stat-card { background: rgba(255, 255, 255, 0.95); padding: 15px 20px; border-radius: 16px; box-shadow: 0 8px 25px -5px rgba(0,0,0,0.05); border: 1px solid rgba(255,255,255,0.8); display: flex; align-items: center; justify-content: space-between; transition: var(--transition-bounce); position: relative; overflow: hidden; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px -5px rgba(0,0,0,0.1); }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; }
+        .stat-card.total::before { background: var(--info); }
+        .stat-card.pending::before { background: var(--warning); }
+        .stat-card.checked::before { background: var(--success); }
+        .stat-card.returned::before { background: var(--danger); }
+        .stat-info h3 { margin: 0; font-size: 13px; color: var(--text-light); font-weight: 700; }
+        .stat-info .number { font-size: 24px; font-weight: 900; color: var(--text-dark); margin-top: 3px; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 22px; }
+        .stat-card.total .stat-icon { background: #eff6ff; color: var(--info); }
+        .stat-card.pending .stat-icon { background: #fffbeb; color: var(--warning); }
+        .stat-card.checked .stat-icon { background: #ecfdf5; color: var(--success); }
+        .stat-card.returned .stat-icon { background: #fef2f2; color: var(--danger); }
+
+        /* نوار جستجو */
+        .dashboard-toolbar { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.85); padding: 12px 15px; border-radius: 14px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        .search-input { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; outline: none; font-family: inherit; font-size: 14px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); background: #fff; transition: var(--transition-smooth); }
+        .search-input:focus { box-shadow: inset 0 2px 5px rgba(0,0,0,0.05), 0 0 0 3px rgba(124,58,237,0.1); }
+        .filter-select { width: 180px; padding: 12px 20px; border-radius: 10px; border: none; outline: none; font-family: inherit; font-size: 14px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); cursor: pointer; transition: var(--transition-smooth); }
+        .filter-select:focus { box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+
+        /* جدول حواله‌ها */
+        .waybill-list-container { background: rgba(255, 255, 255, 0.95); border-radius: 20px; box-shadow: 0 15px 40px -10px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid rgba(255,255,255,0.8); }
+        .waybill-list table { width: 100%; border-collapse: collapse; text-align: right; }
+        .waybill-list th, .waybill-list td { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .waybill-list th { background: #f8fafc; color: var(--text-light); font-weight: 900; font-size: 13px; }
+        .waybill-list tr { transition: var(--transition-smooth); }
+        .waybill-list tr:hover { background: #f8fafc; transform: scale(1.005); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        
+        .badge { padding: 6px 12px; border-radius: 30px; font-size: 12px; font-weight: 900; display: inline-flex; align-items: center; gap: 6px; }
+        .badge::before { content: ''; width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .badge-draft { background: #f1f5f9; color: #475569; } .badge-draft::before { background: #475569; }
+        .badge-pending { background: #fef3c7; color: #b45309; } .badge-pending::before { background: #b45309; }
+        .badge-checked { background: #d1fae5; color: #047857; } .badge-checked::before { background: #047857; }
+        .badge-returned { background: #fee2e2; color: #b91c1c; } .badge-returned::before { background: #b91c1c; }
+
+        /* =========================================
+           دکمه‌های عمومی
+           ========================================= */
+        .btn { padding: 10px 20px; font-family: inherit; font-size: 14px; font-weight: 900; border: none; border-radius: 10px; cursor: pointer; transition: var(--transition-bounce); display: flex; align-items: center; gap: 8px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled { background: #cbd5e1 !important; color: #94a3b8 !important; cursor: not-allowed; transform: none; box-shadow: none; opacity: 0.8;}
+        
+        .btn-success { background: linear-gradient(135deg, #10b981, #059669); } 
+        .btn-danger { background: linear-gradient(135deg, #ef4444, #dc2626); } 
+        .btn-primary { background: linear-gradient(135deg, #3b82f6, #2563eb); } 
+        .btn-dark { background: linear-gradient(135deg, #475569, #334155); } 
+        .btn-edit { background: linear-gradient(135deg, #f59e0b, #d97706); } 
+        .btn-share { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        
+        .tabs-container { max-width: 100%; margin: 0 auto 20px auto; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.8); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+        /* =========================================
+           استایل‌های اصلی فرم حواله (دست‌نخورده برای پرینت)
+           ========================================= */
+        #waybillView { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         
         @page { size: A4 landscape; margin: 0; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -185,7 +231,7 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none !important; margin: 0 !important; display: none !important; }
         input[type=number] { -moz-appearance: textfield !important; }
 
-        .page { width: 297mm; height: 210mm; background-color: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm; box-shadow: 0 0 10px rgba(0,0,0,0.3); position: relative; overflow: hidden; page-break-after: always; border-radius: 0; }
+        .page { width: 297mm; height: 210mm; background-color: #fff; margin: 0 auto 20px auto; padding: 5mm 8mm; box-shadow: 0 15px 40px rgba(0,0,0,0.2); position: relative; overflow: hidden; page-break-after: always; border-radius: 8px; }
         .page:last-child { page-break-after: auto; }
         .page::before { content: "حواله ی دستی"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-35deg); font-size: 120px; font-weight: bold; color: rgba(0, 0, 0, 0.03); white-space: nowrap; pointer-events: none; z-index: 0; }
         .content { position: relative; z-index: 1; width: 100%; height: 100%; display: flex; flex-direction: column; }
@@ -217,8 +263,8 @@
         .autocomplete-dropdown li { padding: 6px 10px; cursor: pointer; border-bottom: 1px solid #eee; font-size: 13px; }
         .autocomplete-dropdown li:hover { background-color: #f0f0f0; font-weight: bold; }
         .btn-row-del { background: #ef4444; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 6px; font-size: 12px; }
-        .btn-add-row { background: #3b82f6; color: white; border: none; padding: 8px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; font-family: inherit; width: 100%; margin-top: 8px; transition: 0.2s; }
-        .btn-add-row:hover { background: #2563eb; }
+        .btn-add-row { background: #3b82f6; color: white; border: none; padding: 8px 15px; font-size: 14px; font-weight: bold; cursor: pointer; border-radius: 6px; font-family: inherit; width: 100%; margin-top: 8px; transition: var(--transition-smooth); }
+        .btn-add-row:hover { background: #2563eb; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(59,130,246,0.3); }
         .footer-table-w { margin-top: 5px; }
         .footer-row-1 td { text-align: right; padding-right: 10px; font-weight: bold; height: 30px; }
         .footer-row-2 td { text-align: right; padding-right: 10px; height: 28px; }
@@ -227,292 +273,246 @@
         @media print {
             body { background-color: #fff; padding: 0; }
             .page { box-shadow: none; margin: 0; padding: 4mm 8mm; width: 100%; height: 100%; border-radius: 0;}
-            .no-print, .window-frame, #installLockScreen, #loginScreen, .waybill-toolbar, .autocomplete-dropdown { display: none !important; }
+            .no-print, .window-frame, #loginScreen, .waybill-toolbar, .autocomplete-dropdown, .dashboard-header { display: none !important; }
             #waybillView { position: static; background: transparent; padding: 0; overflow: visible; }
             select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-image: none !important; }
         }
-
-        /* مودال تاییدیه */
-        #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 99998; display: flex; justify-content: center; align-items: center; }
-        .confirm-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 350px; }
-        .confirm-header { background: linear-gradient(to right, var(--title-bar-start), var(--title-bar-end)); color: white; padding: 5px; font-weight: bold; font-size: 12px; }
-        .confirm-body { background: #fff; padding: 20px; margin: 5px; border: 1px solid var(--border-dark); text-align: center; font-size: 13px; font-weight: bold;}
-        .confirm-actions { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
-        .confirm-actions button { padding: 5px 20px; background: #d4d0c8; border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); cursor: pointer; font-family: inherit; font-weight: bold;}
-
-        #toastContainer { position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); padding: 10px 20px; font-weight: bold; font-size: 13px; box-shadow: 3px 3px 10px rgba(0,0,0,0.2); }
-        .toast.success { background: #d4edda; color: #155724; }
-        .toast.error { background: #f8d7da; color: #721c24; }
     </style>
 </head>
 <body>
 
-    <!-- 1. صفحه قفل نصب -->
-    <div id="installLockScreen" class="hidden">
-        <div class="install-box">
-            <div class="title-bar">
-                <span>نصب برنامه - سی تک پارسیان</span>
-                <div class="title-bar-controls"><span>X</span></div>
-            </div>
-            <div class="install-content">
-                <div class="install-icon">⚠️</div>
-                <p style="font-size: 13px; font-weight: bold; margin-bottom: 15px;">جهت استفاده از سیستم، ابتدا باید برنامه را نصب کنید.</p>
-                
-                <button id="btnInstallPWA" class="btn-install">📥 نصب برنامه روی دستگاه</button>
-                
-                <!-- راهنمای نصب دستی (اگر مرورگر نصب خودکار را پشتیبانی نکند) -->
-                <div id="manualInstallGuide" class="install-help">
-                    <b>راهنمای نصب:</b><br>
-                    مرورگر شما از نصب خودکار پشتیبانی نمی‌کند. لطفاً برای نصب:
-                    <br>۱. روی منوی <b>سه نقطه (⋮)</b> در بالای مرورگر کلیک کنید.
-                    <br>۲. گزینه <b>Install App</b> یا <b>Save and Share > Install</b> یا <b>نصب برنامه</b> را انتخاب کنید.
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2. صفحه لاگین -->
+    <!-- 1. صفحه لاگین (طراحی مدرن) -->
     <div id="loginScreen" class="hidden">
-        <div class="login-box">
-            <div class="login-header">ورود به سیستم - سی تک پارسیان</div>
-            <div class="login-body">
-                
-                <!-- 🟢 درج لوگوی اختصاصی در صفحه لاگین -->
-                <div class="login-logo-container">
-                    <svg viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="10" y="10" width="25" height="60" fill="#000" />
-                        <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
-                        <text x="45" y="45" font-family="Tahoma, Arial, sans-serif" font-weight="900" font-size="28" fill="#000" letter-spacing="1">SEETEC</text>
-                        <text x="45" y="65" font-family="Tahoma, Arial, sans-serif" font-weight="bold" font-size="13" fill="#444">Persian Flooring</text>
-                    </svg>
-                    <div class="login-logo-text">شرکت کفپوش سی تک پارسیان</div>
-                </div>
-
-                <div class="form-group">
-                    <label>نام کاربری:</label>
-                    <select id="loginUsername">
-                        <option value="mojtaba">مجتبی بیاتی (فروش)</option>
-                        <option value="mehdi">مهدی شیبک (انبار)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>رمز عبور:</label>
-                    <input type="password" id="loginPassword" maxlength="4" placeholder="****">
-                </div>
-                <button class="btn-login" id="btnLogin" onclick="doLogin()">ورود</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. تغییر رمز اجباری -->
-    <div id="changePassScreen" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99998; display:flex; justify-content:center; align-items:center;">
-        <div class="login-box">
-            <div class="login-header" style="background: linear-gradient(to right, #a80000, #ff6b6b);">تغییر رمز اجباری</div>
-            <div class="login-body">
-                <p style="font-size: 12px; margin-bottom: 15px; text-align: center;">بیش از ۳۰ روز از تغییر رمز گذشته است. رمز جدید (۴ رقمی) وارد کنید.</p>
-                <div class="form-group">
-                    <label>رمز جدید:</label>
-                    <input type="password" id="newPassword" maxlength="4" style="text-align:center; letter-spacing:5px;">
-                </div>
-                <button class="btn-login" onclick="changePassword()">ثبت رمز</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. برنامه اصلی (پنجره ERP) -->
-    <div id="appMain" class="window-frame hidden">
-        
-        <!-- نوار عنوان -->
-        <div class="title-bar">
-            <div class="title-bar-brand">
-                <svg style="height: 20px; width: auto;" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="25" height="60" fill="#fff" />
-                    <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="#0a246a" stroke-width="3" fill="none" />
-                    <text x="45" y="55" font-family="Tahoma, Arial, sans-serif" font-weight="900" font-size="32" fill="#fff" letter-spacing="1">SEETEC</text>
-                </svg>
-                <span style="margin-right: 5px;">| سیستم مدیریت حواله</span>
-            </div>
-            <div class="title-bar-controls">
-                <span>_</span><span>□</span><span style="background:#e81123; color:white;" onclick="logout()">X</span>
-            </div>
-        </div>
-
-        <!-- منوی اصلی -->
-        <div class="menu-bar">
-            <button class="menu-btn active">حواله‌ها</button>
-            <button class="menu-btn" onclick="startNewWaybill()">صدور حواله</button>
-            <button class="menu-btn" onclick="logout()">خروج از سیستم</button>
-        </div>
-
-        <!-- بدنه اصلی -->
-        <div class="workspace-body">
+        <div class="login-card">
             
-            <!-- میزکار -->
-            <div class="main-workspace">
-                <div id="dashboardView">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #d4d0c8; padding: 5px; border: 1px solid #999;">
-                        <span style="font-weight: bold; font-size: 13px;" id="welcomeTitle">لیست حواله‌ها</span>
-                        <div style="display: flex; gap: 5px;">
-                            <input type="text" id="dashboardSearch" placeholder="جستجو..." style="padding: 3px; font-family: inherit; border: 1px solid #999;" oninput="renderDashboardTable()">
-                            <select id="dashboardFilter" style="padding: 3px; font-family: inherit; border: 1px solid #999;" onchange="renderDashboardTable()">
-                                <option value="all">همه وضعیت‌ها</option>
-                                <option value="draft">پیش‌نویس</option>
-                                <option value="pending">در انتظار انبار</option>
-                                <option value="checked">کنترل شده</option>
-                                <option value="returned">برگشتی</option>
-                            </select>
-                        </div>
-                    </div>
+            <!-- لوگوی اختصاصی مدرن -->
+            <svg class="login-logo" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="25" height="60" fill="#000" />
+                <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
+                <text x="45" y="45" font-family="Vazirmatn, Tahoma, Arial, sans-serif" font-weight="900" font-size="28" fill="#000" letter-spacing="1">SEETEC</text>
+                <text x="45" y="65" font-family="Vazirmatn, Tahoma, Arial, sans-serif" font-weight="bold" font-size="13" fill="#444">Persian Flooring</text>
+            </svg>
+            <div class="login-subtitle">شرکت کفپوش سی تک پارسیان</div>
 
-                    <table class="erp-grid">
-                        <thead>
-                            <tr>
-                                <th width="5%">ردیف</th>
-                                <th width="20%">شماره حواله</th>
-                                <th width="20%">تاریخ</th>
-                                <th width="20%">وضعیت</th>
-                                <th width="20%">عملیات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="waybillListBody"></tbody>
-                    </table>
+            <div class="input-group">
+                <label>نام کاربری</label>
+                <select id="loginUsername">
+                    <option value="mojtaba">مجتبی بیاتی (فروش)</option>
+                    <option value="mehdi">مهدی شیبک (انبار)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>رمز عبور (۴ رقمی)</label>
+                <input type="password" id="loginPassword" maxlength="4" placeholder="****" style="letter-spacing: 5px; text-align: center;">
+            </div>
+            <button class="btn-login" id="btnLogin" onclick="doLogin()">ورود به سیستم</button>
+        </div>
+    </div>
+
+    <!-- 2. تغییر رمز اجباری -->
+    <div id="changePassScreen" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.5); backdrop-filter:blur(10px); z-index:99998; display:flex; justify-content:center; align-items:center;">
+        <div class="confirm-box" style="text-align:right;">
+            <h3 style="margin-bottom: 20px; color: var(--danger); text-align:center; font-size: 22px;">تغییر رمز اجباری</h3>
+            <p style="text-align:center; margin-bottom:25px; font-size:14px; color:var(--text-light);">بیش از ۳۰ روز از تغییر رمز شما گذشته است. لطفاً رمز جدیدی (۴ رقمی) وارد کنید.</p>
+            <div class="input-group">
+                <label>رمز عبور جدید (۴ عدد)</label>
+                <input type="password" id="newPassword" maxlength="4" style="text-align:center; letter-spacing:10px; font-size:22px; border:2px solid #e2e8f0; padding:15px; border-radius:12px;">
+            </div>
+            <button class="btn-login" onclick="changePassword()" style="margin-top: 15px;">ثبت رمز جدید</button>
+        </div>
+    </div>
+
+    <!-- 3. برنامه اصلی -->
+    <div id="appMain" class="hidden">
+        
+        <!-- هدر داشبورد -->
+        <div class="dashboard-header no-print">
+            <div class="header-brand">
+                <svg viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="25" height="60" fill="#7c3aed" />
+                    <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
+                    <text x="45" y="55" font-family="Vazirmatn, Tahoma, Arial, sans-serif" font-weight="900" font-size="32" fill="#7c3aed" letter-spacing="1">SEETEC</text>
+                </svg>
+                <span>مدیریت حواله</span>
+            </div>
+            <div class="user-info">
+                <button class="btn-logout" onclick="logout()">خروج</button>
+                <div class="user-icon">👤</div>
+                <span id="userNameDisplay"></span>
+            </div>
+        </div>
+
+        <!-- داشبورد -->
+        <div id="dashboardView" class="dashboard-content">
+            <div class="dashboard-top">
+                <div class="welcome-text">
+                    <h1 id="welcomeTitle">داشبورد مدیریت</h1>
+                    <p id="welcomeSubtitle">خلاصه‌ای از فعالیت‌های شما</p>
                 </div>
+                <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:12px 24px; font-size:15px;">➕ صدور حواله جدید</button>
+            </div>
 
-                <!-- فرم حواله -->
-                <div id="waybillView" class="hidden">
-                    <div class="waybill-toolbar">
-                        <button class="btn-classic" onclick="showDashboard()">بازگشت</button>
-                        <button class="btn-classic" id="btnSaveDraft" onclick="saveWaybill('draft')">ذخیره پیش‌نویس</button>
-                        <button class="btn-classic" id="btnSendToWarehouse" onclick="saveWaybill('pending')">ارسال به انبار</button>
-                        <button class="btn-classic" id="btnCheckWarehouse" onclick="saveWaybill('checked')">کنترل انبار شد</button>
-                        <button class="btn-classic" id="btnReturn" onclick="saveWaybill('returned')">برگشت به فروش</button>
-                        <button class="btn-classic" id="btnPrint" onclick="prepareAndPrint()">پرینت / PDF</button>
-                        <button class="btn-classic" id="btnShare" onclick="shareWaybill()">ارسال فایل</button>
+            <!-- کارت‌های آماری -->
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-info">
+                        <h3>کل حواله‌ها</h3>
+                        <div class="number" id="statTotal">0</div>
                     </div>
-                    <div id="pdfContainer">
-                        <div id="pagesContainer">
-                            <div class="page">
-                                <div class="content">
-                                    <table class="w-table header-table">
-                                        <tr>
-                                            <td class="header-right">
-                                                شماره حواله : <input type="text" id="waybillNumber" class="form-input ltr-input" readonly style="font-weight: bold; width: 100px;"><br>
-                                                تاریخ : <input type="text" id="waybillDate" class="h-input form-input ltr-input" style="width: 100px;" readonly><br>
-                                                نام انبار : 
-                                                <select id="warehouseSelect" class="h-input form-input" style="width: 220px;" onchange="handleWarehouseChange(this)">
-                                                    <option value="si-tak">انبار محصول سی تک - خط هایگلاس</option>
-                                                    <option value="kafpoosh">انبار محصول کفپوش - خط ملامینه</option>
-                                                </select><br>
-                                                <div class="customer-wrapper">
-                                                    <span style="margin-left: 2px;">نام مشتری :</span>
-                                                    <select id="customerName" class="h-input form-input" style="width: auto; max-width: 140px; text-align: right;">
-                                                        <option value="">-- انتخاب --</option>
-                                                        <option value="امیرعلی عشوری">امیرعلی عشوری</option>
-                                                        <option value="حسن شعبانی">حسن شعبانی</option>
-                                                        <option value="حسن شعبانی پارتیکلایی">حسن شعبانی پارتیکلایی</option>
-                                                        <option value="حسین یوسفی">حسین یوسفی</option>
-                                                    </select>
-                                                    <select id="isOfficial" class="h-input form-input">
-                                                        <option value=""></option>
-                                                        <option value="(رسمی)">(رسمی)</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td class="header-center">
-                                                <h2 class="company-title">سی تک پارسیان</h2>
-                                                <h3>حواله فروش</h3>
-                                                <div class="manual-text">(حواله ی دستی)</div>
-                                            </td>
-                                            <td class="header-left">
-                                                تاریخ پرینت گزارش : <input type="text" id="printDate" class="ltr-input" readonly><br>
-                                            </td>
-                                        </tr>
-                                    </table>
+                    <div class="stat-icon">📄</div>
+                </div>
+                <div class="stat-card pending">
+                    <div class="stat-info">
+                        <h3>در انتظار انبار</h3>
+                        <div class="number" id="statPending">0</div>
+                    </div>
+                    <div class="stat-icon">⏳</div>
+                </div>
+                <div class="stat-card checked">
+                    <div class="stat-info">
+                        <h3>کنترل شده</h3>
+                        <div class="number" id="statChecked">0</div>
+                    </div>
+                    <div class="stat-icon">✅</div>
+                </div>
+                <div class="stat-card returned">
+                    <div class="stat-info">
+                        <h3>برگشتی</h3>
+                        <div class="number" id="statReturned">0</div>
+                    </div>
+                    <div class="stat-icon">↩️</div>
+                </div>
+            </div>
 
-                                    <table class="info-table-w">
-                                        <tr>
-                                            <td>نام راننده : <input type="text" id="driverNameMain" class="driver-input h-input form-input" oninput="syncDriverName(this.value)"></td>
-                                            <td>نوع وسیله نقلیه : 
-                                                <select id="vehicleType" class="driver-input h-input form-input">
-                                                    <option value="خاور">خاور</option>
-                                                    <option value="تریلی">تریلی</option>
-                                                    <option value="کامیون">کامیون</option>
-                                                    <option value="نیسان">نیسان</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>شماره تماس راننده : <input type="text" id="driverPhone" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
-                                            <td>شماره ماشین : <input type="text" id="carPlate" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
-                                        </tr>
-                                    </table>
+            <!-- نوار جستجو -->
+            <div class="dashboard-toolbar">
+                <input type="text" id="dashboardSearch" class="search-input" placeholder="جستجو بر اساس شماره حواله..." oninput="renderDashboardTable()">
+                <select id="dashboardFilter" class="filter-select" onchange="renderDashboardTable()">
+                    <option value="all">همه وضعیت‌ها</option>
+                    <option value="draft">پیش‌نویس</option>
+                    <option value="pending">در انتظار انبار</option>
+                    <option value="checked">کنترل شده</option>
+                    <option value="returned">برگشتی</option>
+                </select>
+            </div>
 
-                                    <table class="main-table-w">
-                                        <thead id="mainTableHead"></thead>
-                                        <tbody class="table-body"></tbody>
-                                    </table>
-                                    
-                                    <div id="addRowContainer" style="margin-top: 8px;">
-                                        <button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>
-                                    </div>
+            <!-- جدول حواله‌ها -->
+            <div class="waybill-list-container waybill-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>شماره حواله</th>
+                            <th>تاریخ ثبت</th>
+                            <th>وضعیت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="waybillListBody"></tbody>
+                </table>
+            </div>
+        </div>
 
-                                    <table class="footer-table-w">
-                                        <tr class="footer-row-1">
-                                            <td colspan="4">
-                                                کالای فوق صحیح و سالم به آقای <input type="text" id="driverNameFooter" class="form-input" style="border: none; text-align: center; width: 120px;"> تحویل و از کارخانه کفپوش سی تک پارسیان خارج گردید.
-                                            </td>
-                                        </tr>
-                                        <tr class="footer-row-2">
-                                            <td colspan="4">شرح سند: <input type="text" id="documentDesc" class="form-input" style="width: 85%; text-align: right;"></td>
-                                        </tr>
-                                        <tr class="signature-row">
-                                            <td>امضاء و اثر انگشت راننده :</td>
-                                            <td>امضاء راننده لیفتراک :</td>
-                                            <td>امضاء انباردار :</td>
-                                            <td>امضاء مدیریت :</td>
-                                        </tr>
-                                    </table>
-                                </div>
+        <!-- فرم حواله (دست‌نخورده) -->
+        <div id="waybillView" class="hidden">
+            <div class="tabs-container no-print">
+                <div class="toolbar" id="mainToolbar">
+                    <button class="btn btn-dark" id="btnBackToDash" onclick="showDashboard()">🔙 بازگشت</button>
+                    <button class="btn btn-success" id="btnSaveDraft" onclick="saveWaybill('draft')">💾 ذخیره پیش‌نویس</button>
+                    <button class="btn btn-primary" id="btnSendToWarehouse" onclick="saveWaybill('pending')">📤 ارسال به انبار</button>
+                    <button class="btn btn-success" id="btnCheckWarehouse" onclick="saveWaybill('checked')">✅ کنترل انبار شد</button>
+                    <button class="btn btn-edit" id="btnReturn" onclick="saveWaybill('returned')">↩️ برگشت به فروش</button>
+                    <button class="btn btn-dark" id="btnPrint" onclick="prepareAndPrint()">🖨️ پرینت / PDF</button>
+                    <button class="btn btn-share" id="btnShare" onclick="shareWaybill()">📤 ارسال فایل</button>
+                </div>
+            </div>
+
+            <div id="pdfContainer">
+                <div id="pagesContainer">
+                    <div class="page">
+                        <div class="content">
+                            <table class="w-table header-table">
+                                <tr>
+                                    <td class="header-right">
+                                        شماره حواله : <input type="text" id="waybillNumber" class="form-input ltr-input" readonly style="font-weight: bold; width: 100px;"><br>
+                                        تاریخ : <input type="text" id="waybillDate" class="h-input form-input ltr-input" style="width: 100px;" readonly><br>
+                                        نام انبار : 
+                                        <select id="warehouseSelect" class="h-input form-input" style="width: 220px;" onchange="handleWarehouseChange(this)">
+                                            <option value="si-tak">انبار محصول سی تک - خط هایگلاس</option>
+                                            <option value="kafpoosh">انبار محصول کفپوش - خط ملامینه</option>
+                                        </select><br>
+                                        <div class="customer-wrapper">
+                                            <span style="margin-left: 2px;">نام مشتری :</span>
+                                            <select id="customerName" class="h-input form-input" style="width: auto; max-width: 140px; text-align: right;">
+                                                <option value="">-- انتخاب --</option>
+                                                <option value="امیرعلی عشوری">امیرعلی عشوری</option>
+                                                <option value="حسن شعبانی">حسن شعبانی</option>
+                                                <option value="حسن شعبانی پارتیکلایی">حسن شعبانی پارتیکلایی</option>
+                                                <option value="حسین یوسفی">حسین یوسفی</option>
+                                            </select>
+                                            <select id="isOfficial" class="h-input form-input">
+                                                <option value=""></option>
+                                                <option value="(رسمی)">(رسمی)</option>
+                                            </select>
+                                        </div>
+                                    </td>
+                                    <td class="header-center">
+                                        <h2 class="company-title">سی تک پارسیان</h2>
+                                        <h3>حواله فروش</h3>
+                                        <div class="manual-text">(حواله ی دستی)</div>
+                                    </td>
+                                    <td class="header-left">
+                                        تاریخ پرینت گزارش : <input type="text" id="printDate" class="ltr-input" readonly><br>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table class="info-table-w">
+                                <tr>
+                                    <td>نام راننده : <input type="text" id="driverNameMain" class="driver-input h-input form-input" oninput="syncDriverName(this.value)"></td>
+                                    <td>نوع وسیله نقلیه : 
+                                        <select id="vehicleType" class="driver-input h-input form-input">
+                                            <option value="خاور">خاور</option>
+                                            <option value="تریلی">تریلی</option>
+                                            <option value="کامیون">کامیون</option>
+                                            <option value="نیسان">نیسان</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>شماره تماس راننده : <input type="text" id="driverPhone" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
+                                    <td>شماره ماشین : <input type="text" id="carPlate" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
+                                </tr>
+                            </table>
+
+                            <table class="main-table-w">
+                                <thead id="mainTableHead"></thead>
+                                <tbody class="table-body"></tbody>
+                            </table>
+                            
+                            <div id="addRowContainer" style="margin-top: 8px;">
+                                <button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>
                             </div>
+
+                            <table class="footer-table-w">
+                                <tr class="footer-row-1">
+                                    <td colspan="4">
+                                        کالای فوق صحیح و سالم به آقای <input type="text" id="driverNameFooter" class="form-input" style="border: none; text-align: center; width: 120px;"> تحویل و از کارخانه کفپوش سی تک پارسیان خارج گردید.
+                                    </td>
+                                </tr>
+                                <tr class="footer-row-2">
+                                    <td colspan="4">شرح سند: <input type="text" id="documentDesc" class="form-input" style="width: 85%; text-align: right;"></td>
+                                </tr>
+                                <tr class="signature-row">
+                                    <td>امضاء و اثر انگشت راننده :</td>
+                                    <td>امضاء راننده لیفتراک :</td>
+                                    <td>امضاء انباردار :</td>
+                                    <td>امضاء مدیریت :</td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- پنل کناری -->
-            <div class="sidebar">
-                
-                <fieldset>
-                    <legend>اطلاعات کاربر</legend>
-                    <table class="info-table">
-                        <tr><td>نام کاربر:</td><td id="userNameDisplay"></td></tr>
-                        <tr><td>نوع کاربر:</td><td id="userRoleDisplay"></td></tr>
-                        <tr><td>وضعیت اتصال:</td><td style="color:green; font-weight:bold;">آنلاین</td></tr>
-                        <tr><td>تاریخ سیستم:</td><td id="sysDateDisplay"></td></tr>
-                    </table>
-                </fieldset>
-
-                <fieldset>
-                    <legend>فرآیندهای مجاز برای شما</legend>
-                    <ul class="process-list">
-                        <li><a href="#" onclick="startNewWaybill()">• صدور حواله جدید</a></li>
-                        <li><a href="#" onclick="showDashboard()">• مشاهده لیست حواله‌ها</a></li>
-                    </ul>
-                </fieldset>
-
-                <fieldset>
-                    <legend>خلاصه وضعیت</legend>
-                    <table class="info-table">
-                        <tr><td>کل حواله‌ها:</td><td id="statTotal">0</td></tr>
-                        <tr><td>در انتظار انبار:</td><td id="statPending">0</td></tr>
-                        <tr><td>کنترل شده:</td><td id="statChecked">0</td></tr>
-                        <tr><td>برگشتی:</td><td id="statReturned">0</td></tr>
-                    </table>
-                </fieldset>
-
-            </div>
-
         </div>
     </div>
 
@@ -522,65 +522,19 @@
     <!-- مودال تاییدیه -->
     <div id="customConfirmModal" class="hidden">
         <div class="confirm-box">
-            <div class="confirm-header">تاییدیه سیستم</div>
-            <div class="confirm-body">
-                <p id="confirmMessage">آیا مطمئن هستید؟</p>
-                <div class="confirm-actions">
-                    <button onclick="confirmResolve(true)">بله</button>
-                    <button onclick="confirmResolve(false)">خیر</button>
-                </div>
+            <p id="confirmMessage">آیا مطمئن هستید؟</p>
+            <div class="confirm-actions">
+                <button class="btn-yes" onclick="confirmResolve(true)">بله</button>
+                <button class="btn-no" onclick="confirmResolve(false)">خیر</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. سیستم PWA (نصب هوشمند و جایگزین) ---
-        let deferredPrompt;
-        const installLockScreen = document.getElementById('installLockScreen');
-        const btnInstallPWA = document.getElementById('btnInstallPWA');
-        const manualInstallGuide = document.getElementById('manualInstallGuide');
-
+        // --- 1. Service Worker برای PWA ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err)); });
         }
-
-        function checkInstallStatus() {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            const isDevMode = window.location.search.includes('dev=true');
-
-            if (isStandalone || isDevMode) {
-                installLockScreen.classList.add('hidden');
-                showScreen('loginScreen');
-            } else {
-                installLockScreen.classList.remove('hidden');
-            }
-        }
-
-        // گرفتن رویداد نصب
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            manualInstallGuide.style.display = 'none';
-        });
-
-        // دکمه نصب
-        btnInstallPWA.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                // اگر مرورگر از نصب خودکار پشتیبانی می‌کند:
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') console.log('Installed');
-                deferredPrompt = null;
-            } else {
-                // اگر مرورگر پشتیبانی نمی‌کند (یا هنوز آماده نیست):
-                // راهنمای دستی را نشان بده
-                manualInstallGuide.style.display = 'block';
-                btnInstallPWA.style.display = 'none';
-            }
-        });
-
-        window.addEventListener('appinstalled', () => { window.location.reload(); });
-        document.addEventListener('DOMContentLoaded', checkInstallStatus);
 
         // --- 2. متغیرهای اصلی ---
         const SUPABASE_URL = "https://sizebshjcwiumclcbsrg.supabase.co";
@@ -708,7 +662,7 @@
             const screens = ['loginScreen', 'changePassScreen', 'appMain'];
             screens.forEach(id => {
                 const el = document.getElementById(id);
-                if (id === screenId) { el.classList.remove('hidden'); }
+                if (id === screenId) { el.classList.remove('hidden'); el.style.animation = 'fadeIn 0.5s ease'; }
                 else { el.classList.add('hidden'); }
             });
         }
@@ -720,9 +674,10 @@
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            toast.innerText = message;
+            let icon = 'ℹ️'; if(type === 'success') icon = '✅'; if(type === 'error') icon = '❌';
+            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
             container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3000);
+            setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 400); }, 3000);
         }
 
         function customConfirm(message) {
@@ -741,32 +696,24 @@
             const password = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
 
-            if (!password || password.length !== 4) {
-                showToast('رمز عبور باید ۴ رقم باشد.', 'error');
-                return;
-            }
+            if (!password || password.length !== 4) { showToast('رمز عبور باید ۴ رقم باشد.', 'error'); return; }
 
-            btn.innerText = 'در حال بررسی...';
-            btn.disabled = true;
+            btn.innerText = 'در حال بررسی...'; btn.disabled = true;
 
             const { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).eq('password', password).single();
 
             if (error || !user) {
                 showToast('نام کاربری یا رمز عبور اشتباه است.', 'error');
-                btn.innerText = 'ورود';
-                btn.disabled = false;
+                btn.innerText = 'ورود به سیستم'; btn.disabled = false;
                 return;
             }
 
             const lastChange = new Date(user.last_password_change);
-            const now = new Date();
-            const diffDays = Math.floor((now - lastChange) / (1000 * 60 * 60 * 24));
+            const diffDays = Math.floor((new Date() - lastChange) / (1000 * 60 * 60 * 24));
 
             if (diffDays >= 30) {
-                currentUser = user; 
-                showScreen('changePassScreen');
-                btn.innerText = 'ورود';
-                btn.disabled = false;
+                currentUser = user; showScreen('changePassScreen');
+                btn.innerText = 'ورود به سیستم'; btn.disabled = false;
             } else {
                 completeLogin(user);
             }
@@ -774,53 +721,45 @@
 
         async function completeLogin(user) {
             currentUser = user;
-            document.getElementById('userNameDisplay').innerText = user.username === 'mojtaba' ? 'مجتبی بیاتی' : 'مهدی شیبک';
-            document.getElementById('userRoleDisplay').innerText = user.role === 'sales' ? 'کارشناس فروش' : 'انباردار';
-            document.getElementById('sysDateDisplay').innerText = getTodayEnglishDate();
+            document.getElementById('userNameDisplay').innerText = user.username === 'mojtaba' ? 'مجتبی بیاتی (فروش)' : 'مهدی شیبک (انبار)';
             
-            showScreen('appMain');
-            document.getElementById('btnLogin').innerText = 'ورود';
-            document.getElementById('btnLogin').disabled = false;
+            if (user.role === 'sales') {
+                document.getElementById('btnCreateNew').style.display = 'block';
+                document.getElementById('welcomeTitle').innerText = 'داشبورد کارشناس فروش';
+                document.getElementById('welcomeSubtitle').innerText = 'مدیریت حواله‌های صادر شده توسط شما';
+            } else {
+                document.getElementById('btnCreateNew').style.display = 'none';
+                document.getElementById('welcomeTitle').innerText = 'داشبورد انباردار';
+                document.getElementById('welcomeSubtitle').innerText = 'حواله‌های در انتظار کنترل و بارگیری';
+            }
 
-            updateDashboardStats();
-            renderDashboardTable();
+            showScreen('appMain');
+            document.getElementById('btnLogin').innerText = 'ورود به سیستم'; document.getElementById('btnLogin').disabled = false;
+
+            updateDashboardStats(); renderDashboardTable();
 
             try {
                 const [waybillsRes, productsRes] = await Promise.all([
                     supabaseClient.from('waybills').select('*').order('id', { ascending: false }),
                     supabaseClient.from('products').select('*')
                 ]);
-
-                if (waybillsRes.data) {
-                    allWaybills = user.role === 'warehouse' 
-                        ? waybillsRes.data.filter(w => ['pending', 'checked'].includes(w.status))
-                        : waybillsRes.data;
-                }
-                
+                if (waybillsRes.data) allWaybills = user.role === 'warehouse' ? waybillsRes.data.filter(w => ['pending', 'checked'].includes(w.status)) : waybillsRes.data;
                 if (productsRes.data) {
                     products = productsRes.data;
                     if (products.length === 0) await seedDefaultProducts();
                 }
-
-                updateDashboardStats();
-                renderDashboardTable();
-                showToast('ورود موفقیت‌آمیز بود', 'success');
-            } catch (err) {
-                showToast('خطا در ارتباط با سرور', 'error');
-            }
+                updateDashboardStats(); renderDashboardTable();
+                showToast(`خوش آمدید ${user.username === 'mojtaba' ? 'مجتبی' : 'مهدی'}`, 'success');
+            } catch (err) { showToast('خطا در ارتباط با سرور', 'error'); }
         }
 
         async function seedDefaultProducts() {
             const defaultProducts = [];
             kafpooshProducts.forEach(p => defaultProducts.push({ code: p.code, name: p.name, type: "kafpoosh" }));
             highglossProducts.forEach(p => defaultProducts.push({ code: p.code, name: "ورق ام دی اف هایگلاس " + p.name, type: "highgloss" }));
-            
             showToast('در حال افزودن لیست اولیه کالاها...', 'info');
             const { data, error } = await supabaseClient.from('products').insert(defaultProducts).select();
-            if (!error && data) {
-                products = data;
-                showToast('لیست کالاها با موفقیت اضافه شد.', 'success');
-            }
+            if (!error && data) { products = data; showToast('لیست کالاها با موفقیت اضافه شد.', 'success'); }
         }
 
         async function changePassword() {
@@ -829,32 +768,23 @@
             if (newPass === currentUser.password) { showToast('رمز جدید نباید با قبلی یکسان باشد.', 'error'); return; }
 
             const { error } = await supabaseClient.from('users').update({
-                previous_password: currentUser.password,
-                password: newPass,
-                last_password_change: new Date().toISOString()
+                previous_password: currentUser.password, password: newPass, last_password_change: new Date().toISOString()
             }).eq('id', currentUser.id);
 
             if (error) { showToast('خطا در تغییر رمز!', 'error'); showScreen('loginScreen'); return; }
-            currentUser.password = newPass;
-            showToast('رمز تغییر یافت.', 'success');
-            completeLogin(currentUser);
+            currentUser.password = newPass; showToast('رمز تغییر یافت.', 'success'); completeLogin(currentUser);
         }
 
         function logout() {
-            currentUser = null;
-            document.getElementById('loginPassword').value = '';
-            showScreen('loginScreen');
+            currentUser = null; document.getElementById('loginPassword').value = ''; showScreen('loginScreen');
         }
 
         async function loadWaybills() {
             let query = supabaseClient.from('waybills').select('*').order('id', { ascending: false });
             if (currentUser.role === 'warehouse') query = query.in('status', ['pending', 'checked']);
-            
             const { data: waybills, error } = await query;
             if (error) return;
-            allWaybills = waybills || [];
-            updateDashboardStats();
-            renderDashboardTable();
+            allWaybills = waybills || []; updateDashboardStats(); renderDashboardTable();
         }
 
         function updateDashboardStats() {
@@ -877,25 +807,23 @@
             });
 
             if(filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#666;">داده‌ای یافت نشد.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#94a3b8; font-size:15px;">هیچ حواله‌ای یافت نشد.</td></tr>`;
                 return;
             }
 
-            let rowNum = 1;
             filtered.forEach(w => {
-                let statusClass = '', statusText = '';
-                if (w.status === 'draft') { statusClass = 'bg-draft'; statusText = 'پیش‌نویس'; }
-                else if (w.status === 'pending') { statusClass = 'bg-pending'; statusText = 'در انتظار انبار'; }
-                else if (w.status === 'checked') { statusClass = 'bg-checked'; statusText = 'کنترل شده'; }
-                else if (w.status === 'returned') { statusClass = 'bg-returned'; statusText = 'برگشت خورده'; }
+                let badgeClass = '', statusText = '';
+                if (w.status === 'draft') { badgeClass = 'badge-draft'; statusText = 'پیش‌نویس'; }
+                else if (w.status === 'pending') { badgeClass = 'badge-pending'; statusText = 'در انتظار انبار'; }
+                else if (w.status === 'checked') { badgeClass = 'badge-checked'; statusText = 'کنترل شده'; }
+                else if (w.status === 'returned') { badgeClass = 'badge-returned'; statusText = 'برگشت خورده'; }
 
                 tbody.innerHTML += `
                     <tr>
-                        <td>${rowNum++}</td>
-                        <td style="font-weight:bold; font-family:Tahoma;">${w.waybill_number}</td>
-                        <td>${w.created_at.substring(0, 10)}</td>
-                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
-                        <td><button class="btn-classic" style="padding:2px 8px;" onclick="openWaybill(${w.id})">انتخاب</button></td>
+                        <td style="font-weight:900; font-family:Tahoma; font-size:15px;">${w.waybill_number}</td>
+                        <td style="font-weight:700;">${w.created_at.substring(0, 10)}</td>
+                        <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                        <td><button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button></td>
                     </tr>
                 `;
             });
@@ -1031,20 +959,20 @@
             });
 
             if (currentUser.role === 'sales') {
-                document.getElementById('btnPrint').style.display = 'block';
-                document.getElementById('btnShare').style.display = 'block';
+                document.getElementById('btnPrint').style.display = 'flex';
+                document.getElementById('btnShare').style.display = 'flex';
                 if (status === 'draft' || status === 'returned') {
-                    document.getElementById('btnSaveDraft').style.display = 'block';
-                    document.getElementById('btnSendToWarehouse').style.display = 'block';
+                    document.getElementById('btnSaveDraft').style.display = 'flex';
+                    document.getElementById('btnSendToWarehouse').style.display = 'flex';
                 }
             } else if (currentUser.role === 'warehouse') {
                 if (status === 'pending') {
-                    document.getElementById('btnCheckWarehouse').style.display = 'block';
-                    document.getElementById('btnReturn').style.display = 'block';
+                    document.getElementById('btnCheckWarehouse').style.display = 'flex';
+                    document.getElementById('btnReturn').style.display = 'flex';
                 } else if (status === 'checked') {
-                    document.getElementById('btnPrint').style.display = 'block';
-                    document.getElementById('btnShare').style.display = 'block';
-                    document.getElementById('btnReturn').style.display = 'block';
+                    document.getElementById('btnPrint').style.display = 'flex';
+                    document.getElementById('btnShare').style.display = 'flex';
+                    document.getElementById('btnReturn').style.display = 'flex';
                 }
             }
         }
@@ -1083,8 +1011,7 @@
                     const { data: settings } = await supabaseClient.from('settings').select('waybill_count').eq('id', 1).single();
                     let count = settings ? settings.waybill_count : 1;
                     const waybillNum = forceEnglish(`${count} (دستی)`);
-                    data.waybillDate = getTodayEnglishDate();
-                    data.printDate = data.waybillDate;
+                    data.waybillDate = getTodayEnglishDate(); data.printDate = data.waybillDate;
 
                     const { data: newW, error } = await supabaseClient.from('waybills').insert([{
                         waybill_number: waybillNum, status: newStatus, data: data, created_by: currentUser.username
@@ -1095,7 +1022,7 @@
                     document.getElementById('waybillNumber').value = waybillNum;
                     await supabaseClient.from('settings').update({ waybill_count: count + 1 }).eq('id', 1);
                 }
-                showToast('ذخیره شد.', 'success');
+                showToast('حواله با موفقیت ذخیره شد.', 'success');
                 showDashboard();
             } catch (err) { showToast('خطا در ذخیره!', 'error'); }
         }
@@ -1131,7 +1058,7 @@
             if (matches.length === 0) { dropdown.style.display = 'none'; return; }
             dropdown.innerHTML = '';
             matches.forEach(m => {
-                const li = document.createElement('li'); li.innerHTML = `<span style="font-family:Tahoma;">${m.code}</span> - ${m.name}`;
+                const li = document.createElement('li'); li.innerHTML = `<span style="font-family:Tahoma; font-weight:bold;">${m.code}</span> - ${m.name}`;
                 li.onclick = function() {
                     row.querySelector('.search-code').value = m.code; row.querySelector('.search-name').value = m.name; dropdown.style.display = 'none';
                     if (currentType === 'kafpoosh') { const chromSelect = row.querySelector('.chrom-select'); if (chromSelect) updateKafpooshCode(chromSelect); }
@@ -1157,7 +1084,7 @@
             }
 
             let duplicate = false;
-            if (!skipPrompt && !isReadOnlyMode) { duplicate = await customConfirm('اطلاعات ردیف قبل تکرار شود؟'); }
+            if (!skipPrompt && !isReadOnlyMode) { duplicate = await customConfirm('آیا مایلید اطلاعات ردیف قبل تکرار شود؟'); }
 
             let newTr = document.createElement('tr'); 
             if (duplicate && tbody.lastElementChild) {
@@ -1171,7 +1098,7 @@
         }
 
         async function deleteRow(btn) {
-            const userConfirmed = await customConfirm('حذف این ردیف؟');
+            const userConfirmed = await customConfirm('این ردیف حذف شود؟');
             if(userConfirmed) { let tr = btn.closest('tr'); tr.parentElement.removeChild(tr); renumberAllRows(); } 
         }
         
@@ -1185,10 +1112,13 @@
 
         async function shareWaybill() {
             prepareAndPrint();
-            setTimeout(() => {
-                alert('لطفا از پنجره پرینت باز شده، گزینه Save as PDF را انتخاب کنید.');
-            }, 500);
+            setTimeout(() => { alert('لطفا از پنجره پرینت باز شده، گزینه Save as PDF را انتخاب کنید.'); }, 500);
         }
+
+        // شروع برنامه
+        window.onload = () => {
+            showScreen('loginScreen');
+        };
     </script>
 </body>
 </html>
