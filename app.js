@@ -8,9 +8,11 @@ let supabaseClient = null;
 try {
     if (typeof supabase !== 'undefined') {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        keepSupabaseAlive(); // شروع فرآیند زنده نگه داشتن دیتابیس
     }
 } catch (e) { console.error("خطا در راه‌اندازی دیتابیس:", e); }
 
+// لیست‌های کالا
 const kafpooshProducts = [
     { code: "10", name: "ام دی اف ملامینه سفید - white" }, { code: "10", name: "ام دی اف ملامینه سفید تکرو - white one side" },
     { code: "12", name: "ام دی اف ملامینه کد 12 - KSP12" }, { code: "14", name: "ام دی اف ملامینه کد 14 - KSP14" },
@@ -88,9 +90,25 @@ let currentWarehouseType = 'si-tak';
 let allWaybills = []; 
 let products = [];
 let isReadOnlyMode = false; 
+let newAvatarBase64 = null;
 
 // =========================================
-// 2. توابع کمکی و مدیریت UI
+// 2. Heartbeat (زنده نگه داشتن سوپابیس)
+// =========================================
+function keepSupabaseAlive() {
+    // هر ۱۲ ساعت یک درخواست بسیار سبک به دیتابیس می‌فرستد تا از Sleep جلوگیری کند
+    setInterval(async () => {
+        if (supabaseClient) {
+            try {
+                await supabaseClient.from('settings').select('id').limit(1);
+                console.log("Supabase Pinged Successfully");
+            } catch (e) { console.log("Heartbeat Error:", e); }
+        }
+    }, 12 * 60 * 60 * 1000); // 12 ساعت
+}
+
+// =========================================
+// 3. توابع کمکی UI
 // =========================================
 function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
 function getTodayEnglishDate() { try { return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return forceEnglish(new Intl.DateTimeFormat('fa-IR').format(new Date())); } }
@@ -104,7 +122,6 @@ function showScreen(screenId) {
     });
 }
 
-// تابع جدید برای مدیریت تب‌ها (داشبورد / حواله)
 function showView(viewName, btnElement) {
     const dashboardView = document.getElementById('dashboardView');
     const waybillView = document.getElementById('waybillView');
@@ -114,7 +131,7 @@ function showView(viewName, btnElement) {
     if (viewName === 'dashboard') {
         dashboardView.classList.remove('hidden');
         waybillView.classList.add('hidden');
-        pageTitle.innerText = 'داشبورد مدیریت';
+        pageTitle.innerText = 'داشبورد';
         loadWaybills();
     } else if (viewName === 'waybill') {
         dashboardView.classList.add('hidden');
@@ -123,12 +140,8 @@ function showView(viewName, btnElement) {
     }
 
     navItems.forEach(item => item.classList.remove('active'));
-    if (btnElement) {
-        btnElement.classList.add('active');
-    } else {
-        // اگر دکمه‌ای پاس داده نشد (مثل دکمه بازگشت)، تب داشبورد را فعال کن
-        document.querySelector('.nav-item').classList.add('active');
-    }
+    if (btnElement) btnElement.classList.add('active');
+    else document.querySelector('.nav-item').classList.add('active');
 }
 
 function showToast(message, type = 'info') {
@@ -153,7 +166,92 @@ function customConfirm(message) {
 }
 
 // =========================================
-// 3. احراز هویت
+// 4. مدیریت پروفایل
+// =========================================
+function openProfileModal() {
+    document.getElementById('editUsername').value = currentUser.username;
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('editNewPassword').value = '';
+    newAvatarBase64 = null;
+    
+    const modalAvatar = document.getElementById('modalAvatar');
+    if (currentUser.avatar) {
+        modalAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar"><div class="avatar-overlay">تغییر عکس</div>`;
+    } else {
+        modalAvatar.innerHTML = `<span>👤</span><div class="avatar-overlay">تغییر عکس</div>`;
+    }
+    
+    document.getElementById('profileModal').classList.remove('hidden');
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').classList.add('hidden');
+}
+
+function uploadAvatar(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) { // حدکثر ۲ مگابایت
+        showToast('حجم عکس نباید بیشتر از ۲ مگابایت باشد.', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        newAvatarBase64 = e.target.result;
+        document.getElementById('modalAvatar').innerHTML = `<img src="${newAvatarBase64}" alt="Avatar"><div class="avatar-overlay">تغییر عکس</div>`;
+    };
+    reader.readAsDataURL(file);
+}
+
+async function saveProfileChanges() {
+    const newUsername = document.getElementById('editUsername').value.trim();
+    const currentPass = document.getElementById('currentPassword').value;
+    const newPass = document.getElementById('editNewPassword').value;
+    
+    if (!newUsername) { showToast('نام کاربری نمی‌تواند خالی باشد.', 'error'); return; }
+
+    let updates = { username: newUsername };
+    
+    // بررسی تغییر عکس
+    if (newAvatarBase64) updates.avatar = newAvatarBase64;
+
+    // بررسی تغییر رمز
+    if (newPass) {
+        if (newPass.length !== 4) { showToast('رمز جدید باید ۴ رقم باشد.', 'error'); return; }
+        if (!currentPass) { showToast('برای تغییر رمز، رمز فعلی را وارد کنید.', 'error'); return; }
+        if (currentPass !== currentUser.password) { showToast('رمز فعلی اشتباه است.', 'error'); return; }
+        
+        updates.password = newPass;
+        updates.previous_password = currentUser.password;
+        updates.last_password_change = new Date().toISOString();
+    }
+
+    try {
+        const { error } = await supabaseClient.from('users').update(updates).eq('id', currentUser.id);
+        if (error) throw error;
+        
+        showToast('پروفایل با موفقیت به‌روزرسانی شد.', 'success');
+        closeProfileModal();
+        
+        // آپدیت کاربر در حافظه
+        Object.assign(currentUser, updates);
+        updateUIProfile();
+    } catch (err) {
+        showToast('خطا در ذخیره تغییرات!', 'error');
+    }
+}
+
+function updateUIProfile() {
+    document.getElementById('userNameDisplay').innerText = currentUser.username === 'mojtaba' ? 'مجتبی بیاتی' : (currentUser.username === 'mehdi' ? 'مهدی شیبک' : currentUser.username);
+    
+    const avatarHTML = currentUser.avatar ? `<img src="${currentUser.avatar}">` : `👤`;
+    document.getElementById('sidebarAvatar').innerHTML = avatarHTML;
+}
+
+// =========================================
+// 5. احراز هویت و لاگین
 // =========================================
 async function doLogin() {
     if (!supabaseClient) { showToast('خطا: اتصال به دیتابیس برقرار نیست!', 'error'); return; }
@@ -170,7 +268,7 @@ async function doLogin() {
 
     if (error || !user) {
         showToast('نام کاربری یا رمز عبور اشتباه است.', 'error');
-        btn.innerText = 'ورود به پنل'; btn.disabled = false;
+        btn.innerText = 'ورود به حساب'; btn.disabled = false;
         return;
     }
 
@@ -179,7 +277,7 @@ async function doLogin() {
 
     if (diffDays >= 30) {
         currentUser = user; showScreen('changePassScreen');
-        btn.innerText = 'ورود به پنل'; btn.disabled = false;
+        btn.innerText = 'ورود به حساب'; btn.disabled = false;
     } else {
         completeLogin(user);
     }
@@ -187,18 +285,16 @@ async function doLogin() {
 
 async function completeLogin(user) {
     currentUser = user;
-    document.getElementById('userNameDisplay').innerText = user.username === 'mojtaba' ? 'مجتبی بیاتی' : 'مهدی شیبک';
-    document.getElementById('userRoleDisplay').innerText = user.role === 'sales' ? 'کارشناس فروش' : 'انباردار';
+    updateUIProfile();
+    
+    document.getElementById('userRoleDisplay').innerText = user.role === 'sales' ? 'فروش' : 'انباردار';
     document.getElementById('currentDateDisplay').innerText = getTodayEnglishDate();
     
-    if (user.role === 'sales') {
-        document.getElementById('navNewWaybill').style.display = 'flex';
-    } else {
-        document.getElementById('navNewWaybill').style.display = 'none';
-    }
+    if (user.role === 'sales') document.getElementById('navNewWaybill').style.display = 'flex';
+    else document.getElementById('navNewWaybill').style.display = 'none';
 
     showScreen('appMain');
-    document.getElementById('btnLogin').innerText = 'ورود به پنل'; document.getElementById('btnLogin').disabled = false;
+    document.getElementById('btnLogin').innerText = 'ورود به حساب'; document.getElementById('btnLogin').disabled = false;
 
     updateDashboardStats(); renderDashboardTable();
 
@@ -213,7 +309,7 @@ async function completeLogin(user) {
             if (products.length === 0) await seedDefaultProducts();
         }
         updateDashboardStats(); renderDashboardTable();
-        showToast(`خوش آمدید ${user.username === 'mojtaba' ? 'مجتبی' : 'مهدی'}`, 'success');
+        showToast(`خوش آمدید`, 'success');
     } catch (err) { showToast('خطا در ارتباط با سرور', 'error'); }
 }
 
@@ -245,7 +341,7 @@ function logout() {
 }
 
 // =========================================
-// 4. داشبورد
+// 6. داشبورد
 // =========================================
 async function loadWaybills() {
     if (!supabaseClient) return;
@@ -276,7 +372,7 @@ function renderDashboardTable() {
     });
 
     if(filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:#94a3b8; font-size:15px;">هیچ حواله‌ای یافت نشد.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px; color:var(--text-muted);">هیچ حواله‌ای یافت نشد.</td></tr>`;
         return;
     }
 
@@ -289,17 +385,17 @@ function renderDashboardTable() {
 
         tbody.innerHTML += `
             <tr>
-                <td style="font-weight:800; font-family:Tahoma;">${w.waybill_number}</td>
-                <td style="font-weight:600;">${w.created_at.substring(0, 10)}</td>
+                <td style="font-weight:700; font-family:Tahoma;">${w.waybill_number}</td>
+                <td style="font-weight:600; color:var(--text-muted);">${w.created_at.substring(0, 10)}</td>
                 <td><span class="badge ${badgeClass}">${statusText}</span></td>
-                <td><button class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button></td>
+                <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="openWaybill(${w.id})">مشاهده</button></td>
             </tr>
         `;
     });
 }
 
 // =========================================
-// 5. فرم حواله (دقیقا مثل قبل)
+// 7. فرم حواله
 // =========================================
 function getTableHeaderHTML(type) {
     if (type === 'kafpoosh') {
@@ -361,7 +457,6 @@ async function openWaybill(id) {
 
     currentWaybillId = waybill.id;
     
-    // تغییر ویو به فرم حواله
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('waybillView').classList.remove('hidden');
     document.getElementById('pageTitle').innerText = 'مشاهده / ویرایش حواله';
@@ -489,7 +584,7 @@ async function saveWaybill(newStatus) {
             await supabaseClient.from('settings').update({ waybill_count: count + 1 }).eq('id', 1);
         }
         showToast('حواله با موفقیت ذخیره شد.', 'success');
-        showView('dashboard', document.querySelector('.nav-item')); // بازگشت به داشبورد
+        showView('dashboard', document.querySelector('.nav-item'));
     } catch (err) { showToast('خطا در ذخیره!', 'error'); }
 }
 
