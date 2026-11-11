@@ -1,4 +1,4 @@
-const CACHE_NAME = 'havale-erp-v8';
+const CACHE_NAME = 'havale-erp-v9';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,7 +7,7 @@ const urlsToCache = [
   './manifest.json',
   'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
-  'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap'
+  'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap'
 ];
 
 self.addEventListener('install', event => {
