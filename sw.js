@@ -1,4 +1,4 @@
-const CACHE_NAME = 'havale-erp-v9';
+const CACHE_NAME = 'havale-aaa-v1';
 const urlsToCache = [
   './',
   './index.html',
@@ -12,13 +12,7 @@ const urlsToCache = [
 
 self.addEventListener('install', event => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return Promise.all(
-        urlsToCache.map(url => cache.add(url).catch(err => console.log('Cache fail:', url)))
-      );
-    })
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
 });
 
 self.addEventListener('activate', event => {
@@ -34,8 +28,7 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
-  if (event.request.url.includes('supabase.co')) return; 
-
+  if (event.request.url.includes('supabase.co')) return; // دیتابیس همیشه آنلاین باشد
   event.respondWith(
     caches.match(event.request).then(response => {
       return response || fetch(event.request);
