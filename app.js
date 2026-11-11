@@ -8,11 +8,10 @@ let supabaseClient = null;
 try {
     if (typeof supabase !== 'undefined') {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        keepSupabaseAlive(); // شروع فرآیند زنده نگه داشتن دیتابیس
+        keepSupabaseAlive(); // Heartbeat
     }
 } catch (e) { console.error("خطا در راه‌اندازی دیتابیس:", e); }
 
-// لیست‌های کالا
 const kafpooshProducts = [
     { code: "10", name: "ام دی اف ملامینه سفید - white" }, { code: "10", name: "ام دی اف ملامینه سفید تکرو - white one side" },
     { code: "12", name: "ام دی اف ملامینه کد 12 - KSP12" }, { code: "14", name: "ام دی اف ملامینه کد 14 - KSP14" },
@@ -93,22 +92,18 @@ let isReadOnlyMode = false;
 let newAvatarBase64 = null;
 
 // =========================================
-// 2. Heartbeat (زنده نگه داشتن سوپابیس)
+// 2. Heartbeat
 // =========================================
 function keepSupabaseAlive() {
-    // هر ۱۲ ساعت یک درخواست بسیار سبک به دیتابیس می‌فرستد تا از Sleep جلوگیری کند
     setInterval(async () => {
         if (supabaseClient) {
-            try {
-                await supabaseClient.from('settings').select('id').limit(1);
-                console.log("Supabase Pinged Successfully");
-            } catch (e) { console.log("Heartbeat Error:", e); }
+            try { await supabaseClient.from('settings').select('id').limit(1); } catch (e) {}
         }
-    }, 12 * 60 * 60 * 1000); // 12 ساعت
+    }, 12 * 60 * 60 * 1000);
 }
 
 // =========================================
-// 3. توابع کمکی UI
+// 3. توابع کمکی
 // =========================================
 function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
 function getTodayEnglishDate() { try { return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return forceEnglish(new Intl.DateTimeFormat('fa-IR').format(new Date())); } }
@@ -126,7 +121,7 @@ function showView(viewName, btnElement) {
     const dashboardView = document.getElementById('dashboardView');
     const waybillView = document.getElementById('waybillView');
     const pageTitle = document.getElementById('pageTitle');
-    const navItems = document.querySelectorAll('.nav-item');
+    const menuItems = document.querySelectorAll('.menu-item');
 
     if (viewName === 'dashboard') {
         dashboardView.classList.remove('hidden');
@@ -139,19 +134,18 @@ function showView(viewName, btnElement) {
         pageTitle.innerText = 'صدور / ویرایش حواله';
     }
 
-    navItems.forEach(item => item.classList.remove('active'));
+    menuItems.forEach(item => item.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
-    else document.querySelector('.nav-item').classList.add('active');
+    else document.querySelector('.menu-item').classList.add('active');
 }
 
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    let icon = 'ℹ️'; if(type === 'success') icon = '✅'; if(type === 'error') icon = '❌';
-    toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+    toast.innerText = message;
     container.appendChild(toast);
-    setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 300); }, 3000);
+    setTimeout(() => { toast.remove(); }, 3000);
 }
 
 function customConfirm(message) {
@@ -175,27 +169,18 @@ function openProfileModal() {
     newAvatarBase64 = null;
     
     const modalAvatar = document.getElementById('modalAvatar');
-    if (currentUser.avatar) {
-        modalAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar"><div class="avatar-overlay">تغییر عکس</div>`;
-    } else {
-        modalAvatar.innerHTML = `<span>👤</span><div class="avatar-overlay">تغییر عکس</div>`;
-    }
+    if (currentUser.avatar) modalAvatar.innerHTML = `<img src="${currentUser.avatar}" alt="Avatar"><div class="avatar-overlay">تغییر عکس</div>`;
+    else modalAvatar.innerHTML = `<span>👤</span><div class="avatar-overlay">تغییر عکس</div>`;
     
     document.getElementById('profileModal').classList.remove('hidden');
 }
 
-function closeProfileModal() {
-    document.getElementById('profileModal').classList.add('hidden');
-}
+function closeProfileModal() { document.getElementById('profileModal').classList.add('hidden'); }
 
 function uploadAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
-    if (file.size > 2 * 1024 * 1024) { // حدکثر ۲ مگابایت
-        showToast('حجم عکس نباید بیشتر از ۲ مگابایت باشد.', 'error');
-        return;
-    }
+    if (file.size > 2 * 1024 * 1024) { showToast('حجم عکس نباید بیشتر از ۲ مگابایت باشد.', 'error'); return; }
 
     const reader = new FileReader();
     reader.onload = function(e) {
@@ -211,41 +196,27 @@ async function saveProfileChanges() {
     const newPass = document.getElementById('editNewPassword').value;
     
     if (!newUsername) { showToast('نام کاربری نمی‌تواند خالی باشد.', 'error'); return; }
-
     let updates = { username: newUsername };
-    
-    // بررسی تغییر عکس
     if (newAvatarBase64) updates.avatar = newAvatarBase64;
-
-    // بررسی تغییر رمز
     if (newPass) {
         if (newPass.length !== 4) { showToast('رمز جدید باید ۴ رقم باشد.', 'error'); return; }
         if (!currentPass) { showToast('برای تغییر رمز، رمز فعلی را وارد کنید.', 'error'); return; }
         if (currentPass !== currentUser.password) { showToast('رمز فعلی اشتباه است.', 'error'); return; }
-        
-        updates.password = newPass;
-        updates.previous_password = currentUser.password;
-        updates.last_password_change = new Date().toISOString();
+        updates.password = newPass; updates.previous_password = currentUser.password; updates.last_password_change = new Date().toISOString();
     }
 
     try {
         const { error } = await supabaseClient.from('users').update(updates).eq('id', currentUser.id);
         if (error) throw error;
-        
         showToast('پروفایل با موفقیت به‌روزرسانی شد.', 'success');
         closeProfileModal();
-        
-        // آپدیت کاربر در حافظه
         Object.assign(currentUser, updates);
         updateUIProfile();
-    } catch (err) {
-        showToast('خطا در ذخیره تغییرات!', 'error');
-    }
+    } catch (err) { showToast('خطا در ذخیره تغییرات!', 'error'); }
 }
 
 function updateUIProfile() {
     document.getElementById('userNameDisplay').innerText = currentUser.username === 'mojtaba' ? 'مجتبی بیاتی' : (currentUser.username === 'mehdi' ? 'مهدی شیبک' : currentUser.username);
-    
     const avatarHTML = currentUser.avatar ? `<img src="${currentUser.avatar}">` : `👤`;
     document.getElementById('sidebarAvatar').innerHTML = avatarHTML;
 }
@@ -261,14 +232,13 @@ async function doLogin() {
     const btn = document.getElementById('btnLogin');
 
     if (!password || password.length !== 4) { showToast('رمز عبور باید ۴ رقم باشد.', 'error'); return; }
-
     btn.innerText = 'در حال بررسی...'; btn.disabled = true;
 
     const { data: user, error } = await supabaseClient.from('users').select('*').eq('username', username).eq('password', password).single();
 
     if (error || !user) {
         showToast('نام کاربری یا رمز عبور اشتباه است.', 'error');
-        btn.innerText = 'ورود به حساب'; btn.disabled = false;
+        btn.innerText = 'ورود به سیستم'; btn.disabled = false;
         return;
     }
 
@@ -277,7 +247,7 @@ async function doLogin() {
 
     if (diffDays >= 30) {
         currentUser = user; showScreen('changePassScreen');
-        btn.innerText = 'ورود به حساب'; btn.disabled = false;
+        btn.innerText = 'ورود به سیستم'; btn.disabled = false;
     } else {
         completeLogin(user);
     }
@@ -286,7 +256,6 @@ async function doLogin() {
 async function completeLogin(user) {
     currentUser = user;
     updateUIProfile();
-    
     document.getElementById('userRoleDisplay').innerText = user.role === 'sales' ? 'فروش' : 'انباردار';
     document.getElementById('currentDateDisplay').innerText = getTodayEnglishDate();
     
@@ -294,7 +263,7 @@ async function completeLogin(user) {
     else document.getElementById('navNewWaybill').style.display = 'none';
 
     showScreen('appMain');
-    document.getElementById('btnLogin').innerText = 'ورود به حساب'; document.getElementById('btnLogin').disabled = false;
+    document.getElementById('btnLogin').innerText = 'ورود به سیستم'; document.getElementById('btnLogin').disabled = false;
 
     updateDashboardStats(); renderDashboardTable();
 
@@ -317,9 +286,8 @@ async function seedDefaultProducts() {
     const defaultProducts = [];
     kafpooshProducts.forEach(p => defaultProducts.push({ code: p.code, name: p.name, type: "kafpoosh" }));
     highglossProducts.forEach(p => defaultProducts.push({ code: p.code, name: "ورق ام دی اف هایگلاس " + p.name, type: "highgloss" }));
-    showToast('در حال افزودن لیست اولیه کالاها...', 'info');
     const { data, error } = await supabaseClient.from('products').insert(defaultProducts).select();
-    if (!error && data) { products = data; showToast('لیست کالاها با موفقیت اضافه شد.', 'success'); }
+    if (!error && data) products = data;
 }
 
 async function changePassword() {
@@ -336,12 +304,10 @@ async function changePassword() {
     currentUser.password = newPass; showToast('رمز تغییر یافت.', 'success'); completeLogin(currentUser);
 }
 
-function logout() {
-    currentUser = null; document.getElementById('loginPassword').value = ''; showScreen('loginScreen');
-}
+function logout() { currentUser = null; document.getElementById('loginPassword').value = ''; showScreen('loginScreen'); }
 
 // =========================================
-// 6. داشبورد
+// 6. داشبورد و جدول
 // =========================================
 async function loadWaybills() {
     if (!supabaseClient) return;
@@ -378,24 +344,24 @@ function renderDashboardTable() {
 
     filtered.forEach(w => {
         let badgeClass = '', statusText = '';
-        if (w.status === 'draft') { badgeClass = 'badge-draft'; statusText = 'پیش‌نویس'; }
-        else if (w.status === 'pending') { badgeClass = 'badge-pending'; statusText = 'در انتظار انبار'; }
-        else if (w.status === 'checked') { badgeClass = 'badge-checked'; statusText = 'کنترل شده'; }
-        else if (w.status === 'returned') { badgeClass = 'badge-returned'; statusText = 'برگشت خورده'; }
+        if (w.status === 'draft') { badgeClass = 'bg-draft'; statusText = 'پیش‌نویس'; }
+        else if (w.status === 'pending') { badgeClass = 'bg-pending'; statusText = 'در انتظار انبار'; }
+        else if (w.status === 'checked') { badgeClass = 'bg-checked'; statusText = 'کنترل شده'; }
+        else if (w.status === 'returned') { badgeClass = 'bg-returned'; statusText = 'برگشت خورده'; }
 
         tbody.innerHTML += `
             <tr>
                 <td style="font-weight:700; font-family:Tahoma;">${w.waybill_number}</td>
                 <td style="font-weight:600; color:var(--text-muted);">${w.created_at.substring(0, 10)}</td>
                 <td><span class="badge ${badgeClass}">${statusText}</span></td>
-                <td><button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="openWaybill(${w.id})">مشاهده</button></td>
+                <td><button class="btn btn-light" style="padding: 6px 12px; font-size: 12px;" onclick="openWaybill(${w.id})">مشاهده</button></td>
             </tr>
         `;
     });
 }
 
 // =========================================
-// 7. فرم حواله
+// 7. فرم حواله (با همان منطق قبلی)
 // =========================================
 function getTableHeaderHTML(type) {
     if (type === 'kafpoosh') {
@@ -441,11 +407,8 @@ function startNewWaybill() {
     currentWaybillId = null;
     document.getElementById('warehouseSelect').value = 'si-tak';
     handleWarehouseChange(document.getElementById('warehouseSelect'));
-    
-    const tbody = document.querySelector('.table-body');
-    tbody.innerHTML = '';
+    document.querySelector('.table-body').innerHTML = '';
     addRow(true);
-
     setFormEditable(true);
     updateButtonVisibility('draft');
 }
@@ -456,7 +419,6 @@ async function openWaybill(id) {
     if (error || !waybill) { showToast('خطا در بارگذاری', 'error'); return; }
 
     currentWaybillId = waybill.id;
-    
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('waybillView').classList.remove('hidden');
     document.getElementById('pageTitle').innerText = 'مشاهده / ویرایش حواله';
@@ -516,10 +478,7 @@ function setFormEditable(isEditable) {
 }
 
 function updateButtonVisibility(status) {
-    ['btnSaveDraft', 'btnSendToWarehouse', 'btnCheckWarehouse', 'btnReturn', 'btnPrint'].forEach(id => {
-        document.getElementById(id).style.display = 'none';
-    });
-
+    ['btnSaveDraft', 'btnSendToWarehouse', 'btnCheckWarehouse', 'btnReturn', 'btnPrint'].forEach(id => { document.getElementById(id).style.display = 'none'; });
     if (currentUser.role === 'sales') {
         document.getElementById('btnPrint').style.display = 'flex';
         if (status === 'draft' || status === 'returned') {
@@ -584,7 +543,7 @@ async function saveWaybill(newStatus) {
             await supabaseClient.from('settings').update({ waybill_count: count + 1 }).eq('id', 1);
         }
         showToast('حواله با موفقیت ذخیره شد.', 'success');
-        showView('dashboard', document.querySelector('.nav-item'));
+        showView('dashboard', document.querySelector('.menu-item'));
     } catch (err) { showToast('خطا در ذخیره!', 'error'); }
 }
 
