@@ -13,8 +13,10 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%237c3aed'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%237c3aed'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%237c3aed'%3EE%3C/text%3E%3Ctext x='45' y='75' font-family='Arial, sans-serif' font-size='12' fill='%237c3aed'%3EETEC%3C/text%3E%3C/svg%3E">
 
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- 🟢 حذف defer برای اطمینان از لود شدن قبل از اسکریپت اصلی -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         /* =========================================
@@ -34,7 +36,6 @@
             --glass-border: rgba(255, 255, 255, 0.6);
             --font-family: 'Vazirmatn', sans-serif;
             
-            /* انیمیشن‌های روان */
             --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -42,7 +43,6 @@
         body { 
             font-family: var(--font-family); 
             margin: 0; padding: 0; overflow-x: hidden; color: var(--text-dark);
-            /* پس زمینه پویا و درخشان */
             background: linear-gradient(135deg, #a78bfa, #60a5fa, #f472b6, #34d399);
             background-size: 300% 300%;
             animation: gradientBG 15s ease infinite;
@@ -57,9 +57,6 @@
 
         .hidden { display: none !important; }
 
-        /* =========================================
-           انیمیشن‌های ورود
-           ========================================= */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUpSmooth { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes zoomInSpring { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
@@ -161,7 +158,6 @@
         .welcome-text h1 { font-size: 26px; font-weight: 900; color: #ffffff; margin: 0 0 5px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.15); }
         .welcome-text p { color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 0; font-weight: 500; }
 
-        /* کارت‌های آماری مینیمال */
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 25px; }
         @media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
         
@@ -180,14 +176,12 @@
         .stat-card.checked .stat-icon { background: #ecfdf5; color: var(--success); }
         .stat-card.returned .stat-icon { background: #fef2f2; color: var(--danger); }
 
-        /* نوار جستجو */
         .dashboard-toolbar { display: flex; gap: 15px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.85); padding: 12px 15px; border-radius: 14px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
         .search-input { flex: 1; padding: 12px 20px; border-radius: 10px; border: none; outline: none; font-family: inherit; font-size: 14px; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); background: #fff; transition: var(--transition-smooth); }
         .search-input:focus { box-shadow: inset 0 2px 5px rgba(0,0,0,0.05), 0 0 0 3px rgba(124,58,237,0.1); }
         .filter-select { width: 180px; padding: 12px 20px; border-radius: 10px; border: none; outline: none; font-family: inherit; font-size: 14px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.02); cursor: pointer; transition: var(--transition-smooth); }
         .filter-select:focus { box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
 
-        /* جدول حواله‌ها */
         .waybill-list-container { background: rgba(255, 255, 255, 0.95); border-radius: 20px; box-shadow: 0 15px 40px -10px rgba(0,0,0,0.1); overflow: hidden; border: 1px solid rgba(255,255,255,0.8); }
         .waybill-list table { width: 100%; border-collapse: collapse; text-align: right; }
         .waybill-list th, .waybill-list td { padding: 16px 20px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
@@ -202,9 +196,6 @@
         .badge-checked { background: #d1fae5; color: #047857; } .badge-checked::before { background: #047857; }
         .badge-returned { background: #fee2e2; color: #b91c1c; } .badge-returned::before { background: #b91c1c; }
 
-        /* =========================================
-           دکمه‌های عمومی
-           ========================================= */
         .btn { padding: 10px 20px; font-family: inherit; font-size: 14px; font-weight: 900; border: none; border-radius: 10px; cursor: pointer; transition: var(--transition-bounce); display: flex; align-items: center; gap: 8px; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
         .btn:active { transform: translateY(0); }
@@ -221,7 +212,7 @@
         .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
         /* =========================================
-           استایل‌های اصلی فرم حواله (دست‌نخورده برای پرینت)
+           فرم حواله
            ========================================= */
         #waybillView { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         
@@ -281,11 +272,10 @@
 </head>
 <body>
 
-    <!-- 1. صفحه لاگین (طراحی مدرن) -->
+    <!-- 1. صفحه لاگین -->
     <div id="loginScreen" class="hidden">
         <div class="login-card">
             
-            <!-- لوگوی اختصاصی مدرن -->
             <svg class="login-logo" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
                 <rect x="10" y="10" width="25" height="60" fill="#000" />
                 <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
@@ -325,7 +315,6 @@
     <!-- 3. برنامه اصلی -->
     <div id="appMain" class="hidden">
         
-        <!-- هدر داشبورد -->
         <div class="dashboard-header no-print">
             <div class="header-brand">
                 <svg viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
@@ -342,7 +331,6 @@
             </div>
         </div>
 
-        <!-- داشبورد -->
         <div id="dashboardView" class="dashboard-content">
             <div class="dashboard-top">
                 <div class="welcome-text">
@@ -352,7 +340,6 @@
                 <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:12px 24px; font-size:15px;">➕ صدور حواله جدید</button>
             </div>
 
-            <!-- کارت‌های آماری -->
             <div class="stats-grid">
                 <div class="stat-card total">
                     <div class="stat-info">
@@ -384,7 +371,6 @@
                 </div>
             </div>
 
-            <!-- نوار جستجو -->
             <div class="dashboard-toolbar">
                 <input type="text" id="dashboardSearch" class="search-input" placeholder="جستجو بر اساس شماره حواله..." oninput="renderDashboardTable()">
                 <select id="dashboardFilter" class="filter-select" onchange="renderDashboardTable()">
@@ -396,7 +382,6 @@
                 </select>
             </div>
 
-            <!-- جدول حواله‌ها -->
             <div class="waybill-list-container waybill-list">
                 <table>
                     <thead>
@@ -412,7 +397,6 @@
             </div>
         </div>
 
-        <!-- فرم حواله (دست‌نخورده) -->
         <div id="waybillView" class="hidden">
             <div class="tabs-container no-print">
                 <div class="toolbar" id="mainToolbar">
@@ -516,10 +500,8 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div id="toastContainer"></div>
 
-    <!-- مودال تاییدیه -->
     <div id="customConfirmModal" class="hidden">
         <div class="confirm-box">
             <p id="confirmMessage">آیا مطمئن هستید؟</p>
@@ -531,7 +513,7 @@
     </div>
 
     <script>
-        // --- 1. Service Worker برای PWA ---
+        // --- 1. Service Worker ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err)); });
         }
@@ -539,6 +521,8 @@
         // --- 2. متغیرهای اصلی ---
         const SUPABASE_URL = "https://sizebshjcwiumclcbsrg.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_dUexAxlEw_-mZuMbVc3Wmg_aWrJDQmj";
+        
+        // 🟢 اتصال به دیتابیس (حالا که کتابخانه کاملاً لود شده است)
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const kafpooshProducts = [
@@ -1115,10 +1099,10 @@
             setTimeout(() => { alert('لطفا از پنجره پرینت باز شده، گزینه Save as PDF را انتخاب کنید.'); }, 500);
         }
 
-        // شروع برنامه
-        window.onload = () => {
+        // 🟢 مهم: اجرای برنامه بعد از لود کامل DOM
+        window.addEventListener('DOMContentLoaded', () => {
             showScreen('loginScreen');
-        };
+        });
     </script>
 </body>
 </html>
