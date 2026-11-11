@@ -7,6 +7,9 @@
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#0a246a">
     
+    <!-- 🟢 لوگوی اختصاصی سایت در تب مرورگر (Favicon - بدون بک گراند) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%230a246a'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230a246a'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230a246a'%3EE%3C/text%3E%3Ctext x='45' y='75' font-family='Arial, sans-serif' font-size='12' fill='%230a246a'%3EETEC%3C/text%3E%3C/svg%3E">
+
     <!-- بهینه‌سازی لود فونت -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -67,6 +70,7 @@
             align-items: center;
             user-select: none;
         }
+        .title-bar-brand { display: flex; align-items: center; gap: 8px; }
         .title-bar-controls span {
             display: inline-block;
             width: 18px; height: 16px;
@@ -92,49 +96,27 @@
         .menu-btn:hover { border-color: var(--border-dark); background: #f0f0f0; }
         .menu-btn.active { background: #d4d0c8; border-color: var(--border-dark); }
 
-        /* --- بدنه اصلی (تقسیم به دو بخش) --- */
+        /* --- بدنه اصلی --- */
         .workspace-body {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
+            display: flex; flex: 1; overflow: hidden;
         }
 
         /* بخش سمت چپ: میزکار */
         .main-workspace {
-            flex: 1;
-            background-color: var(--workspace-bg);
-            border: 2px solid;
-            border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-            margin: 5px;
-            padding: 10px;
-            overflow-y: auto;
-            position: relative;
+            flex: 1; background-color: var(--workspace-bg);
+            border: 2px solid; border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
+            margin: 5px; padding: 10px; overflow-y: auto; position: relative;
         }
 
         /* بخش سمت راست: پنل کناری */
-        .sidebar {
-            width: 320px;
-            display: flex; flex-direction: column;
-            padding: 5px; gap: 10px;
-            overflow-y: auto;
-        }
+        .sidebar { width: 320px; display: flex; flex-direction: column; padding: 5px; gap: 10px; overflow-y: auto; }
 
-        /* --- استایل پنل‌های کناری (Fieldset) --- */
-        fieldset {
-            border: 1px solid var(--border-dark);
-            padding: 10px;
-            margin: 0;
-            background: #ffffff;
-        }
-        legend {
-            font-size: 12px; font-weight: bold;
-            padding: 0 5px;
-        }
+        /* --- استایل پنل‌های کناری --- */
+        fieldset { border: 1px solid var(--border-dark); padding: 10px; margin: 0; background: #ffffff; }
+        legend { font-size: 12px; font-weight: bold; padding: 0 5px; }
 
-        /* جدول اطلاعات سیستم */
-        .info-table {
-            width: 100%; border-collapse: collapse; font-size: 12px;
-        }
+        /* جدول اطلاعات */
+        .info-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .info-table td { padding: 4px; border-bottom: 1px solid #eee; }
         .info-table td:first-child { font-weight: bold; color: #444; width: 40%; }
         .info-table td:last-child { color: #000; text-align: left; direction: ltr; }
@@ -142,38 +124,23 @@
         /* لینک‌های فرآیندها */
         .process-list { list-style: none; padding: 0; margin: 0; }
         .process-list li { margin-bottom: 8px; }
-        .process-list a {
-            color: #0000ee; text-decoration: none; font-size: 12px;
-            display: block; padding: 2px 5px;
-        }
+        .process-list a { color: #0000ee; text-decoration: none; font-size: 12px; display: block; padding: 2px 5px; }
         .process-list a:hover { background: #e0e0e0; text-decoration: underline; }
 
-        /* جدول لیست حواله‌ها در میزکار */
-        .erp-grid {
-            width: 100%; border-collapse: collapse; background: #fff;
-            border: 1px solid var(--border-dark);
-        }
-        .erp-grid th {
-            background: #e0e0e0; border: 1px solid var(--border-dark);
-            padding: 5px; font-size: 12px; font-weight: bold; text-align: center;
-        }
-        .erp-grid td {
-            border: 1px solid #ccc; padding: 5px; font-size: 12px; text-align: center;
-        }
+        /* جدول لیست حواله‌ها */
+        .erp-grid { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--border-dark); }
+        .erp-grid th { background: #e0e0e0; border: 1px solid var(--border-dark); padding: 5px; font-size: 12px; font-weight: bold; text-align: center; }
+        .erp-grid td { border: 1px solid #ccc; padding: 5px; font-size: 12px; text-align: center; }
         .erp-grid tr:hover { background-color: #f0f8ff; }
 
-        /* دکمه‌های کلاسیک */
+        /* دکمه‌ها */
         .btn-classic {
-            background: #d4d0c8;
-            border: 2px solid;
+            background: #d4d0c8; border: 2px solid;
             border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light);
             padding: 3px 10px; cursor: pointer; font-family: inherit; font-size: 12px;
         }
-        .btn-classic:active {
-            border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark);
-        }
+        .btn-classic:active { border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark); }
 
-        /* نشانگر وضعیت (Badge) */
         .status-badge { padding: 2px 6px; border: 1px solid #999; font-size: 11px; border-radius: 3px; }
         .bg-draft { background: #f0f0f0; color: #333; }
         .bg-pending { background: #fff3cd; color: #856404; border-color: #ffeeba; }
@@ -181,7 +148,7 @@
         .bg-returned { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
 
         /* =========================================
-           صفحه نصب (کادر کلاسیک)
+           صفحه نصب و لاگین (کادر کلاسیک)
            ========================================= */
         #installLockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 99999; display: flex; justify-content: center; align-items: center; }
         .install-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 400px; box-shadow: 5px 5px 15px rgba(0,0,0,0.5); }
@@ -189,13 +156,16 @@
         .install-icon { font-size: 40px; margin-bottom: 10px; }
         .btn-install { padding: 8px 20px; margin-top: 15px; font-size: 14px; background: #d4d0c8; border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); cursor: pointer; font-weight: bold; }
 
-        /* =========================================
-           صفحه لاگین (کادر کلاسیک)
-           ========================================= */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--workspace-bg); z-index: 9998; display: flex; justify-content: center; align-items: center; }
-        .login-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 350px; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
+        .login-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 360px; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
         .login-header { background: linear-gradient(to right, var(--title-bar-start), var(--title-bar-end)); color: white; padding: 5px 10px; font-weight: bold; font-size: 13px; }
-        .login-body { padding: 20px; background: #fff; margin: 5px; border: 1px solid var(--border-dark); }
+        .login-body { padding: 20px 30px; background: #fff; margin: 5px; border: 1px solid var(--border-dark); }
+        
+        /* 🟢 استایل لوگو در صفحه لاگین */
+        .login-logo-container { text-align: center; margin-bottom: 20px; }
+        .login-logo-container svg { width: 120px; height: auto; }
+        .login-logo-text { font-size: 11px; font-weight: bold; color: #555; margin-top: 5px; }
+
         .form-group { margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
         .form-group label { font-size: 12px; font-weight: bold; width: 80px; }
         .form-group input, .form-group select { flex: 1; padding: 5px; border: 1px solid var(--border-dark); font-family: inherit; font-size: 12px; outline: none; }
@@ -203,7 +173,7 @@
         .btn-login:active { border-color: var(--border-dark) var(--border-light) var(--border-light) var(--border-dark); }
 
         /* =========================================
-           استایل‌های اصلی فرم حواله (دست‌نخورده برای پرینت)
+           فرم حواله (دست‌نخورده برای پرینت)
            ========================================= */
         #waybillView { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 100; overflow-y: auto; padding: 10px; box-sizing: border-box; }
         .waybill-toolbar { background: #e0e0e0; border: 1px solid var(--border-dark); padding: 5px; margin-bottom: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
@@ -261,7 +231,7 @@
             select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-image: none !important; }
         }
 
-        /* مودال تاییدیه کلاسیک */
+        /* مودال تاییدیه */
         #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); z-index: 99998; display: flex; justify-content: center; align-items: center; }
         .confirm-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 350px; }
         .confirm-header { background: linear-gradient(to right, var(--title-bar-start), var(--title-bar-end)); color: white; padding: 5px; font-weight: bold; font-size: 12px; }
@@ -269,12 +239,10 @@
         .confirm-actions { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
         .confirm-actions button { padding: 5px 20px; background: #d4d0c8; border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); cursor: pointer; font-family: inherit; font-weight: bold;}
 
-        /* Toast کلاسیک */
         #toastContainer { position: fixed; bottom: 20px; left: 20px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; }
         .toast { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); padding: 10px 20px; font-weight: bold; font-size: 13px; box-shadow: 3px 3px 10px rgba(0,0,0,0.2); }
         .toast.success { background: #d4edda; color: #155724; }
         .toast.error { background: #f8d7da; color: #721c24; }
-
     </style>
 </head>
 <body>
@@ -290,9 +258,6 @@
                 <div class="install-icon">⚠️</div>
                 <p style="font-size: 13px; font-weight: bold; margin-bottom: 15px;">جهت استفاده از سیستم، ابتدا باید برنامه را نصب کنید.</p>
                 <button id="btnInstallPWA" class="btn-install">📥 نصب برنامه روی دستگاه</button>
-                <div id="iosInstructions" style="display: none; margin-top: 15px; font-size: 12px; text-align: right; background: #f0f0f0; padding: 10px; border: 1px solid #ccc;">
-                    <b>راهنمای iOS:</b><br>۱. در Safari روی آیکون Share کلیک کنید.<br>۲. گزینه Add to Home Screen را بزنید.
-                </div>
             </div>
         </div>
     </div>
@@ -302,6 +267,23 @@
         <div class="login-box">
             <div class="login-header">ورود به سیستم - سی تک پارسیان</div>
             <div class="login-body">
+                
+                <!-- 🟢 درج لوگوی اختصاصی در صفحه لاگین -->
+                <div class="login-logo-container">
+                    <svg viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+                        <!-- نماد اختصاصی S -->
+                        <rect x="10" y="10" width="25" height="60" fill="#000" />
+                        <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
+                        
+                        <!-- متن SEETEC -->
+                        <text x="45" y="45" font-family="Tahoma, Arial, sans-serif" font-weight="900" font-size="28" fill="#000" letter-spacing="1">SEETEC</text>
+                        
+                        <!-- متن زیر آن -->
+                        <text x="45" y="65" font-family="Tahoma, Arial, sans-serif" font-weight="bold" font-size="13" fill="#444">Persian Flooring</text>
+                    </svg>
+                    <div class="login-logo-text">شرکت کفپوش سی تک پارسیان</div>
+                </div>
+
                 <div class="form-group">
                     <label>نام کاربری:</label>
                     <select id="loginUsername">
@@ -338,7 +320,15 @@
         
         <!-- نوار عنوان -->
         <div class="title-bar">
-            <span>سیستم مدیریت حواله (سی تک پارسیان)</span>
+            <div class="title-bar-brand">
+                <!-- 🟢 لوگوی مینیاتوری در نوار عنوان -->
+                <svg style="height: 20px; width: auto;" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="25" height="60" fill="#fff" />
+                    <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="#0a246a" stroke-width="3" fill="none" />
+                    <text x="45" y="55" font-family="Tahoma, Arial, sans-serif" font-weight="900" font-size="32" fill="#fff" letter-spacing="1">SEETEC</text>
+                </svg>
+                <span style="margin-right: 5px;">| سیستم مدیریت حواله</span>
+            </div>
             <div class="title-bar-controls">
                 <span>_</span><span>□</span><span style="background:#e81123; color:white;" onclick="logout()">X</span>
             </div>
@@ -354,7 +344,7 @@
         <!-- بدنه اصلی -->
         <div class="workspace-body">
             
-            <!-- میزکار (سمت چپ) -->
+            <!-- میزکار -->
             <div class="main-workspace">
                 <div id="dashboardView">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #d4d0c8; padding: 5px; border: 1px solid #999;">
@@ -385,7 +375,7 @@
                     </table>
                 </div>
 
-                <!-- فرم حواله (در این بخش باز می‌شود) -->
+                <!-- فرم حواله -->
                 <div id="waybillView" class="hidden">
                     <div class="waybill-toolbar">
                         <button class="btn-classic" onclick="showDashboard()">بازگشت</button>
@@ -398,7 +388,6 @@
                     </div>
                     <div id="pdfContainer">
                         <div id="pagesContainer">
-                            <!-- محتوای فرم -->
                             <div class="page">
                                 <div class="content">
                                     <table class="w-table header-table">
@@ -487,10 +476,9 @@
                 </div>
             </div>
 
-            <!-- پنل کناری (سمت راست) -->
+            <!-- پنل کناری -->
             <div class="sidebar">
                 
-                <!-- اطلاعات کاربر -->
                 <fieldset>
                     <legend>اطلاعات کاربر</legend>
                     <table class="info-table">
@@ -501,7 +489,6 @@
                     </table>
                 </fieldset>
 
-                <!-- فرآیندهای مجاز -->
                 <fieldset>
                     <legend>فرآیندهای مجاز برای شما</legend>
                     <ul class="process-list">
@@ -510,7 +497,6 @@
                     </ul>
                 </fieldset>
 
-                <!-- آمار سیستم -->
                 <fieldset>
                     <legend>خلاصه وضعیت</legend>
                     <table class="info-table">
@@ -544,11 +530,10 @@
     </div>
 
     <script>
-        // --- 1. سیستم PWA (نصب اجباری) ---
+        // --- 1. سیستم PWA ---
         let deferredPrompt;
         const installLockScreen = document.getElementById('installLockScreen');
         const btnInstallPWA = document.getElementById('btnInstallPWA');
-        const iosInstructions = document.getElementById('iosInstructions');
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err)); });
@@ -563,26 +548,18 @@
                 showScreen('loginScreen');
             } else {
                 installLockScreen.classList.remove('hidden');
-                const userAgent = window.navigator.userAgent.toLowerCase();
-                if (/iphone|ipad|ipod/.test(userAgent) || (userAgent.includes('safari') && !userAgent.includes('chrome'))) {
-                    btnInstallPWA.style.display = 'none';
-                    iosInstructions.style.display = 'block';
-                }
             }
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            btnInstallPWA.style.display = 'block';
-            iosInstructions.style.display = 'none';
         });
 
         btnInstallPWA.addEventListener('click', async () => {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') console.log('Installed');
+                await deferredPrompt.userChoice;
                 deferredPrompt = null;
             } else {
                 alert('مرورگر شما از نصب پشتیبانی نمی‌کند.');
@@ -592,12 +569,11 @@
         window.addEventListener('appinstalled', () => { window.location.reload(); });
         document.addEventListener('DOMContentLoaded', checkInstallStatus);
 
-        // --- 2. متغیرهای اصلی و Supabase ---
+        // --- 2. متغیرهای اصلی ---
         const SUPABASE_URL = "https://sizebshjcwiumclcbsrg.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_dUexAxlEw_-mZuMbVc3Wmg_aWrJDQmj";
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // لیست جدید کفپوش‌ها با فرمت درخواستی
         const kafpooshProducts = [
             { code: "10", name: "ام دی اف ملامینه سفید - white" },
             { code: "10", name: "ام دی اف ملامینه سفید تکرو - white one side" },
@@ -680,7 +656,6 @@
             { code: "576", name: "ام دی اف ملامینه طرح سنگ تیره(8) - HARDSTONE WHITE (8)" }
         ];
 
-        // لیست هایگلاس‌ها (بدون تغییر)
         const highglossProducts = [
             { code: "10A100", name: "سفید مات" }, { code: "11A109", name: "مشکی مات" }, { code: "12A111", name: "آبی مات" },
             { code: "13A112", name: "سبز مات" }, { code: "15A101", name: "کرم مات" }, { code: "16A113", name: "سبززیتونی مات" },
@@ -748,7 +723,6 @@
             });
         }
 
-        // --- 3. سیستم لاگین ---
         async function doLogin() {
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
@@ -785,7 +759,6 @@
             }
         }
 
-        // لود همزمان داده‌ها برای سرعت بالا
         async function completeLogin(user) {
             currentUser = user;
             document.getElementById('userNameDisplay').innerText = user.username === 'mojtaba' ? 'مجتبی بیاتی' : 'مهدی شیبک';
@@ -813,10 +786,7 @@
                 
                 if (productsRes.data) {
                     products = productsRes.data;
-                    // اگر دیتابیس خالی بود، لیست‌های جدید و قبلی را اضافه کن
-                    if (products.length === 0) {
-                        await seedDefaultProducts();
-                    }
+                    if (products.length === 0) await seedDefaultProducts();
                 }
 
                 updateDashboardStats();
@@ -829,9 +799,7 @@
 
         async function seedDefaultProducts() {
             const defaultProducts = [];
-            // تزریق لیست جدید کفپوش
             kafpooshProducts.forEach(p => defaultProducts.push({ code: p.code, name: p.name, type: "kafpoosh" }));
-            // تزریق لیست هایگلاس
             highglossProducts.forEach(p => defaultProducts.push({ code: p.code, name: "ورق ام دی اف هایگلاس " + p.name, type: "highgloss" }));
             
             showToast('در حال افزودن لیست اولیه کالاها...', 'info');
@@ -865,7 +833,6 @@
             showScreen('loginScreen');
         }
 
-        // --- 4. توابع دیتابیس و داشبورد ---
         async function loadWaybills() {
             let query = supabaseClient.from('waybills').select('*').order('id', { ascending: false });
             if (currentUser.role === 'warehouse') query = query.in('status', ['pending', 'checked']);
@@ -927,7 +894,6 @@
             loadWaybills(); 
         }
 
-        // --- 5. فرم حواله ---
         function getTableHeaderHTML(type) {
             if (type === 'kafpoosh') {
                 return `<tr><th width="4%">ردیف</th><th width="10%">کد کالا</th><th width="25%">شرح کالا</th><th width="13%">طرح کروم</th><th width="8%">برند</th><th width="7%">درجه بندی</th><th width="9%">سایز</th><th width="7%">ضخامت</th><th width="7%">پشت کار کالا</th><th width="5%">واحد</th><th width="5%">مقدار</th><th width="3%" class="no-print">حذف</th></tr>`;
