@@ -8,14 +8,9 @@ let supabaseClient = null;
 try {
     if (typeof supabase !== 'undefined') {
         supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    } else {
-        console.error("کتابخانه Supabase لود نشد.");
     }
-} catch (e) {
-    console.error("خطا در راه‌اندازی دیتابیس:", e);
-}
+} catch (e) { console.error("خطا در راه‌اندازی دیتابیس:", e); }
 
-// لیست‌های کالا (کفپوش و هایگلاس)
 const kafpooshProducts = [
     { code: "10", name: "ام دی اف ملامینه سفید - white" }, { code: "10", name: "ام دی اف ملامینه سفید تکرو - white one side" },
     { code: "12", name: "ام دی اف ملامینه کد 12 - KSP12" }, { code: "14", name: "ام دی اف ملامینه کد 14 - KSP14" },
@@ -95,7 +90,7 @@ let products = [];
 let isReadOnlyMode = false; 
 
 // =========================================
-// 2. توابع کمکی
+// 2. توابع کمکی و مدیریت UI
 // =========================================
 function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
 function getTodayEnglishDate() { try { return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return forceEnglish(new Intl.DateTimeFormat('fa-IR').format(new Date())); } }
@@ -104,9 +99,36 @@ function showScreen(screenId) {
     const screens = ['loginScreen', 'changePassScreen', 'appMain'];
     screens.forEach(id => {
         const el = document.getElementById(id);
-        if (id === screenId) { el.classList.remove('hidden'); el.style.animation = 'fadeIn 0.5s ease'; }
+        if (id === screenId) { el.classList.remove('hidden'); }
         else { el.classList.add('hidden'); }
     });
+}
+
+// تابع جدید برای مدیریت تب‌ها (داشبورد / حواله)
+function showView(viewName, btnElement) {
+    const dashboardView = document.getElementById('dashboardView');
+    const waybillView = document.getElementById('waybillView');
+    const pageTitle = document.getElementById('pageTitle');
+    const navItems = document.querySelectorAll('.nav-item');
+
+    if (viewName === 'dashboard') {
+        dashboardView.classList.remove('hidden');
+        waybillView.classList.add('hidden');
+        pageTitle.innerText = 'داشبورد مدیریت';
+        loadWaybills();
+    } else if (viewName === 'waybill') {
+        dashboardView.classList.add('hidden');
+        waybillView.classList.remove('hidden');
+        pageTitle.innerText = 'صدور / ویرایش حواله';
+    }
+
+    navItems.forEach(item => item.classList.remove('active'));
+    if (btnElement) {
+        btnElement.classList.add('active');
+    } else {
+        // اگر دکمه‌ای پاس داده نشد (مثل دکمه بازگشت)، تب داشبورد را فعال کن
+        document.querySelector('.nav-item').classList.add('active');
+    }
 }
 
 function showToast(message, type = 'info') {
@@ -116,7 +138,7 @@ function showToast(message, type = 'info') {
     let icon = 'ℹ️'; if(type === 'success') icon = '✅'; if(type === 'error') icon = '❌';
     toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
     container.appendChild(toast);
-    setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 400); }, 3000);
+    setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
 function customConfirm(message) {
@@ -148,7 +170,7 @@ async function doLogin() {
 
     if (error || !user) {
         showToast('نام کاربری یا رمز عبور اشتباه است.', 'error');
-        btn.innerText = 'ورود به سیستم'; btn.disabled = false;
+        btn.innerText = 'ورود به پنل'; btn.disabled = false;
         return;
     }
 
@@ -157,7 +179,7 @@ async function doLogin() {
 
     if (diffDays >= 30) {
         currentUser = user; showScreen('changePassScreen');
-        btn.innerText = 'ورود به سیستم'; btn.disabled = false;
+        btn.innerText = 'ورود به پنل'; btn.disabled = false;
     } else {
         completeLogin(user);
     }
@@ -165,20 +187,18 @@ async function doLogin() {
 
 async function completeLogin(user) {
     currentUser = user;
-    document.getElementById('userNameDisplay').innerText = user.username === 'mojtaba' ? 'مجتبی بیاتی (فروش)' : 'مهدی شیبک (انبار)';
+    document.getElementById('userNameDisplay').innerText = user.username === 'mojtaba' ? 'مجتبی بیاتی' : 'مهدی شیبک';
+    document.getElementById('userRoleDisplay').innerText = user.role === 'sales' ? 'کارشناس فروش' : 'انباردار';
+    document.getElementById('currentDateDisplay').innerText = getTodayEnglishDate();
     
     if (user.role === 'sales') {
-        document.getElementById('btnCreateNew').style.display = 'block';
-        document.getElementById('welcomeTitle').innerText = 'داشبورد کارشناس فروش';
-        document.getElementById('welcomeSubtitle').innerText = 'مدیریت حواله‌های صادر شده توسط شما';
+        document.getElementById('navNewWaybill').style.display = 'flex';
     } else {
-        document.getElementById('btnCreateNew').style.display = 'none';
-        document.getElementById('welcomeTitle').innerText = 'داشبورد انباردار';
-        document.getElementById('welcomeSubtitle').innerText = 'حواله‌های در انتظار کنترل و بارگیری';
+        document.getElementById('navNewWaybill').style.display = 'none';
     }
 
     showScreen('appMain');
-    document.getElementById('btnLogin').innerText = 'ورود به سیستم'; document.getElementById('btnLogin').disabled = false;
+    document.getElementById('btnLogin').innerText = 'ورود به پنل'; document.getElementById('btnLogin').disabled = false;
 
     updateDashboardStats(); renderDashboardTable();
 
@@ -269,23 +289,17 @@ function renderDashboardTable() {
 
         tbody.innerHTML += `
             <tr>
-                <td style="font-weight:900; font-family:Tahoma; font-size:15px;">${w.waybill_number}</td>
-                <td style="font-weight:700;">${w.created_at.substring(0, 10)}</td>
+                <td style="font-weight:800; font-family:Tahoma;">${w.waybill_number}</td>
+                <td style="font-weight:600;">${w.created_at.substring(0, 10)}</td>
                 <td><span class="badge ${badgeClass}">${statusText}</span></td>
-                <td><button class="btn btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button></td>
+                <td><button class="btn btn-primary" style="padding: 6px 14px; font-size: 12px;" onclick="openWaybill(${w.id})">مشاهده / ویرایش</button></td>
             </tr>
         `;
     });
 }
 
-function showDashboard() {
-    document.getElementById('waybillView').classList.add('hidden');
-    document.getElementById('dashboardView').classList.remove('hidden');
-    loadWaybills(); 
-}
-
 // =========================================
-// 5. فرم حواله
+// 5. فرم حواله (دقیقا مثل قبل)
 // =========================================
 function getTableHeaderHTML(type) {
     if (type === 'kafpoosh') {
@@ -329,9 +343,6 @@ function createRowHTML(type) {
 
 function startNewWaybill() {
     currentWaybillId = null;
-    document.getElementById('waybillView').classList.remove('hidden');
-    document.getElementById('dashboardView').classList.add('hidden');
-    
     document.getElementById('warehouseSelect').value = 'si-tak';
     handleWarehouseChange(document.getElementById('warehouseSelect'));
     
@@ -349,8 +360,11 @@ async function openWaybill(id) {
     if (error || !waybill) { showToast('خطا در بارگذاری', 'error'); return; }
 
     currentWaybillId = waybill.id;
-    document.getElementById('waybillView').classList.remove('hidden');
+    
+    // تغییر ویو به فرم حواله
     document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('waybillView').classList.remove('hidden');
+    document.getElementById('pageTitle').innerText = 'مشاهده / ویرایش حواله';
 
     document.getElementById('waybillNumber').value = waybill.waybill_number;
     document.getElementById('waybillDate').value = waybill.data.waybillDate || '';
@@ -407,13 +421,12 @@ function setFormEditable(isEditable) {
 }
 
 function updateButtonVisibility(status) {
-    ['btnSaveDraft', 'btnSendToWarehouse', 'btnCheckWarehouse', 'btnReturn', 'btnPrint', 'btnShare'].forEach(id => {
+    ['btnSaveDraft', 'btnSendToWarehouse', 'btnCheckWarehouse', 'btnReturn', 'btnPrint'].forEach(id => {
         document.getElementById(id).style.display = 'none';
     });
 
     if (currentUser.role === 'sales') {
         document.getElementById('btnPrint').style.display = 'flex';
-        document.getElementById('btnShare').style.display = 'flex';
         if (status === 'draft' || status === 'returned') {
             document.getElementById('btnSaveDraft').style.display = 'flex';
             document.getElementById('btnSendToWarehouse').style.display = 'flex';
@@ -424,7 +437,6 @@ function updateButtonVisibility(status) {
             document.getElementById('btnReturn').style.display = 'flex';
         } else if (status === 'checked') {
             document.getElementById('btnPrint').style.display = 'flex';
-            document.getElementById('btnShare').style.display = 'flex';
             document.getElementById('btnReturn').style.display = 'flex';
         }
     }
@@ -477,7 +489,7 @@ async function saveWaybill(newStatus) {
             await supabaseClient.from('settings').update({ waybill_count: count + 1 }).eq('id', 1);
         }
         showToast('حواله با موفقیت ذخیره شد.', 'success');
-        showDashboard();
+        showView('dashboard', document.querySelector('.nav-item')); // بازگشت به داشبورد
     } catch (err) { showToast('خطا در ذخیره!', 'error'); }
 }
 
@@ -562,11 +574,6 @@ function prepareAndPrint() {
     document.querySelectorAll('#pdfContainer input').forEach(input => input.value = forceEnglish(input.value));
     document.querySelectorAll('.row-num').forEach(el => el.innerText = forceEnglish(el.innerText));
     window.print();
-}
-
-async function shareWaybill() {
-    prepareAndPrint();
-    setTimeout(() => { alert('لطفا از پنجره پرینت باز شده، گزینه Save as PDF را انتخاب کنید.'); }, 500);
 }
 
 // راه‌اندازی PWA
