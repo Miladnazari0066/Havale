@@ -4,8 +4,8 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%23000000'/%3E%3Cpath d='M 22 20 C 45 20, 45 45, 22 50 C 45 55, 45 80, 22 80' stroke='white' stroke-width='6' fill='none'/%3E%3C/svg%3E",
