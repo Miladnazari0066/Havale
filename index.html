@@ -6,12 +6,12 @@
     <title>سیستم مدیریت حواله - سی تک پارسیان</title>
     
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#7c3aed">
+    <meta name="theme-color" content="#ffffff">
     
-    <!-- لوگوی مشکی مینیمال برای تب مرورگر -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%230f172a'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230f172a'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230f172a'%3EE%3C/text%3E%3C/svg%3E">
+    <!-- لوگوی مشکی دقیق برای تب مرورگر -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%23000000'/%3E%3Cpath d='M 22 20 C 45 20, 45 45, 22 50 C 45 55, 45 80, 22 80' stroke='white' stroke-width='6' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='900' font-size='30' fill='%23000000'%3ES%3C/text%3E%3Ctext x='70' y='55' font-family='Arial, sans-serif' font-weight='900' font-size='30' fill='%23000000'%3ET%3C/text%3E%3C/svg%3E">
 
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -19,258 +19,293 @@
 </head>
 <body>
 
-    <!-- 1. صفحه لاگین (Glassmorphism + Animated Background) -->
-    <div id="loginScreen">
-        <div class="background-orbs">
-            <div class="orb orb-1"></div>
-            <div class="orb orb-2"></div>
-            <div class="orb orb-3"></div>
-        </div>
-        
-        <div class="login-card">
-            <!-- لوگوی مشکی مینیمال -->
-            <svg class="login-logo" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
-                <rect x="10" y="10" width="25" height="60" fill="#0f172a" />
-                <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
-                <text x="45" y="45" font-family="Vazirmatn, Tahoma, Arial, sans-serif" font-weight="900" font-size="28" fill="#0f172a" letter-spacing="1">SEETEC</text>
-                <text x="45" y="65" font-family="Vazirmatn, Tahoma, Arial, sans-serif" font-weight="bold" font-size="13" fill="#444">Persian Flooring</text>
-            </svg>
-            <div class="login-subtitle">شرکت کفپوش سی تک پارسیان</div>
+    <!-- =========================================
+         صفحه لاگین (طراحی اسپلیت مدرن)
+         ========================================= -->
+    <div id="loginScreen" class="login-wrapper">
+        <!-- بخش فرم (سمت چپ) -->
+        <div class="login-form-section">
+            <div class="login-card">
+                <h2>ورود به سیستم</h2>
+                <p class="login-desc">برای ادامه، اطلاعات خود را وارد کنید.</p>
 
-            <div class="input-group">
-                <label>نام کاربری</label>
-                <select id="loginUsername">
-                    <option value="mojtaba">مجتبی بیاتی (فروش)</option>
-                    <option value="mehdi">مهدی شیبک (انبار)</option>
-                </select>
+                <div class="input-group">
+                    <label>نام کاربری</label>
+                    <select id="loginUsername">
+                        <option value="mojtaba">مجتبی بیاتی (کارشناس فروش)</option>
+                        <option value="mehdi">مهدی شیبک (انباردار)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>رمز عبور (۴ رقمی)</label>
+                    <input type="password" id="loginPassword" maxlength="4" placeholder="••••" class="password-input">
+                </div>
+                <button class="btn-login" id="btnLogin" onclick="doLogin()">ورود به پنل</button>
             </div>
-            <div class="input-group">
-                <label>رمز عبور (۴ رقمی)</label>
-                <input type="password" id="loginPassword" maxlength="4" placeholder="****" style="letter-spacing: 5px; text-align: center;">
-            </div>
-            <button class="btn-login" id="btnLogin" onclick="doLogin()">ورود به سیستم</button>
         </div>
-    </div>
 
-    <!-- 2. صفحه تغییر رمز اجباری -->
-    <div id="changePassScreen" class="hidden">
-        <div class="confirm-box" style="text-align:right;">
-            <h3 style="margin-bottom: 20px; color: var(--danger); text-align:center; font-size: 22px;">تغییر رمز اجباری</h3>
-            <p style="text-align:center; margin-bottom:25px; font-size:14px; color:var(--text-light);">بیش از ۳۰ روز از تغییر رمز شما گذشته است. لطفاً رمز جدیدی (۴ رقمی) وارد کنید.</p>
-            <div class="input-group">
-                <label>رمز عبور جدید (۴ عدد)</label>
-                <input type="password" id="newPassword" maxlength="4" style="text-align:center; letter-spacing:10px; font-size:22px; border:2px solid #e2e8f0; padding:15px; border-radius:12px;">
-            </div>
-            <button class="btn-login" onclick="changePassword()" style="margin-top: 15px;">ثبت رمز جدید</button>
-        </div>
-    </div>
-
-    <!-- 3. برنامه اصلی (Bento Grid Dashboard) -->
-    <div id="appMain" class="hidden">
-        
-        <div class="dashboard-header no-print">
-            <div class="header-brand">
-                <svg viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="25" height="60" fill="#0f172a" />
-                    <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
-                    <text x="45" y="55" font-family="Vazirmatn, Tahoma, Arial, sans-serif" font-weight="900" font-size="32" fill="#0f172a" letter-spacing="1">SEETEC</text>
+        <!-- بخش برندینگ (سمت راست) -->
+        <div class="login-brand-section">
+            <div class="brand-content">
+                <!-- لوگوی دقیق و مشکی -->
+                <svg class="brand-logo" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="35" height="80" fill="#000000" />
+                    <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#000000" letter-spacing="2">SEETEC</text>
+                    <text x="62" y="85" font-family="Vazirmatn, Arial, sans-serif" font-weight="600" font-size="16" fill="#333333" letter-spacing="1">Persian Flooring</text>
                 </svg>
-                <span>مدیریت حواله</span>
-            </div>
-            <div class="user-info">
-                <button class="btn-logout" onclick="logout()">خروج</button>
-                <div class="user-icon">👤</div>
-                <span id="userNameDisplay"></span>
+                <div class="brand-text">شرکت کفپوش سی تک پارسیان</div>
+                <p class="brand-subtext">سیستم یکپارچه مدیریت حواله‌های فروش و انبار</p>
             </div>
         </div>
+    </div>
 
-        <!-- داشبورد Bento Grid -->
-        <div id="dashboardView" class="dashboard-content">
-            <div class="dashboard-top">
-                <div class="welcome-text">
-                    <h1 id="welcomeTitle">داشبورد مدیریت</h1>
-                    <p id="welcomeSubtitle">خلاصه‌ای از فعالیت‌های شما</p>
-                </div>
-                <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:12px 24px; font-size:15px;">➕ صدور حواله جدید</button>
+    <!-- =========================================
+         صفحه تغییر رمز اجباری
+         ========================================= -->
+    <div id="changePassScreen" class="hidden overlay">
+        <div class="modal-card">
+            <h3 class="text-danger">تغییر رمز اجباری</h3>
+            <p>بیش از ۳۰ روز از تغییر رمز شما گذشته است. لطفاً رمز جدیدی (۴ رقمی) وارد کنید.</p>
+            <div class="input-group mt-20">
+                <label>رمز عبور جدید</label>
+                <input type="password" id="newPassword" maxlength="4" class="password-input" style="text-align:center; letter-spacing:5px; font-size:20px;">
             </div>
-
-            <!-- Bento Grid Stats -->
-            <div class="bento-grid-stats">
-                <div class="bento-card stat-card total">
-                    <div class="stat-info">
-                        <h3>کل حواله‌ها</h3>
-                        <div class="number" id="statTotal">0</div>
-                    </div>
-                    <div class="stat-icon">📄</div>
-                </div>
-                <div class="bento-card stat-card pending">
-                    <div class="stat-info">
-                        <h3>در انتظار انبار</h3>
-                        <div class="number" id="statPending">0</div>
-                    </div>
-                    <div class="stat-icon">⏳</div>
-                </div>
-                <div class="bento-card stat-card checked">
-                    <div class="stat-info">
-                        <h3>کنترل شده</h3>
-                        <div class="number" id="statChecked">0</div>
-                    </div>
-                    <div class="stat-icon">✅</div>
-                </div>
-                <div class="bento-card stat-card returned">
-                    <div class="stat-info">
-                        <h3>برگشتی</h3>
-                        <div class="number" id="statReturned">0</div>
-                    </div>
-                    <div class="stat-icon">↩️</div>
-                </div>
-            </div>
-
-            <div class="dashboard-toolbar">
-                <input type="text" id="dashboardSearch" class="search-input" placeholder="جستجو بر اساس شماره حواله..." oninput="renderDashboardTable()">
-                <select id="dashboardFilter" class="filter-select" onchange="renderDashboardTable()">
-                    <option value="all">همه وضعیت‌ها</option>
-                    <option value="draft">پیش‌نویس</option>
-                    <option value="pending">در انتظار انبار</option>
-                    <option value="checked">کنترل شده</option>
-                    <option value="returned">برگشتی</option>
-                </select>
-            </div>
-
-            <div class="waybill-list-container waybill-list">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>شماره حواله</th>
-                            <th>تاریخ ثبت</th>
-                            <th>وضعیت</th>
-                            <th>عملیات</th>
-                        </tr>
-                    </thead>
-                    <tbody id="waybillListBody"></tbody>
-                </table>
-            </div>
+            <button class="btn btn-primary w-100 mt-20" onclick="changePassword()">ثبت رمز جدید</button>
         </div>
+    </div>
 
-        <!-- فرم حواله (دست‌نخورده) -->
-        <div id="waybillView" class="hidden">
-            <div class="tabs-container no-print">
-                <div class="toolbar" id="mainToolbar">
-                    <button class="btn btn-dark" id="btnBackToDash" onclick="showDashboard()">🔙 بازگشت</button>
-                    <button class="btn btn-success" id="btnSaveDraft" onclick="saveWaybill('draft')">💾 ذخیره پیش‌نویس</button>
+    <!-- =========================================
+         برنامه اصلی (داشبورد)
+         ========================================= -->
+    <div id="appMain" class="hidden app-layout">
+        
+        <!-- سایدبار (منوی سمت راست) -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <!-- لوگوی مینیمال مشکی -->
+                <svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="35" height="80" fill="#000000" />
+                    <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#000000" letter-spacing="2">SEETEC</text>
+                    <text x="62" y="85" font-family="Vazirmatn, Arial, sans-serif" font-weight="600" font-size="16" fill="#333333" letter-spacing="1">Persian Flooring</text>
+                </svg>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <button class="nav-item active" onclick="showView('dashboard', this)">
+                    <span class="nav-icon">📊</span> داشبورد
+                </button>
+                <button class="nav-item" onclick="startNewWaybill(); showView('waybill', this)" id="navNewWaybill" style="display:none;">
+                    <span class="nav-icon">➕</span> صدور حواله
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">👤</div>
+                    <div class="user-details">
+                        <span class="user-name" id="userNameDisplay"></span>
+                        <span class="user-role" id="userRoleDisplay"></span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">خروج از سیستم</button>
+            </div>
+        </aside>
+
+        <!-- محتوای اصلی (سمت چپ) -->
+        <main class="main-content">
+            
+            <!-- هدر بالای صفحه -->
+            <header class="top-header">
+                <h1 class="page-title" id="pageTitle">داشبورد مدیریت</h1>
+                <div class="header-actions">
+                    <span class="date-display" id="currentDateDisplay"></span>
+                </div>
+            </header>
+
+            <!-- نمای داشبورد -->
+            <div id="dashboardView" class="view-section">
+                <!-- کارت‌های آماری (Bento) -->
+                <div class="bento-grid">
+                    <div class="bento-card total">
+                        <div class="bento-icon">📄</div>
+                        <div class="bento-info">
+                            <span>کل حواله‌ها</span>
+                            <h2 id="statTotal">0</h2>
+                        </div>
+                    </div>
+                    <div class="bento-card pending">
+                        <div class="bento-icon">⏳</div>
+                        <div class="bento-info">
+                            <span>در انتظار انبار</span>
+                            <h2 id="statPending">0</h2>
+                        </div>
+                    </div>
+                    <div class="bento-card checked">
+                        <div class="bento-icon">✅</div>
+                        <div class="bento-info">
+                            <span>کنترل شده</span>
+                            <h2 id="statChecked">0</h2>
+                        </div>
+                    </div>
+                    <div class="bento-card returned">
+                        <div class="bento-icon">↩️</div>
+                        <div class="bento-info">
+                            <span>برگشتی</span>
+                            <h2 id="statReturned">0</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- نوار ابزار جدول -->
+                <div class="table-toolbar">
+                    <div class="search-box">
+                        <span>🔍</span>
+                        <input type="text" id="dashboardSearch" placeholder="جستجوی شماره حواله..." oninput="renderDashboardTable()">
+                    </div>
+                    <select id="dashboardFilter" class="filter-select" onchange="renderDashboardTable()">
+                        <option value="all">همه وضعیت‌ها</option>
+                        <option value="draft">پیش‌نویس</option>
+                        <option value="pending">در انتظار انبار</option>
+                        <option value="checked">کنترل شده</option>
+                        <option value="returned">برگشتی</option>
+                    </select>
+                </div>
+
+                <!-- جدول -->
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>شماره حواله</th>
+                                <th>تاریخ ثبت</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="waybillListBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- نمای فرم حواله (دست‌نخورده برای پرینت) -->
+            <div id="waybillView" class="view-section hidden">
+                <div class="waybill-toolbar no-print">
+                    <button class="btn btn-light" onclick="showView('dashboard')">🔙 بازگشت</button>
+                    <div class="spacer"></div>
+                    <button class="btn btn-success" id="btnSaveDraft" onclick="saveWaybill('draft')">💾 پیش‌نویس</button>
                     <button class="btn btn-primary" id="btnSendToWarehouse" onclick="saveWaybill('pending')">📤 ارسال به انبار</button>
-                    <button class="btn btn-success" id="btnCheckWarehouse" onclick="saveWaybill('checked')">✅ کنترل انبار شد</button>
-                    <button class="btn btn-edit" id="btnReturn" onclick="saveWaybill('returned')">↩️ برگشت به فروش</button>
+                    <button class="btn btn-success" id="btnCheckWarehouse" onclick="saveWaybill('checked')">✅ کنترل انبار</button>
+                    <button class="btn btn-warning" id="btnReturn" onclick="saveWaybill('returned')">↩️ برگشت</button>
                     <button class="btn btn-dark" id="btnPrint" onclick="prepareAndPrint()">🖨️ پرینت / PDF</button>
-                    <button class="btn btn-share" id="btnShare" onclick="shareWaybill()">📤 ارسال فایل</button>
                 </div>
-            </div>
 
-            <div id="pdfContainer">
-                <div id="pagesContainer">
-                    <div class="page">
-                        <div class="content">
-                            <table class="w-table header-table">
-                                <tr>
-                                    <td class="header-right">
-                                        شماره حواله : <input type="text" id="waybillNumber" class="form-input ltr-input" readonly style="font-weight: bold; width: 100px;"><br>
-                                        تاریخ : <input type="text" id="waybillDate" class="h-input form-input ltr-input" style="width: 100px;" readonly><br>
-                                        نام انبار : 
-                                        <select id="warehouseSelect" class="h-input form-input" style="width: 220px;" onchange="handleWarehouseChange(this)">
-                                            <option value="si-tak">انبار محصول سی تک - خط هایگلاس</option>
-                                            <option value="kafpoosh">انبار محصول کفپوش - خط ملامینه</option>
-                                        </select><br>
-                                        <div class="customer-wrapper">
-                                            <span style="margin-left: 2px;">نام مشتری :</span>
-                                            <select id="customerName" class="h-input form-input" style="width: auto; max-width: 140px; text-align: right;">
-                                                <option value="">-- انتخاب --</option>
-                                                <option value="امیرعلی عشوری">امیرعلی عشوری</option>
-                                                <option value="حسن شعبانی">حسن شعبانی</option>
-                                                <option value="حسن شعبانی پارتیکلایی">حسن شعبانی پارتیکلایی</option>
-                                                <option value="حسین یوسفی">حسین یوسفی</option>
+                <div id="pdfContainer">
+                    <div id="pagesContainer">
+                        <div class="page">
+                            <div class="content">
+                                <table class="w-table header-table">
+                                    <tr>
+                                        <td class="header-right">
+                                            شماره حواله : <input type="text" id="waybillNumber" class="form-input ltr-input" readonly style="font-weight: bold; width: 100px;"><br>
+                                            تاریخ : <input type="text" id="waybillDate" class="h-input form-input ltr-input" style="width: 100px;" readonly><br>
+                                            نام انبار : 
+                                            <select id="warehouseSelect" class="h-input form-input" style="width: 220px;" onchange="handleWarehouseChange(this)">
+                                                <option value="si-tak">انبار محصول سی تک - خط هایگلاس</option>
+                                                <option value="kafpoosh">انبار محصول کفپوش - خط ملامینه</option>
+                                            </select><br>
+                                            <div class="customer-wrapper">
+                                                <span style="margin-left: 2px;">نام مشتری :</span>
+                                                <select id="customerName" class="h-input form-input" style="width: auto; max-width: 140px; text-align: right;">
+                                                    <option value="">-- انتخاب --</option>
+                                                    <option value="امیرعلی عشوری">امیرعلی عشوری</option>
+                                                    <option value="حسن شعبانی">حسن شعبانی</option>
+                                                    <option value="حسن شعبانی پارتیکلایی">حسن شعبانی پارتیکلایی</option>
+                                                    <option value="حسین یوسفی">حسین یوسفی</option>
+                                                </select>
+                                                <select id="isOfficial" class="h-input form-input">
+                                                    <option value=""></option>
+                                                    <option value="(رسمی)">(رسمی)</option>
+                                                </select>
+                                            </div>
+                                        </td>
+                                        <td class="header-center">
+                                            <h2 class="company-title">سی تک پارسیان</h2>
+                                            <h3>حواله فروش</h3>
+                                            <div class="manual-text">(حواله ی دستی)</div>
+                                        </td>
+                                        <td class="header-left">
+                                            تاریخ پرینت گزارش : <input type="text" id="printDate" class="ltr-input" readonly><br>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <table class="info-table-w">
+                                    <tr>
+                                        <td>نام راننده : <input type="text" id="driverNameMain" class="driver-input h-input form-input" oninput="syncDriverName(this.value)"></td>
+                                        <td>نوع وسیله نقلیه : 
+                                            <select id="vehicleType" class="driver-input h-input form-input">
+                                                <option value="خاور">خاور</option>
+                                                <option value="تریلی">تریلی</option>
+                                                <option value="کامیون">کامیون</option>
+                                                <option value="نیسان">نیسان</option>
                                             </select>
-                                            <select id="isOfficial" class="h-input form-input">
-                                                <option value=""></option>
-                                                <option value="(رسمی)">(رسمی)</option>
-                                            </select>
-                                        </div>
-                                    </td>
-                                    <td class="header-center">
-                                        <h2 class="company-title">سی تک پارسیان</h2>
-                                        <h3>حواله فروش</h3>
-                                        <div class="manual-text">(حواله ی دستی)</div>
-                                    </td>
-                                    <td class="header-left">
-                                        تاریخ پرینت گزارش : <input type="text" id="printDate" class="ltr-input" readonly><br>
-                                    </td>
-                                </tr>
-                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>شماره تماس راننده : <input type="text" id="driverPhone" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
+                                        <td>شماره ماشین : <input type="text" id="carPlate" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
+                                    </tr>
+                                </table>
 
-                            <table class="info-table-w">
-                                <tr>
-                                    <td>نام راننده : <input type="text" id="driverNameMain" class="driver-input h-input form-input" oninput="syncDriverName(this.value)"></td>
-                                    <td>نوع وسیله نقلیه : 
-                                        <select id="vehicleType" class="driver-input h-input form-input">
-                                            <option value="خاور">خاور</option>
-                                            <option value="تریلی">تریلی</option>
-                                            <option value="کامیون">کامیون</option>
-                                            <option value="نیسان">نیسان</option>
-                                        </select>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>شماره تماس راننده : <input type="text" id="driverPhone" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
-                                    <td>شماره ماشین : <input type="text" id="carPlate" class="driver-input h-input form-input" oninput="this.value = forceEnglish(this.value)"></td>
-                                </tr>
-                            </table>
+                                <table class="main-table-w">
+                                    <thead id="mainTableHead"></thead>
+                                    <tbody class="table-body"></tbody>
+                                </table>
+                                
+                                <div id="addRowContainer" style="margin-top: 8px;" class="no-print">
+                                    <button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>
+                                </div>
 
-                            <table class="main-table-w">
-                                <thead id="mainTableHead"></thead>
-                                <tbody class="table-body"></tbody>
-                            </table>
-                            
-                            <div id="addRowContainer" style="margin-top: 8px;">
-                                <button class="btn-add-row" onclick="addRow()">➕ افزودن ردیف بعدی</button>
+                                <table class="footer-table-w">
+                                    <tr class="footer-row-1">
+                                        <td colspan="4">
+                                            کالای فوق صحیح و سالم به آقای <input type="text" id="driverNameFooter" class="form-input" style="border: none; text-align: center; width: 120px;"> تحویل و از کارخانه کفپوش سی تک پارسیان خارج گردید.
+                                        </td>
+                                    </tr>
+                                    <tr class="footer-row-2">
+                                        <td colspan="4">شرح سند: <input type="text" id="documentDesc" class="form-input" style="width: 85%; text-align: right;"></td>
+                                    </tr>
+                                    <tr class="signature-row">
+                                        <td>امضاء و اثر انگشت راننده :</td>
+                                        <td>امضاء راننده لیفتراک :</td>
+                                        <td>امضاء انباردار :</td>
+                                        <td>امضاء مدیریت :</td>
+                                    </tr>
+                                </table>
                             </div>
-
-                            <table class="footer-table-w">
-                                <tr class="footer-row-1">
-                                    <td colspan="4">
-                                        کالای فوق صحیح و سالم به آقای <input type="text" id="driverNameFooter" class="form-input" style="border: none; text-align: center; width: 120px;"> تحویل و از کارخانه کفپوش سی تک پارسیان خارج گردید.
-                                    </td>
-                                </tr>
-                                <tr class="footer-row-2">
-                                    <td colspan="4">شرح سند: <input type="text" id="documentDesc" class="form-input" style="width: 85%; text-align: right;"></td>
-                                </tr>
-                                <tr class="signature-row">
-                                    <td>امضاء و اثر انگشت راننده :</td>
-                                    <td>امضاء راننده لیفتراک :</td>
-                                    <td>امضاء انباردار :</td>
-                                    <td>امضاء مدیریت :</td>
-                                </tr>
-                            </table>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     </div>
 
     <!-- Toast -->
     <div id="toastContainer"></div>
 
     <!-- Custom Confirm Modal -->
-    <div id="customConfirmModal" class="hidden">
-        <div class="confirm-box">
-            <p id="confirmMessage">آیا مطمئن هستید؟</p>
-            <div class="confirm-actions">
-                <button class="btn-yes" onclick="confirmResolve(true)">بله</button>
-                <button class="btn-no" onclick="confirmResolve(false)">خیر</button>
+    <div id="customConfirmModal" class="hidden overlay">
+        <div class="modal-card text-center">
+            <p id="confirmMessage" style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">آیا مطمئن هستید؟</p>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="confirmResolve(true)">بله</button>
+                <button class="btn btn-light" onclick="confirmResolve(false)">خیر</button>
             </div>
         </div>
     </div>
 
-    <!-- لینک به فایل جاوااسکریپت -->
     <script src="./app.js"></script>
 </body>
 </html>
