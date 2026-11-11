@@ -5,23 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>سیستم مدیریت حواله - سی تک پارسیان</title>
     
-    <!-- تنظیمات PWA به صورت داخلی -->
     <link rel="manifest" href='data:application/manifest+json,{"name":"حواله سی تک","short_name":"حواله","start_url":"./","display":"standalone","background_color":"%230f172a","theme_color":"%237c3aed","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"512x512","type":"image/png"}]}'>
     <meta name="theme-color" content="#7c3aed">
 
-    <!-- لوگوی اختصاصی سایت در تب مرورگر -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%237c3aed'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%237c3aed'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%237c3aed'%3EE%3C/text%3E%3Ctext x='45' y='75' font-family='Arial, sans-serif' font-size='12' fill='%237c3aed'%3EETEC%3C/text%3E%3C/svg%3E">
 
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     
-    <!-- 🟢 حذف defer برای اطمینان از لود شدن قبل از اسکریپت اصلی -->
+    <!-- لود کتابخانه‌ها -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
-        /* =========================================
-           متغیرها و پایه‌ها (تم مدرن و لاکچری)
-           ========================================= */
         :root {
             --primary: #7c3aed;
             --primary-hover: #6d28d9;
@@ -32,10 +27,7 @@
             --info: #3b82f6;
             --text-dark: #0f172a;
             --text-light: #64748b;
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.6);
             --font-family: 'Vazirmatn', sans-serif;
-            
             --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -49,44 +41,25 @@
             min-height: 100vh;
         }
         
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .hidden { display: none !important; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUpSmooth { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         @keyframes zoomInSpring { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         @keyframes slideDownSpring { 0% { transform: translateY(-100px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
 
-        /* =========================================
-           سیستم پاپ‌آپ (Toast)
-           ========================================= */
+        /* Toast */
         #toastContainer { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); z-index: 99999; display: flex; flex-direction: column; gap: 15px; align-items: center; pointer-events: none; }
-        .toast { 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-            padding: 15px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15); font-weight: 700; font-size: 15px;
-            display: flex; align-items: center; gap: 12px; animation: slideDownSpring 0.6s var(--transition-bounce); 
-            min-width: 300px; justify-content: center; position: relative; overflow: hidden; color: var(--text-dark);
-            pointer-events: auto;
-        }
+        .toast { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.8); box-shadow: 0 15px 35px rgba(0,0,0,0.15); font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 12px; animation: slideDownSpring 0.6s var(--transition-bounce); min-width: 300px; justify-content: center; position: relative; overflow: hidden; color: var(--text-dark); pointer-events: auto; }
         .toast::after { content: ''; position: absolute; bottom: 0; left: 0; height: 4px; width: 100%; animation: toastProgress 3s linear forwards; }
         @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
-        
         .toast.success::after { background: var(--success); } .toast.success { border-right: 5px solid var(--success); }
         .toast.error::after { background: var(--danger); } .toast.error { border-right: 5px solid var(--danger); }
         .toast.info::after { background: var(--primary); } .toast.info { border-right: 5px solid var(--primary); }
-        
         .toast.fade-out { animation: fadeOutUp 0.4s forwards; }
         @keyframes fadeOutUp { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-30px); opacity: 0; } }
 
-        /* =========================================
-           مودال سفارشی
-           ========================================= */
+        /* Modal */
         #customConfirmModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(8px); z-index: 99998; display: flex; justify-content: center; align-items: center; animation: fadeIn 0.3s; }
         .confirm-box { background: #ffffff; padding: 35px; border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); text-align: center; max-width: 400px; width: 90%; animation: zoomInSpring 0.4s var(--transition-bounce); }
         .confirm-box p { font-size: 17px; margin-bottom: 25px; color: var(--text-dark); line-height: 1.6; font-weight: 700; }
@@ -97,63 +70,29 @@
         .btn-no { background: #f1f5f9; color: var(--text-dark); }
         .btn-no:hover { background: #e2e8f0; transform: translateY(-3px); }
 
-        /* =========================================
-           صفحه لاگین (Glassmorphism)
-           ========================================= */
+        /* Login */
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9998; display: flex; justify-content: center; align-items: center; }
-        .login-card { 
-            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            padding: 40px 35px; border-radius: 24px; 
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8); 
-            width: 100%; max-width: 400px; text-align: center; 
-            border: 1px solid rgba(255,255,255,0.6); animation: slideUpSmooth 0.7s var(--transition-bounce); 
-        }
-        
-        /* لوگو مینیمال لاگین */
+        .login-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); padding: 40px 35px; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8); width: 100%; max-width: 400px; text-align: center; border: 1px solid rgba(255,255,255,0.6); animation: slideUpSmooth 0.7s var(--transition-bounce); }
         .login-logo { width: 130px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1)); }
         .login-subtitle { font-size: 12px; font-weight: bold; color: var(--text-light); margin-bottom: 35px; letter-spacing: 1px; }
-
         .input-group { margin-bottom: 20px; text-align: right; }
         .input-group label { display: block; margin-bottom: 8px; font-weight: 700; color: var(--text-light); font-size: 13px; }
-        .input-group select, .input-group input { 
-            width: 100%; padding: 14px 15px; background: rgba(255, 255, 255, 0.9); 
-            border: 2px solid transparent; border-radius: 12px; 
-            font-family: inherit; font-size: 15px; box-sizing: border-box; outline: none; 
-            color: var(--text-dark); transition: var(--transition-smooth); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-        }
-        .input-group select:focus, .input-group input:focus { 
-            border-color: var(--primary); background: #ffffff; 
-            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); 
-            transform: translateY(-2px);
-        }
-        .btn-login { 
-            width: 100%; padding: 15px; background: linear-gradient(135deg, #7c3aed, #ec4899); 
-            color: white; border: none; border-radius: 12px; font-family: inherit; font-size: 17px; 
-            font-weight: 900; cursor: pointer; transition: var(--transition-bounce); 
-            box-shadow: 0 10px 25px -5px rgba(124,58,237,0.5); margin-top: 10px;
-        }
+        .input-group select, .input-group input { width: 100%; padding: 14px 15px; background: rgba(255, 255, 255, 0.9); border: 2px solid transparent; border-radius: 12px; font-family: inherit; font-size: 15px; box-sizing: border-box; outline: none; color: var(--text-dark); transition: var(--transition-smooth); box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
+        .input-group select:focus, .input-group input:focus { border-color: var(--primary); background: #ffffff; box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.15); transform: translateY(-2px); }
+        .btn-login { width: 100%; padding: 15px; background: linear-gradient(135deg, #7c3aed, #ec4899); color: white; border: none; border-radius: 12px; font-family: inherit; font-size: 17px; font-weight: 900; cursor: pointer; transition: var(--transition-bounce); box-shadow: 0 10px 25px -5px rgba(124,58,237,0.5); margin-top: 10px; }
         .btn-login:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 15px 30px -5px rgba(124,58,237,0.7); }
 
-        /* =========================================
-           داشبورد
-           ========================================= */
-        .dashboard-header { 
-            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); 
-            padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; 
-            border-bottom: 1px solid rgba(255,255,255,0.8);
-        }
+        /* Dashboard */
+        .dashboard-header { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.8); }
         .header-brand { display: flex; align-items: center; gap: 12px; }
         .header-brand svg { height: 30px; width: auto; }
         .header-brand span { font-weight: 900; color: var(--text-dark); font-size: 16px; border-right: 2px solid #cbd5e1; padding-right: 12px; }
-        
         .user-info { font-weight: 900; color: var(--text-dark); display: flex; align-items: center; gap: 15px; font-size: 14px; }
         .user-icon { width: 38px; height: 38px; background: linear-gradient(135deg, #a78bfa, #f472b6); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; box-shadow: 0 4px 10px rgba(236,72,153,0.3); }
         .btn-logout { background: #fff; color: var(--danger); border: 2px solid #fee2e2; padding: 8px 16px; border-radius: 10px; cursor: pointer; font-family: inherit; font-weight: 900; transition: var(--transition-smooth); font-size: 13px; }
         .btn-logout:hover { background: var(--danger); color: white; border-color: var(--danger); box-shadow: 0 4px 15px rgba(239,68,68,0.4); transform: translateY(-2px); }
         
         .dashboard-content { max-width: 1200px; margin: 30px auto; padding: 0 20px; animation: fadeIn 0.6s; }
-        
         .dashboard-top { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
         .welcome-text h1 { font-size: 26px; font-weight: 900; color: #ffffff; margin: 0 0 5px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.15); }
         .welcome-text p { color: rgba(255, 255, 255, 0.9); font-size: 14px; margin: 0; font-weight: 500; }
@@ -211,9 +150,7 @@
         .tabs-container { max-width: 100%; margin: 0 auto 20px auto; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); padding: 15px 25px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.8); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
-        /* =========================================
-           فرم حواله
-           ========================================= */
+        /* Print Form */
         #waybillView { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 100; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         
         @page { size: A4 landscape; margin: 0; }
@@ -272,8 +209,8 @@
 </head>
 <body>
 
-    <!-- 1. صفحه لاگین -->
-    <div id="loginScreen" class="hidden">
+    <!-- 1. صفحه لاگین (از همان ابتدا باز است) -->
+    <div id="loginScreen">
         <div class="login-card">
             
             <svg class="login-logo" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
@@ -513,97 +450,63 @@
     </div>
 
     <script>
-        // --- 1. Service Worker ---
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err)); });
-        }
-
-        // --- 2. متغیرهای اصلی ---
+        // 🟢 تنظیمات اتصال به دیتابیس
         const SUPABASE_URL = "https://sizebshjcwiumclcbsrg.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_dUexAxlEw_-mZuMbVc3Wmg_aWrJDQmj";
-        
-        // 🟢 اتصال به دیتابیس (حالا که کتابخانه کاملاً لود شده است)
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabaseClient = null;
 
+        // بررسی اینکه آیا کتابخانه سوپابیس لود شده است یا خیر (برای جلوگیری از کرش کردن)
+        try {
+            if (typeof supabase !== 'undefined') {
+                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                console.error("کتابخانه Supabase لود نشد. اتصال به دیتابیس برقرار نیست.");
+            }
+        } catch (e) {
+            console.error("خطا در راه‌اندازی دیتابیس:", e);
+        }
+
+        // لیست کالاهای کفپوش
         const kafpooshProducts = [
-            { code: "10", name: "ام دی اف ملامینه سفید - white" },
-            { code: "10", name: "ام دی اف ملامینه سفید تکرو - white one side" },
-            { code: "12", name: "ام دی اف ملامینه کد 12 - KSP12" },
-            { code: "14", name: "ام دی اف ملامینه کد 14 - KSP14" },
-            { code: "40", name: "ام دی اف ملامینه کد 40 - KSP40" },
-            { code: "43", name: "ام دی اف ملامینه کد 43 - KSP 43" },
-            { code: "46", name: "ام دی اف ملامینه کد 46 - KSP46" },
-            { code: "71", name: "ام دی اف ملامینه کد 71 - KSP71" },
-            { code: "75", name: "ام دی اف ملامینه کد 75 - KSP 75" },
-            { code: "76", name: "ام دی اف ملامینه کد 76 - KSP 76" },
-            { code: "77", name: "ام دی اف ملامینه کد 77 - KSP77" },
-            { code: "79", name: "ام دی اف ملامینه کد 79 - KSP 79" },
-            { code: "80", name: "ام دی اف ملامینه کد 80 - KSP 80" },
-            { code: "82", name: "ام دی اف ملامینه کد 82 - KSP82" },
-            { code: "83", name: "ام دی اف ملامینه کد 83 - KSP83" },
-            { code: "85", name: "ام دی اف ملامینه کد 85 - KSP 85" },
-            { code: "86", name: "ام دی اف ملامینه کد 86 - KSP86" },
-            { code: "16", name: "ام دی اف ملامینه کرم - CREAM" },
-            { code: "87", name: "ام دی اف ملامینه خاکستری 1 - GRAY-1" },
-            { code: "89", name: "ام دی اف ملامینه خاکستری 3 - GRAY -3" },
-            { code: "99", name: "ام دی اف ملامینه مشکی - BLACK" },
-            { code: "200", name: "ام دی اف ملامینه بلوط روشن - LIGHT OAK" },
-            { code: "201", name: "ام دی اف ملامینه انتیک کاج - ANTIQUE Kag" },
-            { code: "203", name: "ام دی اف ملامینه بالتیمور کرم - CREAM BAL TIMOUR" },
-            { code: "205", name: "ام دی اف ملامینه کرمازوهیرکانی - HLRKANI KARMAZOO" },
-            { code: "206", name: "ام دی اف ملامینه کاتانیا - CATANIA" },
-            { code: "207", name: "ام دی اف ملامینه انتیک لایت - ANTIQUE LIGHT" },
-            { code: "208", name: "ام دی اف ملامینه انجالک - SORBUS" },
-            { code: "209", name: "ام دی اف ملامینه شاه بلوط هیرکانی - HIRKANI KING OAK" },
-            { code: "210", name: "ام دی اف ملامینه لیون روشن - LYON WALNUT LIGHT" },
-            { code: "211", name: "ام دی اف ملامینه لیون مدیوم - LYON MEDIUM" },
-            { code: "213", name: "ام دی اف ملامینه کانادا اوک - CANADA OAK" },
-            { code: "214", name: "ام دی اف ملامینه سوناما - SONAMA" },
-            { code: "215", name: "ام دی اف ملامینه فلگ استاف اوک 2 - FLAGSTAFF OAK 2" },
-            { code: "216", name: "ام دی اف ملامینه فلگ استاف اوک 3 - FLAGSTAFF OAK 3" },
-            { code: "217", name: "ام دی اف ملامینه سون اوک - SEVEN OAK" },
-            { code: "218", name: "ام دی اف ملامینه بیگ اوک روشن - BIG OAK LIGH T" },
-            { code: "219", name: "ام دی اف ملامینه بیگ اوک مدیوم - BIG OAK MIDDLE" },
-            { code: "220", name: "ام دی اف ملامینه تک سوز تیره - DARK TAK SUZ" },
-            { code: "221", name: "ام دی اف ملامینه افرا هیرکانی - ACER" },
-            { code: "223", name: "ام دی اف ملامینه اقاقیا - ROBINIA" },
-            { code: "224", name: "ام دی اف ملامینه تیللا - TILALA" },
-            { code: "225", name: "ام دی اف ملامینه ملچ روشن - LIGHT MALACH" },
-            { code: "226", name: "ام دی اف ملامینه تلکا - PYRUS" },
-            { code: "228", name: "ام دی اف ملامینه ممرز هیکانی 1 - HIRKANI MAMREZ 1" },
-            { code: "229", name: "ام دی اف ملامینه ممرز هیکانی 2 - HIRKANI MAMREZ 2" },
-            { code: "232", name: "ام دی اف ملامینه ممرز هیکانی 3 - HIRKANI MAMREZ 3" },
-            { code: "230", name: "ام دی اف ملامینه کلیاف روشن - LIGHT CLEAF" },
-            { code: "231", name: "ام دی اف ملامینه کلیاف مدیوم - MEDIUM CLEAF" },
-            { code: "235", name: "ام دی اف ملامینه انتیک طلایی - GOLDEN ANTIQUE" },
-            { code: "236", name: "ام دی اف ملامینه اباکای 1 - ABACA 1" },
-            { code: "237", name: "ام دی اف ملامینه اباکای 2 - ABACA 2" },
-            { code: "240", name: "ام دی اف ملامینه لیون تیره - LYON WALNUT DARK" },
-            { code: "245", name: "ام دی اف ملامینه نویز - NOISE" },
-            { code: "246", name: "ام دی اف ملامینه بشیکتاش الم - BESHIKTASH ELM(001)" },
-            { code: "247", name: "ام دی اف ملامینه سیاه مازو - BLACK OAK" },
-            { code: "250", name: "ام دی اف ملامینه کلیاف تیره - DARK CLEAF" },
-            { code: "249", name: "ام دی اف ملامینه میلانو والنات 1 - MILANO WALNUT 1" },
-            { code: "251", name: "ام دی اف ملامینه میلانو والنات 2 - MILANO WALNUT 2" },
-            { code: "252", name: "ام دی اف ملامینه میلانو والنات 3 - MILANO WALNUT 3" },
-            { code: "255", name: "ام دی اف ملامینه ملچ تیره - DARK MALACH" },
-            { code: "300", name: "ام دی اف ملامینه سفید متالیک - METALLIC WHITE" },
-            { code: "304", name: "ام دی اف ملامینه متالیک کرم - METALLIC CREAM" },
-            { code: "305", name: "ام دی اف ملامینه متالیک بژ - METALLIC BEIGE" },
-            { code: "306", name: "ام دی اف ملامینه نسکافه متالیک - METALIC CAPUCINO" },
-            { code: "315", name: "ام دی اف ملامینه متالیک نقره - METALLIC SILVER" },
-            { code: "325", name: "ام دی اف ملامینه متالیک آنتراسیت - METALIC ANTRASIT" },
-            { code: "400", name: "ام دی اف ملامینه بتون سفید - CONCRETE WHITE" },
-            { code: "405", name: "ام دی اف ملامینه بتون 5 - BETON 5" },
-            { code: "410", name: "ام دی اف ملامینه بتون 6 - BETON 6" },
-            { code: "408", name: "ام دی اف ملامینه بتون 7 - BETON 7" },
-            { code: "406", name: "ام دی اف ملامینه بتون 8 - BETON 8" },
-            { code: "411", name: "ام دی اف ملامینه بتون 9 - BETON 9" },
-            { code: "513", name: "ام دی اف ملامینه کتان سفید - WHITE LINEN" },
-            { code: "514", name: "ام دی اف ملامینه کتان کرم - CREAM LINEN" },
-            { code: "515", name: "ام دی اف ملامینه توییست 1 - TWIST 1" },
-            { code: "574", name: "ام دی اف ملامینه طرح سنگ سفید (3) - HARDSTONE WHITE (3)" },
-            { code: "575", name: "ام دی اف ملامینه طرح سنگ کرم (4) - HARDSTONE WHITE (4)" },
+            { code: "10", name: "ام دی اف ملامینه سفید - white" }, { code: "10", name: "ام دی اف ملامینه سفید تکرو - white one side" },
+            { code: "12", name: "ام دی اف ملامینه کد 12 - KSP12" }, { code: "14", name: "ام دی اف ملامینه کد 14 - KSP14" },
+            { code: "40", name: "ام دی اف ملامینه کد 40 - KSP40" }, { code: "43", name: "ام دی اف ملامینه کد 43 - KSP 43" },
+            { code: "46", name: "ام دی اف ملامینه کد 46 - KSP46" }, { code: "71", name: "ام دی اف ملامینه کد 71 - KSP71" },
+            { code: "75", name: "ام دی اف ملامینه کد 75 - KSP 75" }, { code: "76", name: "ام دی اف ملامینه کد 76 - KSP 76" },
+            { code: "77", name: "ام دی اف ملامینه کد 77 - KSP77" }, { code: "79", name: "ام دی اف ملامینه کد 79 - KSP 79" },
+            { code: "80", name: "ام دی اف ملامینه کد 80 - KSP 80" }, { code: "82", name: "ام دی اف ملامینه کد 82 - KSP82" },
+            { code: "83", name: "ام دی اف ملامینه کد 83 - KSP83" }, { code: "85", name: "ام دی اف ملامینه کد 85 - KSP 85" },
+            { code: "86", name: "ام دی اف ملامینه کد 86 - KSP86" }, { code: "16", name: "ام دی اف ملامینه کرم - CREAM" },
+            { code: "87", name: "ام دی اف ملامینه خاکستری 1 - GRAY-1" }, { code: "89", name: "ام دی اف ملامینه خاکستری 3 - GRAY -3" },
+            { code: "99", name: "ام دی اف ملامینه مشکی - BLACK" }, { code: "200", name: "ام دی اف ملامینه بلوط روشن - LIGHT OAK" },
+            { code: "201", name: "ام دی اف ملامینه انتیک کاج - ANTIQUE Kag" }, { code: "203", name: "ام دی اف ملامینه بالتیمور کرم - CREAM BAL TIMOUR" },
+            { code: "205", name: "ام دی اف ملامینه کرمازوهیرکانی - HLRKANI KARMAZOO" }, { code: "206", name: "ام دی اف ملامینه کاتانیا - CATANIA" },
+            { code: "207", name: "ام دی اف ملامینه انتیک لایت - ANTIQUE LIGHT" }, { code: "208", name: "ام دی اف ملامینه انجالک - SORBUS" },
+            { code: "209", name: "ام دی اف ملامینه شاه بلوط هیرکانی - HIRKANI KING OAK" }, { code: "210", name: "ام دی اف ملامینه لیون روشن - LYON WALNUT LIGHT" },
+            { code: "211", name: "ام دی اف ملامینه لیون مدیوم - LYON MEDIUM" }, { code: "213", name: "ام دی اف ملامینه کانادا اوک - CANADA OAK" },
+            { code: "214", name: "ام دی اف ملامینه سوناما - SONAMA" }, { code: "215", name: "ام دی اف ملامینه فلگ استاف اوک 2 - FLAGSTAFF OAK 2" },
+            { code: "216", name: "ام دی اف ملامینه فلگ استاف اوک 3 - FLAGSTAFF OAK 3" }, { code: "217", name: "ام دی اف ملامینه سون اوک - SEVEN OAK" },
+            { code: "218", name: "ام دی اف ملامینه بیگ اوک روشن - BIG OAK LIGH T" }, { code: "219", name: "ام دی اف ملامینه بیگ اوک مدیوم - BIG OAK MIDDLE" },
+            { code: "220", name: "ام دی اف ملامینه تک سوز تیره - DARK TAK SUZ" }, { code: "221", name: "ام دی اف ملامینه افرا هیرکانی - ACER" },
+            { code: "223", name: "ام دی اف ملامینه اقاقیا - ROBINIA" }, { code: "224", name: "ام دی اف ملامینه تیللا - TILALA" },
+            { code: "225", name: "ام دی اف ملامینه ملچ روشن - LIGHT MALACH" }, { code: "226", name: "ام دی اف ملامینه تلکا - PYRUS" },
+            { code: "228", name: "ام دی اف ملامینه ممرز هیکانی 1 - HIRKANI MAMREZ 1" }, { code: "229", name: "ام دی اف ملامینه ممرز هیکانی 2 - HIRKANI MAMREZ 2" },
+            { code: "232", name: "ام دی اف ملامینه ممرز هیکانی 3 - HIRKANI MAMREZ 3" }, { code: "230", name: "ام دی اف ملامینه کلیاف روشن - LIGHT CLEAF" },
+            { code: "231", name: "ام دی اف ملامینه کلیاف مدیوم - MEDIUM CLEAF" }, { code: "235", name: "ام دی اف ملامینه انتیک طلایی - GOLDEN ANTIQUE" },
+            { code: "236", name: "ام دی اف ملامینه اباکای 1 - ABACA 1" }, { code: "237", name: "ام دی اف ملامینه اباکای 2 - ABACA 2" },
+            { code: "240", name: "ام دی اف ملامینه لیون تیره - LYON WALNUT DARK" }, { code: "245", name: "ام دی اف ملامینه نویز - NOISE" },
+            { code: "246", name: "ام دی اف ملامینه بشیکتاش الم - BESHIKTASH ELM(001)" }, { code: "247", name: "ام دی اف ملامینه سیاه مازو - BLACK OAK" },
+            { code: "250", name: "ام دی اف ملامینه کلیاف تیره - DARK CLEAF" }, { code: "249", name: "ام دی اف ملامینه میلانو والنات 1 - MILANO WALNUT 1" },
+            { code: "251", name: "ام دی اف ملامینه میلانو والنات 2 - MILANO WALNUT 2" }, { code: "252", name: "ام دی اف ملامینه میلانو والنات 3 - MILANO WALNUT 3" },
+            { code: "255", name: "ام دی اف ملامینه ملچ تیره - DARK MALACH" }, { code: "300", name: "ام دی اف ملامینه سفید متالیک - METALLIC WHITE" },
+            { code: "304", name: "ام دی اف ملامینه متالیک کرم - METALLIC CREAM" }, { code: "305", name: "ام دی اف ملامینه متالیک بژ - METALLIC BEIGE" },
+            { code: "306", name: "ام دی اف ملامینه نسکافه متالیک - METALIC CAPUCINO" }, { code: "315", name: "ام دی اف ملامینه متالیک نقره - METALLIC SILVER" },
+            { code: "325", name: "ام دی اف ملامینه متالیک آنتراسیت - METALIC ANTRASIT" }, { code: "400", name: "ام دی اف ملامینه بتون سفید - CONCRETE WHITE" },
+            { code: "405", name: "ام دی اف ملامینه بتون 5 - BETON 5" }, { code: "410", name: "ام دی اف ملامینه بتون 6 - BETON 6" },
+            { code: "408", name: "ام دی اف ملامینه بتون 7 - BETON 7" }, { code: "406", name: "ام دی اف ملامینه بتون 8 - BETON 8" },
+            { code: "411", name: "ام دی اف ملامینه بتون 9 - BETON 9" }, { code: "513", name: "ام دی اف ملامینه کتان سفید - WHITE LINEN" },
+            { code: "514", name: "ام دی اف ملامینه کتان کرم - CREAM LINEN" }, { code: "515", name: "ام دی اف ملامینه توییست 1 - TWIST 1" },
+            { code: "574", name: "ام دی اف ملامینه طرح سنگ سفید (3) - HARDSTONE WHITE (3)" }, { code: "575", name: "ام دی اف ملامینه طرح سنگ کرم (4) - HARDSTONE WHITE (4)" },
             { code: "576", name: "ام دی اف ملامینه طرح سنگ تیره(8) - HARDSTONE WHITE (8)" }
         ];
 
@@ -642,6 +545,10 @@
         let products = [];
         let isReadOnlyMode = false; 
 
+        // توابع کمکی
+        function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
+        function getTodayEnglishDate() { try { return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return forceEnglish(new Intl.DateTimeFormat('fa-IR').format(new Date())); } }
+
         function showScreen(screenId) {
             const screens = ['loginScreen', 'changePassScreen', 'appMain'];
             screens.forEach(id => {
@@ -650,9 +557,6 @@
                 else { el.classList.add('hidden'); }
             });
         }
-
-        function forceEnglish(str) { if (!str) return ''; let s = str.toString(); s = s.replace(/[\u06F0-\u06F9]/g, match => String.fromCharCode(match.charCodeAt(0) - 1776)); s = s.replace(/[\u0660-\u0669]/g, match => String.fromCharCode(match.charCodeAt(0) - 1632)); return s; }
-        function getTodayEnglishDate() { try { return new Intl.DateTimeFormat('fa-IR-u-nu-latn', { year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); } catch (e) { return forceEnglish(new Intl.DateTimeFormat('fa-IR').format(new Date())); } }
 
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
@@ -675,7 +579,10 @@
             });
         }
 
+        // سیستم لاگین
         async function doLogin() {
+            if (!supabaseClient) { showToast('خطا: اتصال به دیتابیس برقرار نیست!', 'error'); return; }
+            
             const username = document.getElementById('loginUsername').value;
             const password = document.getElementById('loginPassword').value;
             const btn = document.getElementById('btnLogin');
@@ -747,6 +654,7 @@
         }
 
         async function changePassword() {
+            if (!supabaseClient) return;
             const newPass = document.getElementById('newPassword').value;
             if (!/^\d{4}$/.test(newPass)) { showToast('رمز باید ۴ عدد باشد.', 'error'); return; }
             if (newPass === currentUser.password) { showToast('رمز جدید نباید با قبلی یکسان باشد.', 'error'); return; }
@@ -764,6 +672,7 @@
         }
 
         async function loadWaybills() {
+            if (!supabaseClient) return;
             let query = supabaseClient.from('waybills').select('*').order('id', { ascending: false });
             if (currentUser.role === 'warehouse') query = query.in('status', ['pending', 'checked']);
             const { data: waybills, error } = await query;
@@ -819,6 +728,7 @@
             loadWaybills(); 
         }
 
+        // بقیه توابع فرم حواله
         function getTableHeaderHTML(type) {
             if (type === 'kafpoosh') {
                 return `<tr><th width="4%">ردیف</th><th width="10%">کد کالا</th><th width="25%">شرح کالا</th><th width="13%">طرح کروم</th><th width="8%">برند</th><th width="7%">درجه بندی</th><th width="9%">سایز</th><th width="7%">ضخامت</th><th width="7%">پشت کار کالا</th><th width="5%">واحد</th><th width="5%">مقدار</th><th width="3%" class="no-print">حذف</th></tr>`;
@@ -876,6 +786,7 @@
         }
 
         async function openWaybill(id) {
+            if (!supabaseClient) return;
             const { data: waybill, error } = await supabaseClient.from('waybills').select('*').eq('id', id).single();
             if (error || !waybill) { showToast('خطا در بارگذاری', 'error'); return; }
 
@@ -962,6 +873,7 @@
         }
 
         async function saveWaybill(newStatus) {
+            if (!supabaseClient) return;
             if (currentUser.role === 'sales' && (newStatus === 'checked' || newStatus === 'returned')) return;
             if (currentUser.role === 'warehouse' && (newStatus === 'draft' || newStatus === 'pending')) return;
 
@@ -1099,10 +1011,10 @@
             setTimeout(() => { alert('لطفا از پنجره پرینت باز شده، گزینه Save as PDF را انتخاب کنید.'); }, 500);
         }
 
-        // 🟢 مهم: اجرای برنامه بعد از لود کامل DOM
-        window.addEventListener('DOMContentLoaded', () => {
-            showScreen('loginScreen');
-        });
+        // اجرای سرویس ورکر برای PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err)); });
+        }
     </script>
 </body>
 </html>
