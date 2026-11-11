@@ -8,7 +8,7 @@
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#7c3aed">
     
-    <!-- Favicon (لوگوی مشکی مینیمال) -->
+    <!-- لوگوی مشکی مینیمال برای تب مرورگر -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%230f172a'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230f172a'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230f172a'%3EE%3C/text%3E%3C/svg%3E">
 
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
@@ -19,8 +19,14 @@
 </head>
 <body>
 
-    <!-- 1. صفحه لاگین -->
+    <!-- 1. صفحه لاگین (Glassmorphism + Animated Background) -->
     <div id="loginScreen">
+        <div class="background-orbs">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+        </div>
+        
         <div class="login-card">
             <!-- لوگوی مشکی مینیمال -->
             <svg class="login-logo" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
@@ -59,7 +65,7 @@
         </div>
     </div>
 
-    <!-- 3. برنامه اصلی -->
+    <!-- 3. برنامه اصلی (Bento Grid Dashboard) -->
     <div id="appMain" class="hidden">
         
         <div class="dashboard-header no-print">
@@ -78,6 +84,7 @@
             </div>
         </div>
 
+        <!-- داشبورد Bento Grid -->
         <div id="dashboardView" class="dashboard-content">
             <div class="dashboard-top">
                 <div class="welcome-text">
@@ -87,29 +94,30 @@
                 <button class="btn btn-primary" id="btnCreateNew" onclick="startNewWaybill()" style="display:none; padding:12px 24px; font-size:15px;">➕ صدور حواله جدید</button>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-card total">
+            <!-- Bento Grid Stats -->
+            <div class="bento-grid-stats">
+                <div class="bento-card stat-card total">
                     <div class="stat-info">
                         <h3>کل حواله‌ها</h3>
                         <div class="number" id="statTotal">0</div>
                     </div>
                     <div class="stat-icon">📄</div>
                 </div>
-                <div class="stat-card pending">
+                <div class="bento-card stat-card pending">
                     <div class="stat-info">
                         <h3>در انتظار انبار</h3>
                         <div class="number" id="statPending">0</div>
                     </div>
                     <div class="stat-icon">⏳</div>
                 </div>
-                <div class="stat-card checked">
+                <div class="bento-card stat-card checked">
                     <div class="stat-info">
                         <h3>کنترل شده</h3>
                         <div class="number" id="statChecked">0</div>
                     </div>
                     <div class="stat-icon">✅</div>
                 </div>
-                <div class="stat-card returned">
+                <div class="bento-card stat-card returned">
                     <div class="stat-info">
                         <h3>برگشتی</h3>
                         <div class="number" id="statReturned">0</div>
@@ -144,6 +152,7 @@
             </div>
         </div>
 
+        <!-- فرم حواله (دست‌نخورده) -->
         <div id="waybillView" class="hidden">
             <div class="tabs-container no-print">
                 <div class="toolbar" id="mainToolbar">
@@ -247,10 +256,10 @@
         </div>
     </div>
 
-    <!-- سیستم پاپ‌آپ (Toast) -->
+    <!-- Toast -->
     <div id="toastContainer"></div>
 
-    <!-- مودال تاییدیه سفارشی -->
+    <!-- Custom Confirm Modal -->
     <div id="customConfirmModal" class="hidden">
         <div class="confirm-box">
             <p id="confirmMessage">آیا مطمئن هستید؟</p>
