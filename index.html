@@ -6,7 +6,7 @@
     <title>سیستم مدیریت حواله - سی تک پارسیان</title>
     
     <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#ffffff">
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%23000000'/%3E%3Cpath d='M 22 20 C 45 20, 45 45, 22 50 C 45 55, 45 80, 22 80' stroke='white' stroke-width='6' fill='none'/%3E%3C/svg%3E">
 
@@ -16,52 +16,45 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="dark-theme">
+<body>
 
     <!-- ================= صفحه لاگین ================= -->
     <div id="loginScreen" class="login-wrapper">
-        <div class="login-form-section">
-            <div class="login-card animate-slide-up">
-                <div class="brand-logo-small">
-                    <svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
-                        <rect x="10" y="10" width="35" height="80" fill="#ffffff" />
-                        <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
-                        <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff" letter-spacing="2">SEETEC</text>
-                    </svg>
-                </div>
-                <h2>ورود به سیستم</h2>
-                <p class="text-muted mb-30">برای ادامه، اطلاعات حساب خود را وارد کنید.</p>
+        <div class="login-container">
+            <div class="login-header">
+                <svg class="brand-logo" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="10" y="10" width="35" height="80" fill="#000000" />
+                    <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#000000" letter-spacing="2">SEETEC</text>
+                    <text x="62" y="85" font-family="Vazirmatn, Arial, sans-serif" font-weight="600" font-size="16" fill="#666666" letter-spacing="1">Persian Flooring</text>
+                </svg>
+                <h1>ورود به سیستم</h1>
+                <p>لطفاً اطلاعات حساب کاربری خود را وارد کنید.</p>
+            </div>
 
+            <div class="login-form">
                 <div class="input-group">
                     <label>نام کاربری</label>
                     <select id="loginUsername" class="form-control">
-                        <option value="mojtaba">مجتبی بیاتی (فروش)</option>
-                        <option value="mehdi">مهدی شیبک (انبار)</option>
+                        <option value="mojtaba">مجتبی بیاتی (کارشناس فروش)</option>
+                        <option value="mehdi">مهدی شیبک (انباردار)</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label>رمز عبور</label>
                     <input type="password" id="loginPassword" maxlength="4" placeholder="••••" class="form-control password-input">
                 </div>
-                <button class="btn btn-primary w-100 mt-20" id="btnLogin" onclick="doLogin()">ورود به حساب</button>
+                <button class="btn btn-primary w-100 mt-20" id="btnLogin" onclick="doLogin()">ورود به سیستم</button>
             </div>
-        </div>
-        <div class="login-brand-section">
-            <div class="brand-content">
-                <svg class="brand-logo-large" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="35" height="80" fill="#ffffff" />
-                    <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
-                    <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff" letter-spacing="2">SEETEC</text>
-                </svg>
-                <div class="brand-text">شرکت کفپوش سی تک پارسیان</div>
-                <p class="brand-subtext">پلتفرم یکپارچه مدیریت حواله‌های فروش و انبار</p>
+            <div class="login-footer">
+                <span>شرکت کفپوش سی تک پارسیان</span>
             </div>
         </div>
     </div>
 
     <!-- ================= صفحه تغییر رمز اجباری ================= -->
     <div id="changePassScreen" class="hidden overlay">
-        <div class="modal-card animate-pop-in text-center">
+        <div class="modal-content text-center">
             <h3 class="text-danger mb-10">تغییر رمز اجباری</h3>
             <p class="text-muted mb-20">بیش از ۳۰ روز از تغییر رمز شما گذشته است. لطفاً رمز جدیدی وارد کنید.</p>
             <div class="input-group text-right">
@@ -77,73 +70,69 @@
         
         <!-- سایدبار -->
         <aside class="sidebar">
-            <div class="sidebar-header">
+            <div class="sidebar-brand">
                 <svg viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="10" y="10" width="35" height="80" fill="#ffffff" />
-                    <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="#0f172a" stroke-width="5" fill="none" stroke-linecap="round"/>
-                    <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#ffffff" letter-spacing="2">SEETEC</text>
+                    <rect x="10" y="10" width="35" height="80" fill="#000000" />
+                    <path d="M 27 20 C 60 20, 60 45, 27 50 C 60 55, 60 80, 27 80" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+                    <text x="60" y="60" font-family="Vazirmatn, Arial, sans-serif" font-weight="900" font-size="42" fill="#000000" letter-spacing="2">SEETEC</text>
                 </svg>
             </div>
             
-            <nav class="sidebar-nav">
-                <button class="nav-item active" onclick="showView('dashboard', this)">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            <nav class="sidebar-menu">
+                <button class="menu-item active" onclick="showView('dashboard', this)">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     داشبورد
                 </button>
-                <button class="nav-item" onclick="startNewWaybill(); showView('waybill', this)" id="navNewWaybill" style="display:none;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    صدور حواله
+                <button class="menu-item" onclick="startNewWaybill(); showView('waybill', this)" id="navNewWaybill" style="display:none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    صدور حواله جدید
                 </button>
             </nav>
 
-            <div class="sidebar-footer">
-                <div class="user-profile" onclick="openProfileModal()">
-                    <div class="avatar" id="sidebarAvatar">👤</div>
-                    <div class="user-details">
-                        <span class="user-name" id="userNameDisplay"></span>
-                        <span class="user-role" id="userRoleDisplay"></span>
+            <div class="sidebar-user">
+                <div class="user-card" onclick="openProfileModal()">
+                    <div class="avatar" id="sidebarAvatar"></div>
+                    <div class="user-info">
+                        <span class="name" id="userNameDisplay"></span>
+                        <span class="role" id="userRoleDisplay"></span>
                     </div>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="ml-auto opacity-50"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
-                <button class="btn btn-outline-danger w-100 mt-10" onclick="logout()">خروج</button>
+                <button class="btn btn-outline w-100 mt-10" onclick="logout()">خروج از حساب</button>
             </div>
         </aside>
 
         <!-- محتوای اصلی -->
         <main class="main-content">
-            <header class="top-header">
-                <h1 class="page-title" id="pageTitle">داشبورد</h1>
-                <div class="header-actions">
-                    <span class="date-display" id="currentDateDisplay"></span>
+            <header class="topbar">
+                <div class="page-title" id="pageTitle">داشبورد</div>
+                <div class="topbar-actions">
+                    <span class="date" id="currentDateDisplay"></span>
                 </div>
             </header>
 
             <!-- نمای داشبورد -->
             <div id="dashboardView" class="view-section">
-                <div class="bento-grid">
-                    <div class="bento-card total">
-                        <div class="bento-info"><span>کل حواله‌ها</span><h2 id="statTotal">0</h2></div>
-                        <div class="bento-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg></div>
+                <div class="stats-grid">
+                    <div class="stat-box total">
+                        <div class="stat-title">کل حواله‌ها</div>
+                        <div class="stat-value" id="statTotal">0</div>
                     </div>
-                    <div class="bento-card pending">
-                        <div class="bento-info"><span>در انتظار انبار</span><h2 id="statPending">0</h2></div>
-                        <div class="bento-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                    <div class="stat-box pending">
+                        <div class="stat-title">در انتظار انبار</div>
+                        <div class="stat-value" id="statPending">0</div>
                     </div>
-                    <div class="bento-card checked">
-                        <div class="bento-info"><span>کنترل شده</span><h2 id="statChecked">0</h2></div>
-                        <div class="bento-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                    <div class="stat-box checked">
+                        <div class="stat-title">کنترل شده</div>
+                        <div class="stat-value" id="statChecked">0</div>
                     </div>
-                    <div class="bento-card returned">
-                        <div class="bento-info"><span>برگشتی</span><h2 id="statReturned">0</h2></div>
-                        <div class="bento-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 14 4 9 9 4"></polyline><path d="M20 20v-7a4 4 0 0 0-4-4H4"></path></svg></div>
+                    <div class="stat-box returned">
+                        <div class="stat-title">برگشتی</div>
+                        <div class="stat-value" id="statReturned">0</div>
                     </div>
                 </div>
 
-                <div class="table-toolbar">
-                    <div class="search-box">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" id="dashboardSearch" placeholder="جستجوی شماره حواله..." oninput="renderDashboardTable()">
-                    </div>
+                <div class="toolbar">
+                    <input type="text" id="dashboardSearch" class="search-input" placeholder="جستجوی شماره حواله..." oninput="renderDashboardTable()">
                     <select id="dashboardFilter" class="filter-select" onchange="renderDashboardTable()">
                         <option value="all">همه وضعیت‌ها</option>
                         <option value="draft">پیش‌نویس</option>
@@ -153,7 +142,7 @@
                     </select>
                 </div>
 
-                <div class="table-container">
+                <div class="table-responsive">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -168,12 +157,12 @@
                 </div>
             </div>
 
-            <!-- نمای فرم حواله (پرینت) -->
+            <!-- نمای فرم حواله -->
             <div id="waybillView" class="view-section hidden">
-                <div class="waybill-toolbar no-print">
-                    <button class="btn btn-secondary" onclick="showView('dashboard', document.querySelector('.nav-item'))">بازگشت</button>
+                <div class="waybill-actions no-print">
+                    <button class="btn btn-light" onclick="showView('dashboard', document.querySelector('.menu-item'))">بازگشت</button>
                     <div class="spacer"></div>
-                    <button class="btn btn-success" id="btnSaveDraft" onclick="saveWaybill('draft')">ذخیره پیش‌نویس</button>
+                    <button class="btn btn-outline" id="btnSaveDraft" onclick="saveWaybill('draft')">ذخیره پیش‌نویس</button>
                     <button class="btn btn-primary" id="btnSendToWarehouse" onclick="saveWaybill('pending')">ارسال به انبار</button>
                     <button class="btn btn-success" id="btnCheckWarehouse" onclick="saveWaybill('checked')">کنترل انبار</button>
                     <button class="btn btn-warning" id="btnReturn" onclick="saveWaybill('returned')">برگشت</button>
@@ -273,15 +262,15 @@
 
     <!-- ================= Modal: پروفایل کاربری ================= -->
     <div id="profileModal" class="hidden overlay">
-        <div class="modal-card animate-pop-in" style="max-width: 450px;">
+        <div class="modal-content" style="max-width: 400px;">
             <div class="modal-header">
                 <h3>تنظیمات پروفایل</h3>
-                <button class="btn-close" onclick="closeProfileModal()">×</button>
+                <button class="modal-close" onclick="closeProfileModal()">×</button>
             </div>
             <div class="modal-body">
-                <div class="profile-upload-section text-center mb-20">
+                <div class="avatar-upload text-center mb-20">
                     <div class="avatar-large" id="modalAvatar" onclick="document.getElementById('avatarInput').click()">
-                        <span id="avatarText">👤</span>
+                        <span>👤</span>
                         <div class="avatar-overlay">تغییر عکس</div>
                     </div>
                     <input type="file" id="avatarInput" accept="image/*" style="display: none;" onchange="uploadAvatar(event)">
@@ -290,7 +279,7 @@
                     <label>نام کاربری جدید</label>
                     <input type="text" id="editUsername" class="form-control">
                 </div>
-                <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+                <hr class="divider">
                 <div class="input-group text-right">
                     <label>رمز عبور فعلی</label>
                     <input type="password" id="currentPassword" class="form-control" maxlength="4">
@@ -307,11 +296,11 @@
     <!-- Toast & Confirm -->
     <div id="toastContainer"></div>
     <div id="customConfirmModal" class="hidden overlay">
-        <div class="modal-card text-center animate-pop-in">
-            <p id="confirmMessage" style="font-size: 16px; font-weight: 600; margin-bottom: 20px;">آیا مطمئن هستید؟</p>
+        <div class="modal-content text-center" style="max-width: 350px;">
+            <p id="confirmMessage" style="font-size: 15px; font-weight: 600; margin-bottom: 20px;">آیا مطمئن هستید؟</p>
             <div class="modal-actions">
                 <button class="btn btn-primary" onclick="confirmResolve(true)">بله</button>
-                <button class="btn btn-secondary" onclick="confirmResolve(false)">خیر</button>
+                <button class="btn btn-light" onclick="confirmResolve(false)">خیر</button>
             </div>
         </div>
     </div>
