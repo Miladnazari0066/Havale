@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>سیستم مدیریت حواله - سی تک پارسیان</title>
-    <link rel="manifest" href="./manifest.json">
-    <meta name="theme-color" content="#0a246a">
     
-    <!-- 🟢 لوگوی اختصاصی سایت در تب مرورگر (Favicon - بدون بک گراند) -->
+    <!-- تزریق تنظیمات PWA به صورت داخلی (بدون نیاز به فایل جداگانه) -->
+    <link rel="manifest" href='data:application/manifest+json,{"name":"حواله سی تک","short_name":"حواله","start_url":"./","display":"standalone","background_color":"%23d4d0c8","theme_color":"%230a246a","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"192x192","type":"image/png"},{"src":"https://cdn-icons-png.flaticon.com/512/2921/2921822.png","sizes":"512x512","type":"image/png"}]}'>
+    <meta name="theme-color" content="#0a246a">
+
+    <!-- 🟢 لوگوی اختصاصی سایت در تب مرورگر -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='30' height='80' fill='%230a246a'/%3E%3Cpath d='M20 25 C 40 25, 40 50, 20 50 C 40 50, 40 75, 20 75' stroke='white' stroke-width='4' fill='none'/%3E%3Ctext x='45' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230a246a'%3ES%3C/text%3E%3Ctext x='65' y='55' font-family='Arial, sans-serif' font-weight='bold' font-size='28' fill='%230a246a'%3EE%3C/text%3E%3Ctext x='45' y='75' font-family='Arial, sans-serif' font-size='12' fill='%230a246a'%3EETEC%3C/text%3E%3C/svg%3E">
 
-    <!-- بهینه‌سازی لود فونت -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700;900&display=swap" rel="stylesheet">
     
-    <!-- لود کتابخانه‌ها به صورت Defer تا صفحه را بلاک نکنند -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
@@ -97,9 +97,7 @@
         .menu-btn.active { background: #d4d0c8; border-color: var(--border-dark); }
 
         /* --- بدنه اصلی --- */
-        .workspace-body {
-            display: flex; flex: 1; overflow: hidden;
-        }
+        .workspace-body { display: flex; flex: 1; overflow: hidden; }
 
         /* بخش سمت چپ: میزکار */
         .main-workspace {
@@ -155,6 +153,9 @@
         .install-content { padding: 20px; text-align: center; background: #fff; margin: 5px; border: 1px solid var(--border-dark); }
         .install-icon { font-size: 40px; margin-bottom: 10px; }
         .btn-install { padding: 8px 20px; margin-top: 15px; font-size: 14px; background: #d4d0c8; border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); cursor: pointer; font-weight: bold; }
+        
+        .install-help { display: none; margin-top: 15px; font-size: 12px; text-align: right; background: #f8f9fa; padding: 10px; border: 1px solid #ccc; border-radius: 4px; color: #333; line-height: 1.6; }
+        .install-help b { color: #0a246a; }
 
         #loginScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--workspace-bg); z-index: 9998; display: flex; justify-content: center; align-items: center; }
         .login-box { background: var(--bg-color); border: 2px solid; border-color: var(--border-light) var(--border-dark) var(--border-dark) var(--border-light); width: 360px; box-shadow: 5px 5px 15px rgba(0,0,0,0.2); }
@@ -257,7 +258,16 @@
             <div class="install-content">
                 <div class="install-icon">⚠️</div>
                 <p style="font-size: 13px; font-weight: bold; margin-bottom: 15px;">جهت استفاده از سیستم، ابتدا باید برنامه را نصب کنید.</p>
+                
                 <button id="btnInstallPWA" class="btn-install">📥 نصب برنامه روی دستگاه</button>
+                
+                <!-- راهنمای نصب دستی (اگر مرورگر نصب خودکار را پشتیبانی نکند) -->
+                <div id="manualInstallGuide" class="install-help">
+                    <b>راهنمای نصب:</b><br>
+                    مرورگر شما از نصب خودکار پشتیبانی نمی‌کند. لطفاً برای نصب:
+                    <br>۱. روی منوی <b>سه نقطه (⋮)</b> در بالای مرورگر کلیک کنید.
+                    <br>۲. گزینه <b>Install App</b> یا <b>Save and Share > Install</b> یا <b>نصب برنامه</b> را انتخاب کنید.
+                </div>
             </div>
         </div>
     </div>
@@ -271,14 +281,9 @@
                 <!-- 🟢 درج لوگوی اختصاصی در صفحه لاگین -->
                 <div class="login-logo-container">
                     <svg viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
-                        <!-- نماد اختصاصی S -->
                         <rect x="10" y="10" width="25" height="60" fill="#000" />
                         <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="white" stroke-width="3" fill="none" />
-                        
-                        <!-- متن SEETEC -->
                         <text x="45" y="45" font-family="Tahoma, Arial, sans-serif" font-weight="900" font-size="28" fill="#000" letter-spacing="1">SEETEC</text>
-                        
-                        <!-- متن زیر آن -->
                         <text x="45" y="65" font-family="Tahoma, Arial, sans-serif" font-weight="bold" font-size="13" fill="#444">Persian Flooring</text>
                     </svg>
                     <div class="login-logo-text">شرکت کفپوش سی تک پارسیان</div>
@@ -321,7 +326,6 @@
         <!-- نوار عنوان -->
         <div class="title-bar">
             <div class="title-bar-brand">
-                <!-- 🟢 لوگوی مینیاتوری در نوار عنوان -->
                 <svg style="height: 20px; width: auto;" viewBox="0 0 250 80" xmlns="http://www.w3.org/2000/svg">
                     <rect x="10" y="10" width="25" height="60" fill="#fff" />
                     <path d="M 22 20 C 35 20, 35 40, 22 40 C 35 40, 35 60, 22 60" stroke="#0a246a" stroke-width="3" fill="none" />
@@ -530,10 +534,11 @@
     </div>
 
     <script>
-        // --- 1. سیستم PWA ---
+        // --- 1. سیستم PWA (نصب هوشمند و جایگزین) ---
         let deferredPrompt;
         const installLockScreen = document.getElementById('installLockScreen');
         const btnInstallPWA = document.getElementById('btnInstallPWA');
+        const manualInstallGuide = document.getElementById('manualInstallGuide');
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(err => console.log('SW failed:', err)); });
@@ -551,18 +556,26 @@
             }
         }
 
+        // گرفتن رویداد نصب
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            manualInstallGuide.style.display = 'none';
         });
 
+        // دکمه نصب
         btnInstallPWA.addEventListener('click', async () => {
             if (deferredPrompt) {
+                // اگر مرورگر از نصب خودکار پشتیبانی می‌کند:
                 deferredPrompt.prompt();
-                await deferredPrompt.userChoice;
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') console.log('Installed');
                 deferredPrompt = null;
             } else {
-                alert('مرورگر شما از نصب پشتیبانی نمی‌کند.');
+                // اگر مرورگر پشتیبانی نمی‌کند (یا هنوز آماده نیست):
+                // راهنمای دستی را نشان بده
+                manualInstallGuide.style.display = 'block';
+                btnInstallPWA.style.display = 'none';
             }
         });
 
